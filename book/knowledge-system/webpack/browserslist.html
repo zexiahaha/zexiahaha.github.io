@@ -1,0 +1,338 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>browserslist - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="browserslist"><a class="header" href="#browserslist">browserslist</a></h1>
+<p>browserslist 是一个配置文件，用于在不同的前端工具直接共享指定目标浏览器或 nodejs 版本的设置。</p>
+<p>browserslist 可以放在 package.json 中，或者项目根目录下的 .browserslistrc 文件中。</p>
+<pre><code class="language-js">// package.json
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "maintained node versions"
+  ]
+
+// .browserslistrc
+defaults
+not IE 11
+maintained node versions
+</code></pre>
+<h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
+<p>可以设置 browserslist 设置为默认值，适合大多数用户。</p>
+<pre><code class="language-js">  "browserslist": [
+    "defaults"
+  ]
+</code></pre>
+<p>但是更建议用如下设置：</p>
+<pre><code class="language-js">last 2 versions
+not dead
+&gt; 0.2%
+</code></pre>
+<h2 id="浏览器数据更新"><a class="header" href="#浏览器数据更新">浏览器数据更新</a></h2>
+<ul>
+<li>
+<p>使用 npx browserslist@latest --update-db 命令更新 caniuse-lite 版本。原因是因为如果一直不更新 browserslist 依赖的 caniuse-lite ，假如两年没有更新，那么 last 2 versions 就意味着两年前的浏览器版本。</p>
+</li>
+<li>
+<p>为不同的工具同步 caniuse-lite 的版本。因为有可能 autoprefixer 和 babel 在安装的时候使用的 caniuse-lite 版本不同</p>
+</li>
+</ul>
+<h2 id="browserslist-设置的几种形式"><a class="header" href="#browserslist-设置的几种形式">browserslist 设置的几种形式</a></h2>
+<ol>
+<li>package.json 中 browserslist 字段</li>
+<li>.browserslistrc 文件</li>
+<li>browserslist 配置文件</li>
+<li>BROWSERSLIST 环境变量</li>
+<li>如果上面几种形式都不存在，则使用默认设置：&gt; 0.5%, last 2 versions, Firefox ESR, not dead</li>
+</ol>
+<h2 id="查询query"><a class="header" href="#查询query">查询（query）</a></h2>
+<p>query 的组合，可以使用 or 或者 ,（逗号）。例如： <code>last 1 version or &gt; 1%</code> 和 <code>last 1 version, &gt; 1%</code> 是同一个意思。还可以使用 and。例如：<code>last 1 version or chrome &gt; 75 and &gt; 1%</code>。</p>
+<div class="table-wrapper"><table><thead><tr><th>关键字</th><th>图例</th><th>例子</th></tr></thead><tbody>
+<tr><td>or 或 , 并集</td><td><img src="../img/browserslist_union.svg" alt="browserslist_union" /></td><td><code>&gt; .5% or last 2 versions</code> <br> <code>&gt; .5%, last 2 versions</code></td></tr>
+<tr><td>and 交集</td><td><img src="../img/browserslist_intersection.svg" alt="browserslist_intersection" /></td><td><code>&gt; .5% and last 2 versions</code></td></tr>
+<tr><td>not 相对补集</td><td><img src="../img/browserslist_complement.svg" alt="browserslist_complement" /></td><td><code>&gt; .5% and not last 2 versions</code> <br> <code>&gt; .5% or not last 2 versions</code> <br> <code>&gt; .5%, not last 2 versions</code></td></tr>
+</tbody></table>
+</div>
+<h2 id="常用-query-写法"><a class="header" href="#常用-query-写法">常用 query 写法</a></h2>
+<ul>
+<li><code>defaults</code> 默认值，等价于 <code>&gt; 0.5%, last 2 versions, Firefox ESR, not dead</code></li>
+<li>使用统计数据
+<ul>
+<li><code>&gt; 5%</code> 全球使用情况统计选择的浏览器版本。同样可以使用 &gt;=，&lt;，&lt;=</li>
+<li><code>&gt; 5% in US</code> 美国使用情况统计的浏览器版本。接受两个字母的国家/地区代码</li>
+<li><code>&gt; 5% in alt-AS</code> 使用亚洲地区使用情况统计。可在以下位置找到<a href="https://github.com/ben-eb/caniuse-lite/tree/master/data/regions">所有地区代码</a>的列表</li>
+<li><code>&gt; 5% in my stats</code> 使用<a href="https://github.com/browserslist/browserslist#custom-usage-data">自定义数据</a></li>
+<li><code>&gt; 5% in browserslist-config-mycompany stats</code> 使用来自于 browserslist-config-mycompany/browserslist-stats.json 的自定义数据</li>
+<li><code>cover 99.5%</code> 提供覆盖的最流行的浏览器</li>
+<li><code>cover 99.5% in US</code> 和上面的相同，两个字母代表国家/地区</li>
+<li><code>cover 99.5% in my stats</code> 和上面相同，使用自定义数据</li>
+</ul>
+</li>
+<li>最后的版本
+<ul>
+<li><code>last 2 versions</code> 每种浏览器的最后两个版本</li>
+<li><code>last 2 Chrome versions</code> chrome 浏览器的最后两个版本</li>
+<li><code>last 2 major versions </code> <code> last 2 iOS major versions</code> 最后两个主要版本</li>
+</ul>
+</li>
+<li><code>dead</code> 官方不再提供更新支持超过 24 个月</li>
+<li>nodejs 版本
+<ul>
+<li><code>node 10</code> <code>node 10.4</code> Node.js 10.x.x 或者 10.4.x 的最后一个发布版本</li>
+<li><code>current node</code> 当前 browserslist 使用的 nodejs 版本</li>
+<li><code>maintained node versions</code> 所有 nodejs 版本，官方还<a href="https://github.com/nodejs/Release">依然维护</a>的版本</li>
+</ul>
+</li>
+<li>浏览器版本
+<ul>
+<li><code>iOS 7</code> iOS 浏览器版本 7</li>
+<li><code>Firefox &gt; 20</code> 版本号大于 20 的火狐浏览器</li>
+<li><code>ie 6-8</code> 选择浏览器版本号的一个范围</li>
+<li><code>Firefox ESR</code> 火狐浏览器 ESR 版本 <a href="https://support.mozilla.org/en-US/kb/choosing-firefox-update-channel">Firefox Extended Support Release</a></li>
+<li><code>PhantomJS 2.1</code> 选择 Safari 版本和 PhantomJS 类似</li>
+</ul>
+</li>
+<li><code>extends browserslist-config-mycompany</code> 使用 browserslist-config-mycompany 包中的 query</li>
+<li><code>supports es6-module</code> 支持特定功能的浏览器，特定功能的列表看<a href="https://github.com/ben-eb/caniuse-lite/tree/master/data/features">这里</a></li>
+<li><code>browserslist config</code> browserslist 配置文件</li>
+<li><code>since 2015</code>  <code>last 2 years</code> 根据时间判断的所有版本</li>
+<li><code>unreleased versions</code>  <code>unreleased Chrome versions</code> alpha 和 beta 版本</li>
+<li><code>not ie &lt;= 8</code> 除了某种条件之外的版本</li>
+</ul>
+<h2 id="浏览器名称"><a class="header" href="#浏览器名称">浏览器名称</a></h2>
+<ul>
+<li><code>Android</code> for Android WebView.</li>
+<li><code>Baidu</code> for Baidu Browser.</li>
+<li><code>BlackBerry</code> or <code>bb</code> for Blackberry browser.</li>
+<li><code>Chrome</code> for Google Chrome.</li>
+<li><code>ChromeAndroid</code> or <code>and_chr</code> for Chrome for Android</li>
+<li><code>Edge</code> for Microsoft Edge.</li>
+<li><code>Electron</code> for Electron framework. It will be converted to Chrome version.</li>
+<li><code>Explorer</code> or <code>ie</code> for Internet Explorer.</li>
+<li><code>ExplorerMobile</code> or <code>ie_mob</code> for Internet Explorer Mobile.</li>
+<li><code>Firefox</code> or <code>ff</code> for Mozilla Firefox.</li>
+<li><code>FirefoxAndroid</code> or <code>and_ff</code> for Firefox for Android.</li>
+<li><code>iOS</code> or <code>ios_saf</code> for iOS Safari.</li>
+<li><code>Node</code> for Node.js.</li>
+<li><code>Opera</code> for Opera.</li>
+<li><code>OperaMini</code> or <code>op_mini</code> for Opera Mini.</li>
+<li><code>OperaMobile</code> or <code>op_mob</code> for Opera Mobile.</li>
+<li><code>QQAndroid</code> or <code>and_qq</code> for QQ Browser for Android.</li>
+<li><code>Safari</code> for desktop Safari.</li>
+<li><code>Samsung</code> for Samsung Internet.</li>
+<li><code>UCAndroid</code> or <code>and_uc</code> for UC Browser for Android.</li>
+<li><code>kaios</code> for KaiOS Browser.</li>
+</ul>
+<h2 id="会使用-browserslist-的插件"><a class="header" href="#会使用-browserslist-的插件">会使用 browserslist 的插件</a></h2>
+<ul>
+<li><code>autoprefixer</code> postcss 的一个插件，用于给 css 添加浏览器引擎前缀</li>
+<li><code>Babel</code> js 编译器</li>
+<li><code>postcss-preset-env</code> 类似 babel，将 css 编译成兼容的形式</li>
+<li><code>postcss-normalize</code> 浏览器都有默认样式。这个插件用于将不同浏览器的默认样式标准化</li>
+<li><code>eslint</code> js 代码错误风格检查</li>
+<li><code>stylelint</code> css 代码错误风格检查</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../webpack/webpack_optimise.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../webpack/source-map.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../webpack/webpack_optimise.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../webpack/source-map.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

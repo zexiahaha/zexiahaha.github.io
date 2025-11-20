@@ -1,0 +1,415 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>事件 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="事件"><a class="header" href="#事件">事件</a></h1>
+<h2 id="添加事件监听回调的方式"><a class="header" href="#添加事件监听回调的方式">添加事件监听回调的方式</a></h2>
+<pre><code class="language-js">// 设置元素的事件属性为一个函数
+const btn = document.querySelector('button');
+btn.onclick = function() {}
+
+// 设置 html 标签的事件属性
+&lt;button onclick="bgChange()"&gt;Press me&lt;/button&gt;
+
+// addEventListener() 和 removeEventListener()
+const btn = document.querySelector('button');
+function bgChange() {}
+btn.addEventListener('click', bgChange);
+btn.removeEventListener('click', bgChange);
+
+</code></pre>
+<p>当给同一个元素设置多个事件监听回调</p>
+<pre><code class="language-js">// 设置元素的事件属性，后一个会覆盖掉前一个
+myElement.onclick = functionA;
+myElement.onclick = functionB;
+
+// addEventListener 两个回调都会执行，按照代码中先后绑定的顺序依次执行
+myElement.addEventListener('click', functionA);
+myElement.addEventListener('click', functionB);
+</code></pre>
+<h2 id="冒泡和捕获"><a class="header" href="#冒泡和捕获">冒泡和捕获</a></h2>
+<ul>
+<li>当一个元素上的事件被触发了，浏览器会运行两个不同的阶段，捕获和冒泡。</li>
+<li>捕获阶段。事件会从根元素向子孙元素传递，一直传递到目标元素为止，这期间如果有元素也绑定了同样的事件，那么它的回调函数也会被触发。</li>
+<li>冒泡阶段。事件从目标元素开始，向祖先元素传递，一直到根元素为止。这期间如果有元素也绑定了同样的事件，那么它的回调函数也会被触发。</li>
+<li>浏览器事件默认都是冒泡的，想要设置成捕获需要设置 addEventListener 第三个参数为 true</li>
+</ul>
+<p>下面例子中，如果点击 d ，默认是冒泡的，所以事件回调触发顺序：d c b a</p>
+<pre><code class="language-html">&lt;div id="a"&gt;
+    &lt;div id="b"&gt;
+        &lt;div id="c"&gt;
+            &lt;div id="d"&gt;
+                aaa
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    const a = document.getElementById('a');
+    const b = document.getElementById('b');
+    const c = document.getElementById('c');
+    const d = document.getElementById('d');
+
+    d.addEventListener('click', (e) =&gt; {
+        console.log('target：', e.target, 'currentTarget', e.currentTarget)
+    });
+    c.addEventListener('click', (e) =&gt; {
+        console.log('target：', e.target, 'currentTarget', e.currentTarget)
+    });
+    b.addEventListener('click', (e) =&gt; {
+        console.log('target：', e.target, 'currentTarget', e.currentTarget)
+    });
+    a.addEventListener('click', (e) =&gt; {
+        console.log('target：', e.target, 'currentTarget', e.currentTarget)
+    });
+&lt;/script&gt;
+</code></pre>
+<p>如果想要改成捕获的 a b c d，改成下面这样</p>
+<pre><code class="language-html">&lt;div id="a"&gt;
+    &lt;div id="b"&gt;
+        &lt;div id="c"&gt;
+            &lt;div id="d"&gt;
+                aaa
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    const a = document.getElementById('a');
+    const b = document.getElementById('b');
+    const c = document.getElementById('c');
+    const d = document.getElementById('d');
+
+    d.addEventListener('click', (e) =&gt; {
+        console.log('target：', e.target, 'currentTarget', e.currentTarget)
+    });
+    c.addEventListener('click', (e) =&gt; {
+        console.log('target：', e.target, 'currentTarget', e.currentTarget)
+    }, true);
+    b.addEventListener('click', (e) =&gt; {
+        console.log('target：', e.target, 'currentTarget', e.currentTarget)
+    }, true);
+    a.addEventListener('click', (e) =&gt; {
+        console.log('target：', e.target, 'currentTarget', e.currentTarget)
+    }, true);
+&lt;/script&gt;
+</code></pre>
+<h2 id="事件对象"><a class="header" href="#事件对象">事件对象</a></h2>
+<p>addEventListener 添加的回调函数会收到一个参数，这个参数就是 Event 实例对象。</p>
+<div class="table-wrapper"><table><thead><tr><th>属性或方法</th><th>含义</th></tr></thead><tbody>
+<tr><td>bubbles</td><td>只读，布尔值，事件是否冒泡</td></tr>
+<tr><td>currentTarget</td><td>只读，事件当前注册的元素的引用</td></tr>
+<tr><td>target</td><td>只读，真正触发事件的那个元素的引用</td></tr>
+<tr><td>preventDefault()</td><td>取消默认事件</td></tr>
+<tr><td>stopPropagation()</td><td>阻止事件冒泡</td></tr>
+</tbody></table>
+</div>
+<p>下面是关于 preventDefault 阻止默认事件的例子</p>
+<pre><code class="language-html">    &lt;!-- a 链接点击事件 preventDefault 后页面就不会跳转到链接 href 指向的页面了 --&gt;
+    &lt;a href="http://www.baidu.com" id="a"&gt;链接&lt;/a&gt;
+    &lt;script&gt;
+        const a = document.getElementById('a');
+        a.addEventListener('click', (e) =&gt; {
+            e.preventDefault();
+        });
+    &lt;/script&gt;
+
+    &lt;!-- 在元素绑定的 contextmenu 事件里 preventDefault 会阻止浏览器打开默认的右键菜单 --&gt;
+    &lt;script&gt;
+        document.documentElement.addEventListener('contextmenu', (e) =&gt; {
+            e.preventDefault();
+        });
+        // 下面这样也可以
+        document.oncontextmenu = function (e) {
+            e.preventDefault();
+        }
+        // 下面这样也可以
+        document.oncontextmenu = function () {
+            return false;
+        }
+    &lt;/script&gt;
+
+    &lt;!-- 表单的 submit 事件中 preventDefault 会阻止表单提交 --&gt;
+    &lt;form action="http://www.baidu.com" id="form"&gt;
+        &lt;input type="text" value="aaa" name="name"&gt;
+        &lt;button type="submit"&gt;提交&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;script&gt;
+        const form = document.getElementById('form');
+        form.addEventListener('submit', (e) =&gt; {
+            console.log('submit')
+            e.preventDefault();
+        });
+    &lt;/script&gt;
+</code></pre>
+<p>可以看到 preventDefault 和 return false 的区别，当直接给元素设置 onEventName 方法的时候，阻止默认事件就可以使用 return false。如果使用 addEventListener 添加回调，return false 则无效，只能使用 preventDefault。</p>
+<p>下面的例子通过 event 对象判断按下了鼠标的哪个按键：</p>
+<pre><code class="language-js">document.documentElement.addEventListener('mousedown', (e) =&gt; {
+    if (e.button === 0) {
+        console.log('你点击了鼠标左键');
+    }
+    if (e.button === 1) {
+        console.log('你点击了鼠标中键（滚轮）');
+    }
+    if (e.button === 2) {
+        console.log('你点击了鼠标右键');
+    }
+});
+</code></pre>
+<h2 id="自定义事件和原生事件"><a class="header" href="#自定义事件和原生事件">自定义事件和原生事件</a></h2>
+<p>Event 本身是一个构造函数，可以新建自定义事件对象，然后使用 element.dispatchEvent(event) 去触发这个事件。</p>
+<p>下面是 new Event 自定义事件的例子：</p>
+<pre><code class="language-js">const event = new Event('build');
+elem.addEventListener('build', function (e) {}, false);
+elem.dispatchEvent(event);
+</code></pre>
+<p>如果想为自定义事件添加数据，可以使用 CustomEvent 构造函数创建自定义事件：</p>
+<pre><code class="language-js">const event = new CustomEvent('build', {
+    detail: '哈哈哈', // 自定义数据，可以传任意类型
+    bubbles: false, // 是否能冒泡
+    cancelable: false, // 是否能取消
+});
+elem.addEventListener('build', function (e) {
+    console.log(e.detail) // '哈哈哈'
+}, false);
+elem.dispatchEvent(event);
+</code></pre>
+<p>如果想使用 js 去创建原生事件并且触发，可以使用原生事件对应的构造函数，例如 MouseEvent。</p>
+<pre><code class="language-js">const event = new MouseEvent('click', {
+    'view': window,
+    'bubbles': true,
+    'cancelable': true
+});
+elem.dispatchEvent(event);
+</code></pre>
+<p>上面这样触发 click 事件相当于调用元素的 click() 方法：elem.click()。元素除了 click 方法，还有 blur focus 方法。</p>
+<h2 id="addeventlistener"><a class="header" href="#addeventlistener">addEventListener</a></h2>
+<pre><code class="language-js">target.addEventListener(type, listener, options);
+target.addEventListener(type, listener, useCapture);
+</code></pre>
+<p>当第三个参数 useCapture 使用布尔值的时候，含义是是否使用事件捕获。第三个参数使用对象的时候，有如下字段：</p>
+<div class="table-wrapper"><table><thead><tr><th>options 中的字段</th><th>含义</th></tr></thead><tbody>
+<tr><td>capture</td><td>布尔值，表示事件捕获阶段会触发 listener</td></tr>
+<tr><td>once</td><td>布尔值，表示 listener 在添加之后最多只调用一次。如果是 true， listener 会在其被调用之后自动移除</td></tr>
+<tr><td>passive</td><td>布尔值，当设置为 true， preventDefault 将无法取消事件。</td></tr>
+</tbody></table>
+</div>
+<p>关于 passive。当我们在滚动页面的时候（通常是我们监听 touch 事件的时候），页面其实会有一个短暂的停顿（大概200ms），浏览器不知道我们是否要 preventDefault，所以它需要一个延迟来检测。这就导致了我们的滑动显得比较卡顿。添加 passive: true 参数后，touchmove 事件不会阻塞页面的滚动（同样适用于鼠标的滚轮事件），也就是说它不会停顿 200ms 去判断是否会调用 preventDefault，于是滑动就不会卡顿了。</p>
+<p>规范中 passive 默认值为 false。从 Chrome 56 开始，如果我们给 document 绑定 touchmove 或者 touchstart 事件的监听器，这个 passive 是会被默认设置为 true 以提高性能。</p>
+<h2 id="题目"><a class="header" href="#题目">题目</a></h2>
+<p>现有瀑布流图片页面（页面下拉时无限加载新图片），用 js 监听每个图片的点击事件。</p>
+<details>
+<summary>答案</summary>
+<p>给瀑布流父级盒子绑定事件即可，然后根据 e.target 获取到目标元素，判断如果是图片做相应的处理即可</p>
+<pre><code class="language-js">const waterFallBox = document.getElementById('water-fall-box');
+waterFallBox.addEventListener('click', function (e) {
+    if (e.target.tagName.toLowerCase() === 'img') {
+        // 做处理
+    }
+});
+</code></pre>
+</details>
+<br><br>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../js/strict_mode.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../js/promise.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../js/strict_mode.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../js/promise.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

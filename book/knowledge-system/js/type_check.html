@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>类型判断 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="类型判断"><a class="header" href="#类型判断">类型判断</a></h1>
+<h2 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h2>
+<p>七种基本类型:</p>
+<ul>
+<li>数字（Number），整数或浮点数，例如： 42 或者 3.14159。</li>
+<li>字符串（String），字符串是一串表示文本值的字符序列，例如："Howdy" 。</li>
+<li>布尔值（Boolean），有2个值分别是：true 和 false.</li>
+<li>null ， 一个表明 null 值的特殊关键字。 JavaScript 是大小写敏感的，因此 null 与 Null、NULL或变体完全不同。</li>
+<li>undefined ，和 null 一样是一个特殊的关键字，undefined 表示变量未赋值时的属性。</li>
+<li>任意精度的整数 (BigInt) ，可以安全地存储和操作大整数，甚至可以超过数字的安全整数限制。</li>
+<li>Symbol ( 在 ECMAScript 6 中新添加的类型)。是唯一且不可改变的数据类型。</li>
+</ul>
+<p>一种引用类型：</p>
+<ul>
+<li>对象（Object）。函数 Function 是一种特殊的对象。</li>
+</ul>
+<h2 id="typeof"><a class="header" href="#typeof">typeof</a></h2>
+<ul>
+<li>数值返回 "number"</li>
+<li>字符串返回 "string"</li>
+<li>布尔值返回 "boolean"</li>
+<li>Symbol 值返回 "symbol"</li>
+<li>BigInt 值返回 "bigint"</li>
+<li>undefined 返回 "undefined"</li>
+<li>null 返回 "object"</li>
+<li>NaN 返回 "number"</li>
+<li>函数返回 "function"</li>
+<li>其它返回 "object"</li>
+</ul>
+<pre><code class="language-js">typeof 123 //"number"
+typeof '123' //"string"
+typeof false //"boolean"
+typeof Symbol() //"symbol"
+typeof BigInt(1) //"bigint"
+typeof undefined //"undefined"
+typeof null // "object"
+
+function f () {}
+typeof f //"function"
+typeof NaN //"number"
+
+typeof {} //"object"
+typeof [] //"object"
+typeof null //"object"
+typeof new Set() //"object"
+typeof new Map() //"object"
+typeof new Date() //"object"
+typeof new RegExp() //"object"
+
+</code></pre>
+<h2 id="instanceof"><a class="header" href="#instanceof">instanceof</a></h2>
+<p>instanceof 用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上。</p>
+<p>instanceof 左边是实例对象（必须是对象类型，不能是简单值，否则一直返回 false），右边是构造函数。</p>
+<pre><code class="language-js">new Number(1) instanceof Number // true
+new Number(1) instanceof Object // true
+
+1 instanceof Number // false
+'aaa' instanceof String // false
+true instanceof Boolean // false
+Symbol() instanceof Symbol // false
+BigInt(1) instanceof BigInt // false
+null instanceof Object // false
+undefined instanceof Object // false
+</code></pre>
+<h2 id="objectprototypetostringcall"><a class="header" href="#objectprototypetostringcall">Object.prototype.toString.call()</a></h2>
+<pre><code class="language-js">
+Object.prototype.toString.call(1) // "[object Number]"
+Object.prototype.toString.call(true) // "[object Boolean]"
+Object.prototype.toString.call('aaa') // "[object String]"
+Object.prototype.toString.call(null) // "[object Null]"
+Object.prototype.toString.call(undefined) // "[object Undefined]"
+Object.prototype.toString.call(Symbol()) // "[object Symbol]"
+Object.prototype.toString.call(BigInt(1)) // "[object BigInt]"
+
+Object.prototype.toString.call([]) // "[object Array]"
+Object.prototype.toString.call({}) // "[object Object]"
+
+function f() {
+    Object.prototype.toString.call(arguments) // [object Arguments]
+}
+</code></pre>
+<h2 id="题目"><a class="header" href="#题目">题目</a></h2>
+<p>第一题</p>
+<p>判断一个值是否是数组？</p>
+<details>
+<summary>答案</summary>
+<pre><code class="language-js">Array.isArray(obj);
+
+obj instanceof Array
+
+obj.constructor === Array;
+
+typeof obj === 'object' &amp;&amp; typeof obj.length === 'number'
+
+Array.prototype.isPrototypeOf(obj)
+
+Object.prototype.toString.call(obj) === '[object Array]'
+</code></pre>
+</details>
+<br><br>
+<p>第二题</p>
+<pre><code class="language-js">var a = {n: 1};
+var b = a;
+
+a.x = a = {n: 2};
+</code></pre>
+<details>
+<summary>答案</summary>
+<pre><code class="language-js">a // {n: 2}
+b // {n: 1, x: {n: 2}}
+</code></pre>
+<p>赋值运算符从右边向左边计算，a.x 引用着 {n: 1} 这个对象的 x 属性，还没有赋值，一开始是 undefined，b 也引用着 {n: 1} 对象。a 被重新赋值为 {n: 2}，然后给 {n: 1} 多加了一个 x 属性等于 {n: 2}。</p>
+</details>
+<br><br>
+<p>第三题</p>
+<pre><code class="language-js">var str1 = '123'
+var str2 = new String('123')
+var str3 = String('123')
+
+str1 == str2
+str1 === str2
+str2 === str3
+</code></pre>
+<details>
+<summary>答案</summary>
+<pre><code class="language-js">var str1 = '123'
+var str2 = new String('123')
+var str3 = String('123')
+
+str1 == str2 // true 隐式转换，引用类型会 toPrimitive 转换成简单类型后再比较 
+str1 === str2 // false 类型不一样，str2 是 Object
+str2 === str3 // false 同上
+</code></pre>
+</details>
+<br><br>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../js/recursion.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../js/module.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../js/recursion.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../js/module.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>keep-alive - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="keep-alive"><a class="header" href="#keep-alive">keep-alive</a></h1>
+<p>keep-alive 是一个抽象组件：它自身不会渲染一个 DOM 元素，也不会出现在父组件链中；使用 keep-alive 包裹动态组件时，会缓存不活动的组件实例，而不是销毁它们。</p>
+<p>用户在某个列表页面选择筛选条件过滤出一份数据列表，由列表页面进入数据详情页面，再返回该列表页面，我们希望：列表页面可以保留用户的筛选（或选中）状态。keep-alive 就是用来解决这种场景。当然 keep-alive 不仅仅是能够保存页面/组件的状态这么简单，它还可以避免组件反复创建和渲染，有效提升系统性能。
+总的来说，keep-alive 用于保存组件的渲染状态。</p>
+<h2 id="源码分析"><a class="header" href="#源码分析">源码分析</a></h2>
+<p>keep-alive.js <code>src/core/components/keep-alive.js</code></p>
+<pre><code class="language-js">/* @flow */
+
+import { isRegExp, remove } from 'shared/util'
+import { getFirstComponentChild } from 'core/vdom/helpers/index'
+
+type VNodeCache = { [key: string]: ?VNode };
+
+function getComponentName (opts: ?VNodeComponentOptions): ?string {
+  return opts &amp;&amp; (opts.Ctor.options.name || opts.tag)
+}
+
+function matches (pattern: string | RegExp | Array&lt;string&gt;, name: string): boolean {
+  if (Array.isArray(pattern)) {
+    return pattern.indexOf(name) &gt; -1
+  } else if (typeof pattern === 'string') {
+    return pattern.split(',').indexOf(name) &gt; -1
+  } else if (isRegExp(pattern)) {
+    return pattern.test(name)
+  }
+  /* istanbul ignore next */
+  return false
+}
+
+function pruneCache (keepAliveInstance: any, filter: Function) {
+  const { cache, keys, _vnode } = keepAliveInstance
+  for (const key in cache) {
+    const cachedNode: ?VNode = cache[key]
+    if (cachedNode) {
+      const name: ?string = getComponentName(cachedNode.componentOptions)
+      if (name &amp;&amp; !filter(name)) {
+        pruneCacheEntry(cache, key, keys, _vnode)
+      }
+    }
+  }
+}
+
+function pruneCacheEntry (
+  cache: VNodeCache,
+  key: string,
+  keys: Array&lt;string&gt;,
+  current?: VNode
+) {
+  const cached = cache[key]
+  if (cached &amp;&amp; (!current || cached.tag !== current.tag)) {
+    // 删除缓存 VNode 执行对应组件实例的 destory 钩子函数。
+    cached.componentInstance.$destroy()
+  }
+  cache[key] = null
+  remove(keys, key)
+}
+
+const patternTypes: Array&lt;Function&gt; = [String, RegExp, Array]
+
+export default {
+  name: 'keep-alive',
+  abstract: true, // 判断当前组件虚拟 dom 是否渲染成真实 dom 的关键
+
+  props: {
+    include: patternTypes, // 缓存白名单
+    exclude: patternTypes, // 缓存黑名单
+    max: [String, Number] // 缓存的组件实例数量上限
+  },
+
+  created () {
+    this.cache = Object.create(null) // 缓存虚拟 dom
+    this.keys = [] // 缓存的虚拟 dom 的 key 集合
+  },
+
+  destroyed () {
+    for (const key in this.cache) { // 删除所有的缓存
+      pruneCacheEntry(this.cache, key, this.keys)
+    }
+  },
+
+  mounted () {
+    // 实时监听黑白名单的变动
+    this.$watch('include', val =&gt; {
+      pruneCache(this, name =&gt; matches(val, name))
+    })
+    this.$watch('exclude', val =&gt; {
+      pruneCache(this, name =&gt; !matches(val, name))
+    })
+  },
+
+  render () {
+    // 通过 $slots 获取 keep-alive 包裹着的第一个子组件对象及其组件名
+    const slot = this.$slots.default
+    const vnode: VNode = getFirstComponentChild(slot)
+    const componentOptions: ?VNodeComponentOptions = vnode &amp;&amp; vnode.componentOptions
+    if (componentOptions) {
+      // check pattern
+      const name: ?string = getComponentName(componentOptions)
+      const { include, exclude } = this
+      if (
+        // not included
+        (include &amp;&amp; (!name || !matches(include, name))) ||
+        // excluded
+        (exclude &amp;&amp; name &amp;&amp; matches(exclude, name))
+      ) {
+        // 根据设定的黑白名单（如果有）进行条件匹配，决定是否缓存
+        // 这里的条件判断的是不匹配的情况，直接返回当前子组件的 vnode
+        return vnode
+      }
+
+      const { cache, keys } = this
+      const key: ?string = vnode.key == null
+        // same constructor may get registered as different local components
+        // so cid alone is not enough (#3269)
+        ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
+        : vnode.key
+        // 如果 vnode 有 key ，直接使用 vnode.key，否则根据组件 cid 和 tag 生成缓存 key
+        // 在缓存对象中查找是否已缓存过该组件 vnode。如果存在，直接取出缓存值并更新该 key 在 this.keys 中的位置（更新 key 的位置是实现 LRU 置换策略的关键）
+      if (cache[key]) {
+        vnode.componentInstance = cache[key].componentInstance
+        // make current key freshest
+        remove(keys, key)
+        keys.push(key)
+      } else {
+        // 在 this.cache 对象中存储该组件 vnode 并保存 key 值，之后检查缓存的 vnode 数量是否超过 max 的设置值，超过则根据 LRU 置换策略删除最近最久未使用的 vnode（即是下标为 0 的那个 key）。
+        cache[key] = vnode
+        keys.push(key)
+        // prune oldest entry
+        if (this.max &amp;&amp; keys.length &gt; parseInt(this.max)) {
+          pruneCacheEntry(cache, keys[0], keys, this._vnode)
+        }
+      }
+
+      // 这一步很重要，将该组件 vnode 的 keepAlive 属性值设置为 true
+      vnode.data.keepAlive = true
+    }
+    return vnode || (slot &amp;&amp; slot[0])
+  }
+}
+
+</code></pre>
+<p>主要看这个组件最后的导出。keep-alive 在它生命周期内定义了三个钩子函数：</p>
+<ul>
+<li>created 初始化两个对象分别缓存 vnode 和 vnode 对应的 key 集合</li>
+<li>destroyed 删除 this.cache 中缓存的 vnode 。这里不是简单地将 this.cache 置为 null，而是遍历调用 pruneCacheEntry 函数删除。因为需要调用 vnode.componentInstance.$destroy() 执行组件实例的 destroy 流程（销毁一个实例。清理它与其它实例的连接，解绑它的全部指令及事件监听器。）</li>
+<li>mounted 在 mounted 中对 include 和 exclude 参数进行监听，然后实时地更新（删除）this.cache 对象数据。pruneCache 函数的核心也是去调用pruneCacheEntry。</li>
+<li>render
+<ol>
+<li>通过 $slots 获取 keep-alive 包裹着的第一个子组件对象及其组件名</li>
+<li>根据设定的黑白名单（如果有）进行条件匹配，决定是否缓存。如果不需要缓存直接返回 vnode</li>
+<li>如果 vnode 有 key ，直接使用 vnode.key，否则根据组件 cid 和 tag 生成缓存 key。在缓存对象中查找是否已缓存过该组件 vnode。如果存在，直接取出缓存值并更新该 key 在 this.keys 中的位置（更新 key 的位置是实现 LRU 置换策略的关键）</li>
+<li>如果缓存中不存在，在 this.cache 对象中存储该组件 vnode 并保存 key 值，之后检查缓存的 vnode 数量是否超过 max 的设置值，超过则根据 LRU 置换策略删除最近最久未使用的 vnode（即是下标为 0 的那个 key）。</li>
+<li>最后一步很重要，将该组件 vnode 的 keepAlive 属性值设置为 true</li>
+</ol>
+</li>
+</ul>
+<h2 id="关键问题"><a class="header" href="#关键问题">关键问题</a></h2>
+<ul>
+<li>keep-alive 不会生成真正的DOM节点，这是怎么做到的？</li>
+</ul>
+<p><code>src/core/instance/lifecycle.js</code></p>
+<pre><code class="language-js">export function initLifecycle (vm: Component) {
+  const options = vm.$options
+  // 找到第一个非abstract的父组件实例
+  let parent = options.parent
+  if (parent &amp;&amp; !options.abstract) {
+    while (parent.$options.abstract &amp;&amp; parent.$parent) {
+      parent = parent.$parent
+    }
+    parent.$children.push(vm)
+  }
+  vm.$parent = parent
+  // ...
+}
+</code></pre>
+<p>Vue 在初始化生命周期的时候，为组件实例建立父子关系会根据 abstract 属性决定是否忽略某个组件。在 keep-alive 中，设置了 abstract: true，那 Vue 就会跳过该组件实例。</p>
+<p>最后构建的组件树中就不会包含 keep-alive 组件，那么由组件树渲染成的 DOM 树自然也不会有 keep-alive 相关的节点了。</p>
+<ul>
+<li>keep-alive 包裹的组件是如何使用缓存的？</li>
+</ul>
+<p>看这样一个例子：</p>
+<pre><code class="language-js">let A = {
+  template: '&lt;div class="a"&gt;' +
+  '&lt;p&gt;A Comp&lt;/p&gt;' +
+  '&lt;/div&gt;',
+  name: 'A'
+}
+
+let B = {
+  template: '&lt;div class="b"&gt;' +
+  '&lt;p&gt;B Comp&lt;/p&gt;' +
+  '&lt;/div&gt;',
+  name: 'B'
+}
+
+let vm = new Vue({
+  el: '#app',
+  template: '&lt;div&gt;' +
+  '&lt;keep-alive&gt;' +
+  '&lt;component :is="currentComp"&gt;' +
+  '&lt;/component&gt;' +
+  '&lt;/keep-alive&gt;' +
+  '&lt;button @click="change"&gt;switch&lt;/button&gt;' +
+  '&lt;/div&gt;',
+  data: {
+    currentComp: 'A'
+  },
+  methods: {
+    change() {
+      this.currentComp = this.currentComp === 'A' ? 'B' : 'A'
+    }
+  },
+  components: {
+    A,
+    B
+  }
+})
+</code></pre>
+<ol>
+<li>
+<p>第一次渲染的时候，keep-alive 标签走正常的 init 的钩子函数生成实例，然后走 $mount 流程， keep-alive 标签生成的 vm 实例有 $slots 属性，vm.$slots.default 就是其内部的 A 组件。keep-alive 组件自己是没有 dom 结构的，所以走到 _render 生成 vnode 的时候，调用的 render 是 keep-alive 的 render 方法。</p>
+</li>
+<li>
+<p>keep-alive 的 render 方法会判断如果有缓存则返回缓存中的被包裹的组件的 vnode，如果是第一次渲染，则通过 vm.$slots.default 拿到被 keep-alive 包裹的组件 vnode 后缓存在 keep-alive 组件实例中，并设置 vnode.data.keepAlive = true 然后返回 vnode。</p>
+</li>
+<li>
+<p>_render 之后就是 patch 流程将组件 A 渲染出来。</p>
+</li>
+<li>
+<p>点击按钮切换到 B 组件也是第一次渲染 B ，和 A 走同样的逻辑被缓存起来。这时候 keep-alive 组件实例的 cache 里就缓存了两个组件 A 和 B 的 vnode。</p>
+</li>
+<li>
+<p>再次切换回 A 组件的时候，patch 流程又会走到 init 组件钩子函数，这时候就判断 vnode.data.keepAlive 了，因为是 keepAlive 为 true，所以不会新实例化 A 组件，而是通过缓存的 A 的 vnode 获取到对应的 dom 直接插入页面中。</p>
+</li>
+</ol>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>keep-alive 组件是一个抽象组件，它的实现通过自定义 render 函数并且利用了插槽，将它包裹的组件的 vnode 缓存起来。且在 patch 过程中对于已缓存的组件不会执行 mounted，所以不会有一般的组件的生命周期函数但是又提供了 activated 和 deactivated 钩子函数。patch 过程中通过 keep-alive 的 cache 属性获取到之前缓存的组件 vnode 然后拿到 elm 属性，也就是原生 dom 节点，然后直接插入页面中。</p>
+<p>keep-alive 也是个组件，它没有 dom 模板，而是实现了 render 方法用来缓存它的插槽内容，它会通过vm.$slots.default 拿到它包裹的子组件的 vnode 然后缓存在自己的 cache 数组中，然后返回这个子组件 vnode 渲染。等到第二次渲染的时候就直接会从 keep-alive 组件的 cache 数组里得到子组件的 vnode.elm 属性，也就是子组件的 dom 节点，然后直接插入页面对应位置。这时候就不再走 mounted 了，只会触发 activated 和 deactivated 钩子函数</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../vue/ref.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../vue/slot.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../vue/ref.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../vue/slot.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

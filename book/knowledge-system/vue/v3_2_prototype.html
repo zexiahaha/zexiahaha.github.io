@@ -1,0 +1,369 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>源码结构 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="源码结构"><a class="header" href="#源码结构">源码结构</a></h1>
+<h2 id="结构"><a class="header" href="#结构">结构</a></h2>
+<pre><code>vue-3.2.37
+├─.github
+├─.vscode
+├─packages // 核心代码
+│  ├─compiler-core // 编译器核心代码
+│  ├─compiler-dom // 浏览器相关的编译模块
+│  ├─compiler-sfc // 单文件组件（.vue）编译模块
+│  ├─compiler-ssr // 服务端渲染的编译模块
+│  ├─reactivity // 响应式核心模块
+│  ├─reactivity-transform // 已过期代码，无需关注
+│  ├─runtime-core // 运行时核心代码，针对不同平台进行实现
+│  ├─runtime-dom // 基于浏览器的运行时
+│  ├─runtime-test // runtime 测试相关
+│  ├─server-renderer // 服务端渲染
+│  ├─sfc-playground // sfc 工具 https://sfc.vuejs.org
+│  ├─shared // 共享的工具类
+│  ├─size-check // 测试运行时包大小
+│  ├─template-explorer // 提供了一个线上测试 https://template-explorer.vuejs.org 用于把 template 转化为 render
+│  ├─vue // 测试，打包之后的 dist 都在这里
+│  └─vue-compat // 兼容 vue2 的代码
+├─scripts // 配置文件相关
+└─test-dts // 测试相关
+│  .eslintrc.js
+│  .gitignore
+│  .prettierrc
+│  api-extractor.json // Typescript 的 API 分析工具
+│  BACKERS.md // 赞助声明
+│  CHANGELOG.md // 更新日志
+│  jest.config.js // 测试相关
+│  LICENSE // 开源协议
+│  netlify.toml // 自动化部署相关
+│  package.json
+│  pnpm-lock.yaml
+│  pnpm-workspace.yaml
+│  README.md
+│  rollup.config.js // rollup 配置文件
+│  SECURITY.md // 报告漏洞，维护安全的声明文件
+│  tsconfig.json // TypeScript 配置文件
+</code></pre>
+<h2 id="在-vue-源码中运行测试实例"><a class="header" href="#在-vue-源码中运行测试实例">在 vue 源码中运行测试实例</a></h2>
+<ul>
+<li>切换 nodejs 到 18, vue-3.2.37 需要 nodejs 18 环境。全局安装 pnpm ，然后 pnpm 装包，装包成功后运行 npm run build</li>
+<li><code>packages\vue\dist</code> 目录下就是生成的 vue 库文件</li>
+<li><code>packages\vue\examples</code> 目录下新建文件夹 xia，写自己的测试实例</li>
+<li>然后使用 vscode 的 live server 插件打开测试页面，即可看到效果</li>
+</ul>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;Document&lt;/title&gt;
+    &lt;script src="../../../dist/vue.global.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;div id="app"&gt;&lt;/div&gt;
+  &lt;/body&gt;
+
+  &lt;script&gt;
+    const { reactive, effect } = Vue;
+
+    const obj = reactive({ name: "张三" });
+
+    effect(() =&gt; {
+      document.querySelector("#app").innerHTML = obj.name;
+    });
+
+    setTimeout(() =&gt; {
+      obj.name = "李四";
+    }, 2000);
+  &lt;/script&gt;
+&lt;/html&gt;
+</code></pre>
+<h2 id="debug为-vue-开启-sourcemap"><a class="header" href="#debug为-vue-开启-sourcemap">debug：为 vue 开启 sourcemap</a></h2>
+<ul>
+<li>通过 <code>scripts\build.js</code> 文件得知，sourcemap 的开启是由 npm script 命令中的 -sourcemap 或者 -s 参数开启的，于是修改一下 build 的命令就可以开启 sourcemap 了</li>
+</ul>
+<pre><code class="language-js">"build": "node scripts/build.js -s",
+</code></pre>
+<ul>
+<li>然后在浏览器的 Sources 面板中就可以打断点 debugger 了</li>
+</ul>
+<h2 id="如何阅读源码"><a class="header" href="#如何阅读源码">如何阅读源码</a></h2>
+<ol>
+<li>摒弃边缘情况，仅阅读核心逻辑</li>
+<li>跟随一条主线</li>
+</ol>
+<h2 id="创建自己的-vue-next-mini-搭建框架"><a class="header" href="#创建自己的-vue-next-mini-搭建框架">创建自己的 vue-next-mini 搭建框架</a></h2>
+<ul>
+<li>
+<p>创建 vue-next-mini 文件夹，npm init 初始化，创建对应 packages 文件夹</p>
+</li>
+<li>
+<p>全局安装 typescript，初始化 tsconfig.json 文件，并为 packages 目录下所有模块都创建 src/index.ts 文件</p>
+<pre><code class="language-js">  // 全局安装 typescript
+  npm install -g typescript
+  // 初始化 tsconfig.json 文件
+  tsc -init
+</code></pre>
+</li>
+<li>
+<p>引入 prettier 保证代码格式</p>
+<ul>
+<li>vscode 插件市场安装 <code>Prettier - Code formatter</code> 插件</li>
+<li>根目录下创建 <code>.prettierrc</code> 配置文件
+<pre><code class="language-js">  {
+    "semi": true,
+    "singleQuote": true,
+    "printWidth": 80,
+    "trailingComma": "all",
+    "arrowParens": "avoid"
+  }
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>新建 rollup.config.js 文件</p>
+<pre><code class="language-js">import commonjs from "@rollup/plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
+import typescript from "@rollup/plugin-typescript";
+
+export default [
+  {
+    input: "packages/vue/src/index.ts", // 入口文件
+    output: [
+      {
+        sourcemap: true, // 开启 sourcemap
+        file: "./packages/vue/dist/vue.js", // 导出文件地址
+        format: "iife", // 出口文件 导出一个 iife 格式的包
+        name: "Vue", // 变量名
+      },
+    ],
+    plugins: [
+      typescript({
+        // ts
+        sourceMap: true,
+      }),
+      resolve(), // 模块导入路径补全
+      commonjs(), // 转换 commonjs 为 esm
+    ],
+  },
+];
+</code></pre>
+</li>
+<li>
+<p>在 tsconfig.js 中配置路径映射</p>
+<pre><code class="language-js">  {
+    "baseUrl": ".",
+    "paths": { // 指定路径映射
+      "@vue/*": [
+        "packages/*/src"
+      ]
+    },
+  }
+</code></pre>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../vue/v3_1_base.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../vue/v3_3_reactivity_base.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../vue/v3_1_base.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../vue/v3_3_reactivity_base.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>asar 增量更新 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="asar-增量更新"><a class="header" href="#asar-增量更新">asar 增量更新</a></h1>
+<p>通过观察发现 <code>electron-builder</code> 和 <code>electron-updater</code> 实现的差分更新，并不能节省多少下载的带宽，这时候就需要实现只更新 <code>asar</code> 包的增量更新，1 包的体积小，更能节省带宽，提升更新的速度，用户体验好。</p>
+<h2 id="两种方案"><a class="header" href="#两种方案">两种方案</a></h2>
+<ul>
+<li>
+<p>不管是哪种方案，<code>asar</code> 更新的本质都是</p>
+<ol>
+<li>下载新版本的 <code>asar</code> 包</li>
+<li>关闭软件之后用新版本包覆盖旧版本包</li>
+<li>重启软件更新完成</li>
+</ol>
+</li>
+<li>
+<p>所以两种方案的区别就在于关闭软件之后覆盖文件的方式不同，因为软件正在运行的途中，<code>asar</code> 包处于锁定状态，是无法覆盖的，所以就是为了解决覆盖文件的问题</p>
+<ol>
+<li>第一种是双 <code>asar</code> 包方案，软件会生成两个 <code>asar</code> 包，<code>electron-builder</code> 默认打包生成的 <code>app.asar</code> 作为入口包，软件启动后还是从 <code>app.asar</code> 启动，但是 <code>app.asar</code> 的代码里只存放检测新版本文件和覆盖的逻辑，做完覆盖操作后就使用 <code>require</code> 或者 <code>import</code> 动态导入 <code>main-v1.0.0.asar</code> 这个主 <code>asar</code> 包，所有软件的业务逻辑都在主包中</li>
+<li>第二种逻辑简单一些，检查升级服务器是否存在新版本包，如果存在就下载下来，下载成功后立即退出软件，同时启动一个子进程，与软件主进程脱离关系，主进程退出后执行一个批处理脚本（或者 shell 脚本）覆盖操作，覆盖成功后再重启软件。所有的覆盖逻辑还有重启逻辑都在批处理脚本中</li>
+</ol>
+</li>
+<li>
+<p>优缺点分析：</p>
+<ul>
+<li>双 <code>asar</code> 方案缺点是会出现两个版本号，因为 <code>asar</code> 包中必须存在 <code>package.json</code> 文件，因此当主包升级后，主包版本号会和入口包版本号不一致，解决办法是实现一个方法，需要读取版本号的时候都要去读取主包内的 <code>package.json</code> 的版本号。双包方案实现起来略微有些复杂</li>
+<li>批处理脚本的优点是，实现起来简单，缺点是有可能批处理脚本的操作会被杀毒软件认为是病毒操作，被误杀</li>
+</ul>
+</li>
+</ul>
+<h2 id="双-asar-方案"><a class="header" href="#双-asar-方案">双 asar 方案</a></h2>
+<p><img src="./img/double_asar_update.png" alt="double_asar_update" /></p>
+<pre><code class="language-js">// 主包入口文件 index.js
+const path = require('node:path');
+const { app, dialog } = require('electron');
+const log = require('./logger');
+const fs = require('node:fs');
+const { getMajorPackageInfo, findAsarFilesInResources } = require('./utils.js');
+
+try {
+  // 如果是生产包，就去扫描软件安装目录 resources 目录下是否存在多个 asar 包，如果存在说明新版本已经下载到本地了，判断哪个 asar 包是最新版本，然后进行文件替换操作完成升级
+  // 新版本包下载下来是带 .tmp 后缀的 main-v1.0.0.asar.tmp 以便和旧版本区分
+  if (app.isPackaged) {
+    const asarFiles = findAsarFilesInResources();
+    log.info(asarFiles, 'asarFiles');
+    if (asarFiles.length &gt; 1) {
+      const tmp = asarFiles.filter(i =&gt; i.includes('.tmp'))[0];
+      const old = asarFiles.filter(i =&gt; !i.includes('.tmp'))[0];
+      log.info(`tmp: ${tmp} old: ${old}`);
+      if (tmp &amp;&amp; old) {
+        try {
+          fs.renameSync(tmp, tmp.replace('.tmp', ''));
+          fs.unlinkSync(old);
+          log.info('update main asar successful');
+        } catch (err) {
+          log.error(`fs.renameSync err: ${err}`);
+        }
+      }
+    }
+  }
+
+  let mainAppPath;
+  // 本地 dev 开发环境直接加载 main.js 主逻辑文件
+  if (!app.isPackaged) {
+    mainAppPath = path.join(app.getAppPath(), 'main', 'main.js');
+  } else {
+    // 生产环境动态加载主 asar 包中的 main.js
+    const asarFiles = findAsarFilesInResources();
+    const mainAsar = asarFiles[0];
+    const pkg = getMajorPackageInfo(mainAsar);
+    log.info(pkg, 'pkg');
+    const resourcesPath = path.dirname(app.getAppPath());
+    mainAppPath = path.join(
+      resourcesPath,
+      `${pkg.name}-${pkg.version}.asar`,
+      'main.js'
+    );
+  }
+
+  log.info('Loading main application from:', mainAppPath);
+  // 动态加载
+  const mainModule = require(mainAppPath);
+  mainModule(log);
+} catch (error) {
+  log.error('Failed to load main application:', error);
+
+  dialog.showErrorBox(
+    '应用加载失败',
+    `无法加载主应用模块: ${error.message}\n请尝试重新安装应用`
+  );
+
+  app.quit();
+}
+
+// 获取主包版本号
+exports.getMajorPackageInfo = function getMajorPackageInfo(mainAsarPath) {
+  try {
+    let pkgPath;
+
+    if (!app.isPackaged) {
+      pkgPath = path.join(__dirname, './package.json');
+    } else {
+      pkgPath = path.join(mainAsarPath, 'package.json');
+    }
+
+    const pkgContent = fs.readFileSync(pkgPath, 'utf8');
+    return JSON.parse(pkgContent);
+  } catch (error) {
+    log.error('read package.json failed:', error);
+    return {
+      name: 'unknown-app',
+      version: '0.0.0',
+    };
+  }
+};
+
+// 获取 resources 目录下多个 asar 主包
+exports.findAsarFilesInResources = function findAsarFilesInResources() {
+  try {
+    const resourcesPath = path.dirname(app.getAppPath());
+    log.log('resources dir path:', resourcesPath);
+
+    const files = fs.readdirSync(resourcesPath, { withFileTypes: true });
+
+    const asarFiles = files
+      .filter(
+        item =&gt;
+          !item.isDirectory() &amp;&amp;
+          item.name.includes('asar') &amp;&amp;
+          item.name !== 'app.asar'
+      )
+      .map(item =&gt; path.join(resourcesPath, item.name));
+
+    log.log(`find ${asarFiles.length} files includes asar:`);
+    asarFiles.forEach(file =&gt; log.log(`- ${file}`));
+
+    return asarFiles;
+  } catch (error) {
+    log.error('get asar files list failed:', error.message);
+    return [];
+  }
+};
+</code></pre>
+<p>下面是主包逻辑 main.js，导出一个函数，函数中就是所有主逻辑</p>
+<pre><code class="language-js">module.exports = async function () {};
+</code></pre>
+<p>然后是 <code>electron-builder</code> 打包配置，在 <code>package.json</code> 中设置 <code>extraResources</code> 复制主进程文件到 <code>${name}-${version}.asarfolder</code> 目录下，并且设置 <code>afterPack</code> 脚本去处理 pack 之后的第二个 asar 包的生成</p>
+<pre><code class="language-js">{
+      "extraResources": [
+      {
+        "from": "main",
+        "to": "${name}-${version}.asarfolder",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "afterPack": "./afterPack.js"
+}
+</code></pre>
+<p>下面是 <code>afterPack.js</code>，解压 <code>app.asar</code> 从中获取到 <code>node_modules</code> 和 <code>package.json</code> 复制到 <code>${name}-${version}.asarfolder</code> 下，然后再将 <code>${name}-${version}.asarfolder</code> 打成 <code>${pkg.name}-${pkg.version}.asar</code> 文件，即第二个 asar 包</p>
+<pre><code class="language-js">const localPgk = require('local-pkg');
+const asar = require('@electron/asar');
+const path = require('path');
+const fs = require('fs-extra');
+
+module.exports = async context =&gt; {
+  async function moveToDirectory(source, targetDir) {
+    try {
+      if (!(await fs.pathExists(source))) {
+        throw new Error(`moveToDirectory source doesn't exist: ${source}`);
+      }
+
+      const sourceName = path.basename(source);
+      const targetPath = path.join(targetDir, sourceName);
+
+      // ensure targetDir exists,if doesn't then creat
+      await fs.ensureDir(targetDir);
+
+      // check targetDir exists same source, if exists remove
+      if (await fs.pathExists(targetPath)) {
+        await fs.remove(targetPath);
+        console.log(
+          `  • moveToDirectory already remove same source in targetDir: ${targetPath}`
+        );
+      }
+
+      await fs.move(source, targetPath);
+      console.log(`  • moveToDirectory move successful: ${targetPath}`);
+    } catch (error) {
+      console.error('  • moveToDirectory move failed:', error.message);
+      throw error;
+    }
+  }
+
+  async function extractAsarFile(from, dest) {
+    try {
+      await fs.ensureDir(dest);
+
+      console.log(`  • start extract asar: ${from}`);
+      console.log(`  • extract to dest: ${dest}`);
+
+      await asar.extractAll(from, dest);
+
+      console.log('  • asar extract complete');
+      return true;
+    } catch (error) {
+      console.error('  • asar extract error:', error);
+      throw error;
+    }
+  }
+
+  const pkg = localPgk.loadPackageJSONSync();
+
+  const from = path.join(__dirname, './dist/win-unpacked/resources/app.asar');
+  const dest = path.join(__dirname, './dist/win-unpacked/resources/temp');
+  const target = path.join(
+    __dirname,
+    `./dist/win-unpacked/resources/${pkg.name}-${pkg.version}.asarfolder/`
+  );
+
+  try {
+    // extract app.asar to temp folder
+    await extractAsarFile(from, dest);
+    console.log('  • extract app.asar complete');
+
+    const nodeModulesPath = path.join(
+      __dirname,
+      './dist/win-unpacked/resources/temp/node_modules'
+    );
+    const pkgPath = path.join(
+      __dirname,
+      './dist/win-unpacked/resources/temp/package.json'
+    );
+
+    // copy mode_modules and package.json to main asar folder
+    await moveToDirectory(nodeModulesPath, target);
+    await moveToDirectory(pkgPath, target);
+
+    // remove temp
+    await fs.remove(dest);
+    console.log('  • remove temp file complete');
+
+    const asarFolder = path.join(
+      __dirname,
+      `./dist/win-unpacked/resources/${pkg.name}-${pkg.version}.asarfolder`
+    );
+    const asarDest = path.join(
+      __dirname,
+      `./dist/win-unpacked/resources/${pkg.name}-${pkg.version}.asar`
+    );
+
+    // pack asar folder
+    await asar.createPackage(asarFolder, asarDest);
+
+    console.log('  • asar pack complete');
+
+    // remove original asar folder
+    await fs.remove(asarFolder);
+
+    console.log('  • remove asar temp folder complete');
+  } catch (err) {
+    throw err;
+  }
+};
+</code></pre>
+<p>最后是检查是否需要增量更新的方法，请求服务器最新的版本号和 resources 目录下的 asar 主包中 package.json 中的版本号对比判断是否需要更新</p>
+<pre><code class="language-js">exports.asarUpdateCheck = async function asarUpdateCheck(sendStatusToWindow) {
+  const log = global.log;
+  const res = await axios.get('http://127.0.0.1:33855/update.json');
+  log.info(res.data, 'update.json res');
+
+  const latest = res.data[0];
+  log.info(latest, 'latest');
+
+  const asarFiles = findAsarFilesInResources();
+  let currentVersion;
+  if (asarFiles.length === 1) {
+    const pkg = getMajorPackageInfo(asarFiles[0]);
+    currentVersion = pkg.version;
+  } else if (asarFiles.length &gt; 1) {
+    const versionArr = asarFiles.map(i =&gt; getMajorPackageInfo(i).version);
+    versionArr.sort((a, b) =&gt; compareVersion(a, b));
+    currentVersion = versionArr[versionArr.length - 1];
+  } else {
+    app.quit();
+  }
+  log.info(
+    `currentVersion: ${currentVersion} latest.version: ${latest.version}`
+  );
+
+  const compareRes = compareVersion(latest.version, currentVersion);
+  if (compareRes === 1) {
+    sendStatusToWindow('New Version found.');
+    if (latest.type === 'full') {
+      return 'full';
+    } else {
+      // check if there is on full between latest and current, then will be full update not asar
+      const currentIndex = res.data.findIndex(
+        i =&gt; i.version === currentVersion
+      );
+      log.info('currentIndex', currentIndex);
+      const filterData = res.data.slice(1, currentIndex);
+      log.info('filterData', filterData);
+      log.info(
+        `filterData.some((i) =&gt; i.type === 'full')`,
+        filterData.some(i =&gt; i.type === 'full')
+      );
+      if (filterData.some(i =&gt; i.type === 'full')) {
+        return 'full';
+      }
+      log.info(`start download asar update ${latest.name}`);
+      const targetDir = app.isPackaged
+        ? path.join(path.dirname(app.getAppPath()))
+        : path.join(app.getAppPath());
+      await downloadAsarFile(
+        `http://127.0.0.1:33855/${latest.name}`,
+        targetDir,
+        () =&gt; {},
+        true,
+        sendStatusToWindow
+      );
+    }
+    return 'asar';
+  } else {
+    sendStatusToWindow('update not available.');
+    return false;
+  }
+};
+</code></pre>
+<h2 id="批处理方案"><a class="header" href="#批处理方案">批处理方案</a></h2>
+<p><img src="./img/batch_update.png" alt="batch_update" /></p>
+<p>批处理方案的逻辑就简单得多了，首先检查更新和下载 asar 增量包得逻辑和双包方案是一样的，在确定需要增量更新后，调用 <code>exitAndRunBatch</code> 方法退出应用并升级</p>
+<pre><code class="language-js">export function exitAndRunBatch(newAsarPath: string) {
+  const log = global.log;
+  try {
+    const exePath = process.execPath;
+    const resourcesPath = path.dirname(app.getAppPath());
+    const appAsarPath = path.join(resourcesPath, 'app.asar');
+    const batPath = path.join(resourcesPath, 'update.bat');
+
+    log.info(
+      `resourcesPath: ${resourcesPath}, newAsarPath: ${newAsarPath}, appAsarPath: ${appAsarPath}, exePath: ${exePath}`
+    );
+
+    const batContent =
+      '@echo off\r\n' +
+      'chcp 936 &gt;nul 2&gt;&amp;1\r\n' +
+      '\r\n' +
+      ':: wait 3 seconds ensure main process exit\r\n' +
+      'timeout /t 3 /nobreak &gt;nul\r\n' +
+      '\r\n' +
+      ':: loop wait asar file unlock\r\n' +
+      'if exist "' +
+      appAsarPath +
+      '" (\r\n' +
+      '    :WAIT_DELETE\r\n' +
+      '    del "' +
+      appAsarPath +
+      '" &gt;nul 2&gt;&amp;1\r\n' +
+      '    if %errorlevel% equ 0 (\r\n' +
+      '        goto DELETE_SUCCESS\r\n' +
+      '    ) else (\r\n' +
+      '        timeout /t 1 /nobreak &gt;nul\r\n' +
+      '        goto WAIT_DELETE\r\n' +
+      '    )\r\n' +
+      ')\r\n' +
+      ':DELETE_SUCCESS\r\n' +
+      '\r\n' +
+      ':: move new file\r\n' +
+      'move "' +
+      newAsarPath +
+      '" "' +
+      appAsarPath +
+      '"\r\n' +
+      '\r\n' +
+      ':: relaunch app\r\n' +
+      'start "" "' +
+      exePath +
+      '"\r\n' +
+      '\r\n' +
+      ':: delete bat script self\r\n' +
+      'del "%~f0" &gt;nul 2&gt;&amp;1\r\n';
+
+    const buffer = iconv.encode(batContent, 'gbk');
+    fs.writeFileSync(batPath, buffer);
+
+    const out = fs.openSync(path.join(resourcesPath, './out.log'), 'a');
+    const err = fs.openSync(path.join(resourcesPath, './out.log'), 'a');
+
+    const child = spawn(batPath, [], {
+      cwd: resourcesPath,
+      detached: true,
+      shell: true,
+      stdio: ['ignore', out, err],
+      windowsHide: true,
+    });
+    child.on('spawn', () =&gt; {
+      log.info('child process start successful');
+      app.quit();
+    });
+    child.on('error', err =&gt; {
+      logErrorInfo('child process on error', err);
+    });
+    child.unref();
+
+    return true;
+  } catch (err) {
+    logErrorInfo('bat script run failed error: ', err);
+    return false;
+  }
+}
+</code></pre>
+<ul>
+<li>
+<p>这里需要注意的是，在 windows 下，文本的换行符是 <code>\r\n</code> 所以需要拼接换行符字符串，否则子进程执行批处理脚本会失败，然后 windows 下字符编码多是 'gbk' 编码，需要转换成 <code>gbk</code> 编码，否则一旦路径中出现中文字符，脚本也会失败，最后通过子进程的 <code>spawn</code> 的参数 <code>detached</code> 设置为 <code>true</code>，使得子进程与父进程分离开独立运行（父进程退出不会导致子进程也退出），<code>shell</code>设置为 <code>true</code>，因为在 <code>shell</code> 中运行脚本才能支持很多丰富的语法，<code>windowsHide</code> 隐藏子进程打开的命令行窗口，stdio 设置子进程的输入，输出，和错误信息组成的数组，忽略掉输入，将子进程的输出和错误信息写入本地硬盘文件，方便调试。最后调用 <code>child.unref()</code>，通常父进程会等待子进程退出，调用 <code>child.unref()</code> 后父进程不再等待子进程，会提前退出</p>
+</li>
+<li>
+<p>这里需要注意，项目路径或者说批处理文件的路径中不要有特殊符号，比如括号之类的符号，否则子进程 spawn 方法也会调用失败</p>
+</li>
+</ul>
+<h2 id="参考链接"><a class="header" href="#参考链接">参考链接</a></h2>
+<ul>
+<li><a href="https://nodejs.org/docs/latest/api/child_process.html#child_processspawncommand-args-options">child_process.spawn(command[, args][, options])</a></li>
+<li><a href="https://nodejs.org/docs/latest/api/child_process.html#subprocessunref">subprocess.unref()</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../electron/updater.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../electron/framework.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../electron/updater.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../electron/framework.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

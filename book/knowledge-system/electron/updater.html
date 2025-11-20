@@ -1,0 +1,426 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>electron 全量更新与增量更新 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="electron-全量更新与增量更新"><a class="header" href="#electron-全量更新与增量更新">electron 全量更新与增量更新</a></h1>
+<ul>
+<li>
+<p>electron 的自动更新功能依赖于 <code>electron-builder</code> 和 <code>electron-updater</code></p>
+</li>
+<li>
+<p><code>electron-builder</code> 打包以后会生成 3 个文件</p>
+<ul>
+<li><code>latest.yml</code> 包含最新版本包的信息的配置文件，其中有 文件版本号，文件地址，文件哈希值，打包时间</li>
+<li><code>electron-update Setup 1.0.0.exe</code> 安装包 exe 文件</li>
+<li><code>electron-update Setup 1.0.1.exe.blockmap</code> blockmap 文件，它记录了应用程序文件的区块索引和哈希值，帮助 electron-updater 精准识别新旧版本间的差异</li>
+</ul>
+<p><img src="./img/electron_updater.png" alt="electron_updater" /></p>
+</li>
+</ul>
+<h2 id="如何实现"><a class="header" href="#如何实现">如何实现</a></h2>
+<ol>
+<li>打包后将 <code>latest.yml</code>，<code>安装包exe文件</code>还有 <code>blockmap 文件</code>全部放到服务器上作为静态资源文件服务，需要配置静态资源服务，以便后续检查更新的时候客户端 app 可以下载到这些文件</li>
+</ol>
+<pre><code class="language-js">const Koa = require('koa');
+const app = new Koa();
+const serve = require('koa-static-server');
+const { rangeStatic } = require('koa-range-static');
+
+// app.use(
+//   serve({
+//     rootDir: 'public',
+//     rootPath: '/',
+//     setHeaders: (res, path, stat) =&gt; {
+//       res.setHeader('Accept-Ranges', 'bytes');
+//       res.setHeader('Content-Type', 'multipart/byteranges');
+//     },
+//   })
+// );
+
+app.use(rangeStatic({ root: 'public', directory: true }));
+app.listen(33855);
+</code></pre>
+<ol start="2">
+<li>在主进程中引入 <code>electron-updater</code> 的逻辑</li>
+</ol>
+<pre><code class="language-js">const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('node:path');
+const { autoUpdater } = require('electron-updater');
+const log = require('electron-log');
+
+// 为 autoUpdater 设置日志工具，autoUpdater 内部的日志都会输出到硬盘中，windows 系统默认在 C:\Users\用户名\AppData\Roaming\应用名\logs 下，方便 debug
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+autoUpdater.autoInstallOnAppQuit = false;
+
+// 设置 disableDifferentialDownload 可以关闭差分更新，也就是增量更新
+// autoUpdater.disableDifferentialDownload = true;
+log.info('App starting...');
+
+let win;
+
+const createWindow = () =&gt; {
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+    },
+  });
+
+  win.loadFile('index.html');
+  win.webContents.openDevTools();
+
+  win.on('ready-to-show', () =&gt; {
+    log.info('start check updates');
+    // 检查是否需要更新
+    autoUpdater.checkForUpdatesAndNotify();
+  });
+};
+
+function sendStatusToWindow(text) {
+  log.info(text);
+  win.webContents.send('message', text);
+}
+
+// 检查更新事件
+autoUpdater.on('checking-for-update', () =&gt; {
+  sendStatusToWindow('Checking for update...');
+});
+
+// 有新版本可用
+autoUpdater.on('update-available', info =&gt; {
+  sendStatusToWindow('Update available.');
+});
+
+// 无可用更新
+autoUpdater.on('update-not-available', info =&gt; {
+  sendStatusToWindow('Update not available.');
+});
+
+// 报错
+autoUpdater.on('error', err =&gt; {
+  sendStatusToWindow('Error in auto-updater. ' + err);
+});
+
+// 下载进度
+autoUpdater.on('download-progress', progressObj =&gt; {
+  let log_message = 'Download speed: ' + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message =
+    log_message +
+    ' (' +
+    progressObj.transferred +
+    '/' +
+    progressObj.total +
+    ')';
+  sendStatusToWindow(log_message);
+});
+
+// 更新包下载完成
+autoUpdater.on('update-downloaded', info =&gt; {
+  sendStatusToWindow('Update downloaded');
+  setTimeout(() =&gt; {
+    autoUpdater.quitAndInstall(true, true);
+  }, 4000);
+});
+
+app.whenReady().then(() =&gt; {
+  createWindow();
+});
+
+app.on('window-all-closed', () =&gt; {
+  app.quit();
+});
+</code></pre>
+<ol start="3">
+<li>在 <code>package.json</code>中配置打包选项</li>
+</ol>
+<pre><code class="language-js">  {
+    "build": {
+    "appId": "update.test",
+    "publish": [// generic 是自定义的更新服务器，也就是我们上面用 koa 实现的静态文件服务, url 是服务的域名
+      {
+        "provider": "generic",
+        "url": "http://127.0.0.1:33855/"
+      }
+    ],
+    "win": { // windows 目标格式为 nsis 安装包
+      "target": "nsis"
+    },
+    "nsis": { // nsis 安装包配置项
+      "createDesktopShortcut": "always", // 是否创建桌面图标
+      "oneClick": false, // 是否是一键安装包
+      "allowToChangeInstallationDirectory": true // 允许用户选择安装目录
+    },
+    "electronDownload": { // electron-builder 打包编译时切换镜像源，避免下载超时失败问题
+    // https://github.com/electron/get?tab=readme-ov-file#specifying-a-mirror
+      "mirror": "https://registry.npmmirror.com/binary.html?path=electron/"
+    }
+  }
+  }
+</code></pre>
+<ol start="4">
+<li>这样当应用安装后启动，主进程就会触发 <code>autoUpdater.checkForUpdatesAndNotify()</code>去检查是否需要更新，如果当前电脑安装的是 <code>1.0.0</code>版本，而静态资源服务上的 <code>latest.yml</code> 中是 <code>1.0.1</code> 版本号，<code>electron-updater</code>就会判断应用需要更新。这里会发生下面几件事：</li>
+<li>第一个版本，<code>1.0.0</code>版本安装成功后，<code>1.0.0</code>的安装包文件会被复制到 <code>C:\Users\用户名\AppData\Local\应用名-updater</code> 目录下</li>
+<li><code>autoUpdater.checkForUpdatesAndNotify()</code> 会请求文件服务器上的 <code>latest.yml</code> 文件，然后做版本号比较，判断是否需要更新</li>
+<li>如果 <code>latest.yml</code> 中是 <code>1.0.1</code>则需要更新，<code>autoUpdater</code>会去下载<code>1.0.0</code>和<code>1.0.1</code>两个版本的 <code>blockmap</code> 文件，两个版本的 <code>blockmap</code> 文件只要有一个不存在，就无法比较差异，自动降级为全量更新，直接下载完整的 <code>1.0.1</code> 安装包；如果两个版本的 <code>blockmap</code> 文件都存在，就下载然后比对新旧版本之间区块的差异，然后差分更新，只去下载需要更新的部分。新版本的安装包文件会下载到 <code>C:\Users\用户名\AppData\Local\应用名-updater\pending</code>目录下</li>
+<li>待用户退出应用后会自动发起静默更新操作，在系统后台自动安装新版本应用</li>
+</ol>
+<h2 id="日志表现"><a class="header" href="#日志表现">日志表现</a></h2>
+<ul>
+<li>全量更新的时候日志是这样的：
+<pre><code class="language-log">  [2025-07-31 11:46:33.448] [info]  App starting...
+  [2025-07-31 11:46:34.234] [info]  start check updates
+  [2025-07-31 11:46:34.235] [info]  Checking for update
+  [2025-07-31 11:46:34.236] [info]  Checking for update...
+  [2025-07-31 11:46:34.265] [info]  Found version 1.0.1 (url: electron-update Setup 1.0.1.exe)
+  [2025-07-31 11:46:34.265] [info]  Update available.
+  [2025-07-31 11:46:34.266] [info]  Downloading update from electron-update Setup 1.0.1.exe
+  [2025-07-31 11:46:34.284] [warn]  disableWebInstaller is set to false, you should set it to true if you do not plan on using a web installer. This will default to true in a future version.
+  [2025-07-31 11:46:35.260] [info]  Download speed: 92694231 - Downloaded 100% (87966825/87966825)
+  [2025-07-31 11:46:35.265] [info]  New version 1.0.1 has been downloaded to C:\Users\用户名\AppData\Local\electron-update-updater\pending\electron-update Setup 1.0.1.exe
+</code></pre>
+</li>
+<li>增量更新的时候日志是这样的：
+<pre><code class="language-log">  [2025-07-31 13:48:53.127] [info]  App starting...
+  [2025-07-31 13:48:53.587] [info]  start check updates
+  [2025-07-31 13:48:53.588] [info]  Checking for update
+  [2025-07-31 13:48:53.589] [info]  Checking for update...
+  [2025-07-31 13:48:53.645] [info]  Found version 1.0.1 (url: electron-update Setup 1.0.1.exe)
+  [2025-07-31 13:48:53.645] [info]  Update available.
+  [2025-07-31 13:48:53.646] [info]  Downloading update from electron-update Setup 1.0.1.exe
+  [2025-07-31 13:48:53.649] [warn]  disableWebInstaller is set to false, you should set it to true if you do not plan on using a web installer. This will default to true in a future version.
+  [2025-07-31 13:48:53.650] [info]  Download block maps (old: "http://127.0.0.1:33855/electron-update%20Setup%201.0.0.exe.blockmap", new: http://127.0.0.1:33855/electron-update%20Setup%201.0.1.exe.blockmap)
+  [2025-07-31 13:48:53.792] [info]  File has 85 changed blocks
+  [2025-07-31 13:48:53.812] [info]  Full: 349,896.58 KB, To download: 1,950.42 KB (1%)
+  [2025-07-31 13:48:56.232] [info]  New version 1.0.1 has been downloaded to C:\Users\用户名\AppData\Local\electron-update-updater\pending\electron-update Setup 1.0.1.exe
+</code></pre>
+</li>
+<li>对比可以看到增量更新只下载了原始安装包大小的 1%</li>
+</ul>
+<h2 id="electron-updater其他参数"><a class="header" href="#electron-updater其他参数"><code>electron-updater</code>其他参数</a></h2>
+<pre><code class="language-js">autoUpdater.forceDevUpdateConfig = true; //开发环境下强制更新
+autoUpdater.autoDownload = false; // 自动下载更新
+autoUpdater.autoInstallOnAppQuit = true; // 应用退出后自动安装
+autoUpdater.quitAndInstall(isSilent, isForceRunAfter); // 退出应用并安装已经下载好的更新。isSilent 是否静默安装 isForceRunAfter 安装后是否重启应用
+</code></pre>
+<h2 id="注意事项"><a class="header" href="#注意事项">注意事项</a></h2>
+<ul>
+<li>静态文件服务器需要支持范围请求（即请求资源的一部分而非全部），即 <code>Accept-Ranges</code> 响应头，所以上面代码中使用了 <code>koa-range-static</code> 而不是 <code>koa-static-server</code>，如果不支持，<code>electron-updater</code>记录的日志会报错，并且更新行为会自动降级为全量更新
+<pre><code class="language-log">  [2025-07-31 03:59:35.855] [error] Cannot download differentially, fallback to full download: Error: Server doesn't support Accept-Ranges (response code 200)
+  [2025-07-31 04:42:03.324] [error] Cannot download differentially, fallback to full download: Error: Content-Type "multipart/byteranges" is expected, but got "application/x-msdos-program"
+</code></pre>
+</li>
+<li>如果某个新版本不想走增量更新，直接将服务器上对应的 <code>blockmap</code> 文件删除即可</li>
+</ul>
+<h2 id="参考链接"><a class="header" href="#参考链接">参考链接</a></h2>
+<ul>
+<li><a href="https://www.electron.build/auto-update">auto-update</a></li>
+<li><a href="https://github.com/iffy/electron-updater-example">electron-updater-example</a></li>
+<li><a href="https://github.com/electron-userland/electron-builder/issues/4682">Can I disable differential download? #4682</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../electron/prepare.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../electron/asar_update.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../electron/prepare.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../electron/asar_update.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

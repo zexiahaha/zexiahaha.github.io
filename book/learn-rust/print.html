@@ -1,0 +1,2251 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title></title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="新建项目"><a class="header" href="#新建项目">新建项目</a></h1>
+<p>cargo 是 rust 的包管理器</p>
+<p>使用cargo初始化新项目</p>
+<pre><code class="language-bash"># 使用 cargo init 初始化项目，. 点的作用是以当前文件夹为名字来创建项目
+# cargo init 默认会以 package 来创建新项目
+# cargo init 意思是在一个已存在的目录中创建一个 cargo package
+cargo init .
+
+# 查看toml文件内容
+cat Cargo.toml
+
+# 查看 init 命令帮助信息
+cargo init --help
+
+# 以 lib 形式初始化项目
+cargo init --lib .
+
+# 查看目录文件结构
+tree
+
+# 修改 test_example 文件夹名字为 test_1
+mv test_example test_1
+
+# 查看 linux 系统版本
+cat /etc/os-release
+
+</code></pre>
+<p>下面是 cargo new</p>
+<pre><code class="language-bash"># 在给定目录下创建新的 cargo package，默认当前目录
+cargo new foo
+
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="变量"><a class="header" href="#变量">变量</a></h1>
+<p>声明变量和控制流</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    // let 默认创建的变量都是不可变的
+    let x = 200.0;
+    // mut 让变量可变
+    let mut z = "haha";
+    println!("{}", z);
+    z = "hehe";
+
+    let y = x / 2.2;
+    println!("y = {}, z = {}", y, z);
+
+    if x &gt; 199.0 {
+        println!("bigger than 199");
+    } else if x &gt; 150.0 {
+        println!("bigger than 150");
+    } else {
+        println!("small");
+    }
+}</code></pre></pre>
+<p>控制流表达式和 shadowing</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let mut height = 200;
+    height = height - 20;
+
+    // 满足条件后会将字符串的值赋值给 result 变量
+    let result = if height &gt; 100 {
+        "tall"
+    } else {
+        "short"
+    };
+
+    println!("{}", result);
+
+    // 下面是把 if 控制流语句写到一行之内，类似表达式
+    let health = if height &gt; 100 {"good"} else {"bad"};
+
+    // 重新声明 health 变量，这叫 隐藏（shadowing）
+    let health = if height &gt; 100 {true} else {false};
+
+    println!("{}", health);
+}</code></pre></pre>
+<p>所有权问题</p>
+<pre><pre class="playground"><code class="language-rust">fn greet(s: String) {
+    println!("Hello {s}");
+}
+
+fn main() {
+    let name: String = "World".to_string();
+    greet(name);
+    greet(name);
+}
+
+/**
+第二次调用greet(name)的时候会报错，因为所有权发生了变化
+name变量的所有权由 main 函数交给了 greet 函数，当再次在 main 函数中使用 name 的时候，就会报错
+error[E0382]: use of moved value: `name`
+ --&gt; src/main.rs:8:11
+  |
+6 |     let name: String = "World".to_string();
+  |         ---- move occurs because `name` has type `String`, which does not implement the `Copy` trait
+7 |     greet(name);
+  |           ---- value moved here
+8 |     greet(name);
+  |           ^^^^ value used here after move
+*/
+</code></pre></pre>
+<p>下面例子解决所有权问题，通过函数的返回值，将所有权交还给原来的函数</p>
+<pre><pre class="playground"><code class="language-rust">fn greet(s: String) -&gt; String {
+    println!("Hello {s}");
+    s
+}
+
+fn main() {
+    let name: String = "World".to_string();
+    let name: String = greet(name);
+    greet(name);
+}
+
+/**
+greet 处理 name 后将其返回，然后再利用 shadowing 将 name 变量重新声明
+这样就意味着 name 的所有权是这样变化的：main -&gt; greet -&gt; main
+**/</code></pre></pre>
+<p>下面例子使用克隆来解决所有权问题</p>
+<pre><pre class="playground"><code class="language-rust">fn greet(s: String) -&gt; String {
+    println!("Hello {s}");
+    s
+}
+
+fn main() {
+    let name: String = "World".to_string();
+    greet(name.clone());
+    greet(name);
+}
+
+/**
+clone 操作复制了一份完整的 name 变量的副本传递给 greet 函数，解决所有权问题
+**/</code></pre></pre>
+<p>克隆操作有缺点，克隆操作运行起来可能会比较慢</p>
+<p>下面使用 &amp; 声明引用类型来借用变量，而不是拥有变量的所有权，其实就是别的语言中的指针</p>
+<pre><pre class="playground"><code class="language-rust">fn greet(s: String) -&gt; String {
+    println!("Hello {s}");
+    s
+}
+
+fn greet_borrow(s: &amp;String) {
+    println!("{s}");
+}
+
+fn main() {
+    let name: String = "World".to_string();
+    greet_borrow(&amp;name);
+    greet(name);
+}
+
+/**
+这样的指针无法改变原来变量的值
+**/</code></pre></pre>
+<p>下面是可改变的指针，可以通过这种指针改变原来变量的值</p>
+<pre><pre class="playground"><code class="language-rust">fn greet(s: String) -&gt; String {
+    println!("Hello {s}");
+    s
+}
+
+fn greet_borrow_mut(s: &amp;mut String) {
+    *s = format!("Hello {s}");
+}
+
+fn main() {
+    let mut name: String = "World".to_string();
+    greet_borrow_mut(&amp;mut name);
+    greet(name);
+}</code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="循环和条件"><a class="header" href="#循环和条件">循环和条件</a></h1>
+<p>if let 语句和模式匹配</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let a = Some(42);
+    if let Some(number) = a {
+        println!("number is {}", number);
+    } else {
+        println!("no number");
+    }
+}
+
+/**
+这里使用 if let 语句来进行模式匹配，Some 是一种 Option类型，代表有可能有值也有可能没值的情况
+
+等号在这里不是赋值，而是模式匹配运算符，如果 a 和 Some(number) 匹配上了，也就是有值，那么就执行第一个代码块，否则就执行第二个代码块
+**/
+
+/**
+在Rust中，Option 是一个枚举类型，用于表示一个值可能存在也可能不存在。Option 有两个变体：Some 和 None。
+
+Some(T)：表示一个值存在，其中 T 是该值的类型。例如，Some(5) 表示存在一个整数值 5，Some("Hello") 表示存在一个字符串 "Hello"。
+
+None：表示没有值。
+**/
+
+fn main() {
+    let a: Option&lt;Option&lt;()&gt;&gt; = Some(None);
+    if let Some(number) = a {
+        println!("number is {:?}", number);
+    } else {
+        println!("no number");
+    }
+}</code></pre></pre>
+<p>loop 循环</p>
+<pre><pre class="playground"><code class="language-rust">
+fn main() {
+    let mut x = 1;
+    loop {
+        println!("x is {x}");
+        x += 1;
+        if x &gt; 5 {
+            break;
+        }
+    }
+}</code></pre></pre>
+<p>while 循环</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let mut i = 0;
+    while i &lt; 5 {
+        println!("i = {i}");
+        i += 1;
+    }
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">use std::io;
+
+fn main() {
+    let mut input = String::new();
+
+    while input.trim() != "stop" {
+        input.clear();
+        println!("Please enter a word, type 'stop' to exit: ");
+        io::stdin().read_line(&amp;mut input).expect("Failed to read input");
+        println!("Your entered: {}", input);
+    }
+    println!("Goodbye!");
+}
+
+/**
+让用户不停地在终端输入字符串，直到输入stop才会停止
+**/
+
+/**
+trim方法返回的是一个&amp;str类型的引用，在Rust中，你可以直接将&amp;str类型的引用与字符串字面量（如"stop"）进行比较，因为字符串字面量本身也是&amp;str类型
+**/</code></pre></pre>
+<p>for 循环</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let a = [10, 20, 30, 40, 50];
+
+    // 循环 a 数组
+    for element in a {
+        println!("the value is: {element}");
+    }
+
+    // 1..5 是一个范围（range）表示从数字 1 到数字 5（不包括 5）的一个序列
+    for i in 1..5 {
+        println!("i = {i}");
+    }
+
+    // 1..=5 是一个包含结束值的范围（inclusive range），表示从数字 1 到数字 5（包括 5）的一个序列。这与 1..5 的区别在于，1..=5 包含了结束值 5，而 1..5 不包含结束值 5。
+    for i in (1..=5).rev() {
+        println!("i = {i}");
+    }
+
+    // vec 向量，类似于其他语言中的列表或者数组
+    let numbers = vec![1, 2, 3, 4, 5];
+    for n in numbers {
+        println!("{n}");
+    }
+}
+
+/**
+向量是一种动态数组，可以存储多个相同类型的元素。向量可以增长和缩小，可以用于存储和操作数据。
+
+范围是一种表示一系列连续整数的简便方式。范围通常用于循环和迭代，但它们本身并不存储这些整数。范围只是表示了一个开始值和一个结束值（有时包含结束值，有时不包含）。
+**/</code></pre></pre>
+<p>break 和 continue</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    for i in 1..=10 {
+        if i % 2 == 0 {
+            continue;
+        }
+        println!("i = {i}");
+        if i == 7 {
+            break;
+        }
+    }
+}</code></pre></pre>
+<p>match 语句</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let name = "Hello";
+
+    match name {
+        "Good Bye" =&gt; println!("Sorry to see you go."),
+        "Hello" =&gt; println!("Hi, nice to meet you!"),
+        _ =&gt; println!("I can't find a greeting, good bye."),
+    }
+}
+
+/**
+match 语句有点类似 js 中的 switch 语句，但更加强大
+**/</code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h1>
+<h2 id="标量类型scalar一个单独的值有整型浮点型布尔型字符型"><a class="header" href="#标量类型scalar一个单独的值有整型浮点型布尔型字符型">标量类型（scalar）一个单独的值，有整型、浮点型、布尔型、字符型</a></h2>
+<h2 id="整型"><a class="header" href="#整型">整型</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>长度</th><th>有符号</th><th>无符号</th></tr></thead><tbody>
+<tr><td>8-bit</td><td>i8</td><td>u8</td></tr>
+<tr><td>16-bit</td><td>i16</td><td>u16</td></tr>
+<tr><td>32-bit</td><td>i32</td><td>u32</td></tr>
+<tr><td>64-bit</td><td>i64</td><td>u64</td></tr>
+<tr><td>128-bit</td><td>i128</td><td>u128</td></tr>
+<tr><td>arch</td><td>isize</td><td>usize</td></tr>
+</tbody></table>
+</div>
+<p>有符号的变体可以储存包含从 -2^(n - 1) 到 2^(n - 1) - 1 在内的数字，这里 n 是变体使用的位数。无符号的变体可以储存从 0 到 2^n - 1 的数字</p>
+<p>isize 和 usize 类型依赖运行程序的计算机架构：64 位架构上它们是 64 位的，32 位架构上它们是 32 位的。</p>
+<div class="table-wrapper"><table><thead><tr><th>数字字面值</th><th>例子</th></tr></thead><tbody>
+<tr><td>Decimal (十进制)</td><td>98_222</td></tr>
+<tr><td>Hex (十六进制)</td><td>0xff</td></tr>
+<tr><td>Octal (八进制)</td><td>0o77</td></tr>
+<tr><td>Binary (二进制)</td><td>0b1111_0000</td></tr>
+<tr><td>Byte (单字节字符)</td><td>b'A'</td></tr>
+</tbody></table>
+</div>
+<p>在 Rust 中，b'A' 是一个字节字面量（byte literal）。它表示一个 u8 类型的单字节字符，即 ASCII 字符。</p>
+<p>b'A' 的值是 65，这是字符 'A' 在 ASCII 表中的十进制值。这种字面量只能用于 ASCII 字符，范围是 0 到 127。</p>
+<p>允许使用 _ 做为分隔符以方便读数，例如1_000，它的值与你指定的 1000 相同。</p>
+<h3 id="整型溢出"><a class="header" href="#整型溢出">整型溢出</a></h3>
+<p>当在 debug 模式编译时，Rust 会检查整型溢出，若存在这些问题，则使程序在编译时 panic。</p>
+<p>在当使用 --release 参数进行 release 模式构建时，Rust 不检测溢出。相反，当检测到整型溢出时，Rust 会按照补码循环溢出（two’s complement wrapping）的规则处理。比如在 u8 的情况下，256 变成 0，257 变成 1，依此类推。程序不会 panic。</p>
+<p>要显式处理可能的溢出，可以使用标准库针对原始数字类型提供的这些方法：</p>
+<p>使用 wrapping_* 方法在所有模式下都按照补码循环溢出规则处理，例如 wrapping_add<br />
+如果使用 checked_* 方法时发生溢出，则返回 None 值<br />
+使用 overflowing_* 方法返回该值和一个指示是否存在溢出的布尔值<br />
+使用 saturating_* 方法，可以限定计算后的结果不超过目标类型的最大值或低于最小值，例如:</p>
+<pre><pre class="playground"><code class="language-rust">assert_eq!(100u8.saturating_add(1), 101);
+assert_eq!(u8::MAX.saturating_add(127), u8::MAX);
+
+fn main() {
+    let a : u8 = 255;
+    let b = a.wrapping_add(20);
+    println!("{}", b);  // 19
+}</code></pre></pre>
+<h2 id="浮点型"><a class="header" href="#浮点型">浮点型</a></h2>
+<p>Rust 的浮点数类型是 f32 和 f64，分别占 32 位和 64 位。f32 是单精度浮点数，f64 是双精度浮点数。</p>
+<h3 id="浮点数陷阱"><a class="header" href="#浮点数陷阱">浮点数陷阱</a></h3>
+<ol>
+<li>浮点数往往是你想要数字的近似表达</li>
+<li>浮点数在某些特性上是反直觉的</li>
+</ol>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let abc: (f32, f32, f32) = (0.1, 0.2, 0.3);
+    let xyz: (f64, f64, f64) = (0.1, 0.2, 0.3);
+
+    println!("abc (f32)");
+    println!("   0.1 + 0.2: {:x}", (abc.0 + abc.1).to_bits());
+    println!("         0.3: {:x}", (abc.2).to_bits());
+    println!();
+
+    println!("xyz (f64)");
+    println!("   0.1 + 0.2: {:x}", (xyz.0 + xyz.1).to_bits());
+    println!("         0.3: {:x}", (xyz.2).to_bits());
+    println!();
+
+    assert!(abc.0 + abc.1 == abc.2);
+    assert!(xyz.0 + xyz.1 == xyz.2);
+}
+
+
+// abc (f32)
+//    0.1 + 0.2: 3e99999a
+//          0.3: 3e99999a
+
+// xyz (f64)
+//    0.1 + 0.2: 3fd3333333333334
+//          0.3: 3fd3333333333333
+
+// thread 'main' panicked at 'assertion failed: xyz.0 + xyz.1 == xyz.2',
+// ➥ch2-add-floats.rs.rs:14:5
+// note: run with `RUST_BACKTRACE=1` environment variable to display
+// ➥a backtrace
+
+// f32 的时候，0.1 + 0.2 和 0.3 是相等的；f64 的时候，0.1 + 0.2 和 0.3 不相等了</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let v: u16 = 38_u8 as u16;
+}
+
+// 38_u8 表示一个 u8 类型的值 38
+// as u16 是一个类型转换操作，将 u8 类型的值转换为 u16 类型</code></pre></pre>
+<h2 id="nan"><a class="header" href="#nan">NaN</a></h2>
+<p>对于数学上未定义的结果，例如对负数取平方根 -42.1.sqrt() ，会产生一个特殊的结果：Rust 的浮点数类型使用 NaN (not a number) 来处理这些情况。</p>
+<p>所有跟 NaN 交互的操作，都会返回一个 NaN，NaN 不能用来比较，下面的代码会崩溃</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+  let x = (-42.0_f32).sqrt();
+  assert_eq!(x, x);
+}
+</code></pre></pre>
+<p>可以使用 is_nan() 等方法，可以用来判断一个数值是否是 NaN ：</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let x = (-42.0_f32).sqrt();
+    if x.is_nan() {
+        println!("未定义的数学行为")
+    }
+}</code></pre></pre>
+<h2 id="运算"><a class="header" href="#运算">运算</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+  // 编译器会进行自动推导，给予twenty i32的类型
+  let twenty = 20;
+  // 类型标注
+  let twenty_one: i32 = 21;
+  // 通过类型后缀的方式进行类型标注：22是i32类型
+  let twenty_two = 22i32;
+
+  // 只有同样类型，才能运算
+  let addition = twenty + twenty_one + twenty_two;
+  println!("{} + {} + {} = {}", twenty, twenty_one, twenty_two, addition);
+
+  // 对于较长的数字，可以用_进行分割，提升可读性
+  let one_million: i64 = 1_000_000;
+  println!("{}", one_million.pow(2));
+
+  // 定义一个f32数组，其中42.0会自动被推导为f32类型
+  let forty_twos = [
+    42.0,
+    42f32,
+    42.0_f32,
+  ];
+
+  // 打印数组中第一个值，并控制小数位为2位
+  println!("{:.2}", forty_twos[0]);
+}</code></pre></pre>
+<h2 id="序列range"><a class="header" href="#序列range">序列(Range)</a></h2>
+<p>Rust 提供了一个非常简洁的方式，用来生成连续的数值，例如 1..5，生成从 1 到 4 的连续数字，不包含 5 ；1..=5，生成从 1 到 5 的连续数字，包含 5</p>
+<p>序列只允许用于数字或字符类型，原因是：它们可以连续，同时编译器在编译期可以检查该序列是否为空，字符和数字值是 Rust 中仅有的可以用于判断是否为空的类型。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>for i in 1..=5 {
+    println!("{}",i);
+}
+
+// 1
+// 2
+// 3
+// 4
+// 5
+
+for i in 'a'..='z' {
+    println!("{}",i);
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="布尔型"><a class="header" href="#布尔型">布尔型</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let t = true;
+
+    let f: bool = false; // with explicit type annotation
+}</code></pre></pre>
+<p>布尔类型占用 1 个字节</p>
+<h2 id="字符型"><a class="header" href="#字符型">字符型</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let c = 'z';
+    let z: char = 'ℤ'; // with explicit type annotation
+    let heart_eyed_cat = '😻';
+}</code></pre></pre>
+<p>我们用单引号声明 char 字面量，而与之相反的是，使用双引号声明字符串字面量。字符类型占用 4 个字节</p>
+<h2 id="复合类型compound-types可以将多个值组合成一个类型rust-有两个原生的复合类型元组tuple和数组array"><a class="header" href="#复合类型compound-types可以将多个值组合成一个类型rust-有两个原生的复合类型元组tuple和数组array">复合类型（Compound types）可以将多个值组合成一个类型。Rust 有两个原生的复合类型：元组（tuple）和数组（array）。</a></h2>
+<h2 id="元组"><a class="header" href="#元组">元组</a></h2>
+<p>元组长度固定：一旦声明，其长度不会增大或缩小。</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let tup: (i32, f64, u8) = (500, 6.4, 1);
+
+    // 元组的解构
+    let (x, y, z) = tup;
+
+
+    // 用.点号来访问元组的成员
+    let x: (i32, f64, u8) = (500, 6.4, 1);
+
+    let five_hundred = x.0;
+
+    let six_point_four = x.1;
+
+    let one = x.2;
+}</code></pre></pre>
+<p>不带任何值的元组有个特殊的名称，叫做 单元（unit） 元组。这种值以及对应的类型都写作 ()，表示空值或空的返回类型。如果表达式不返回任何其他值，则会隐式返回单元值。</p>
+<h2 id="数组"><a class="header" href="#数组">数组</a></h2>
+<p>Rust 中的数组长度是固定的。数组中的每个元素的类型必须相同。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// i32 是每个元素的类型。分号之后，数字 5 表明该数组包含五个元素。
+let a: [i32; 5] = [1, 2, 3, 4, 5];
+
+// 变量名为 a 的数组将包含 5 个元素，这些元素的值最初都将被设置为 3。
+let a = [3; 5];
+<span class="boring">}</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="函数"><a class="header" href="#函数">函数</a></h1>
+<h2 id="语句和表达式"><a class="header" href="#语句和表达式">语句和表达式</a></h2>
+<p>语句是不返回值的指令。 表达式返回一个值。表达式的结尾没有分号。</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let y = {
+        let x = 3;
+        x + 1
+    };
+
+    println!("The value of y is: {y}");
+}
+
+fn five() -&gt; i32 {
+    5
+}
+
+fn main() {
+    let x = five();
+
+    println!("The value of x is: {x}");
+}</code></pre></pre>
+<h2 id="特殊返回值"><a class="header" href="#特殊返回值">特殊返回值</a></h2>
+<ul>
+<li>函数没有返回值，那么返回一个 ()</li>
+<li>当用 ! 作函数返回类型的时候，表示该函数永不返回。例如崩溃的函数和无限循环的函数</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="所有权"><a class="header" href="#所有权">所有权</a></h1>
+<h2 id="栈stack与堆heap"><a class="header" href="#栈stack与堆heap">栈（Stack）与堆（Heap）</a></h2>
+<p>栈中的所有数据都必须占用已知且固定的大小。在编译时大小未知或大小可能变化的数据，要改为存储在堆上。 堆是缺乏组织的：当向堆放入数据时，你要请求一定大小的空间。内存分配器（memory allocator）在堆的某处找到一块足够大的空位，把它标记为已使用，并返回一个表示该位置地址的 指针（pointer）。这个过程称作 在堆上分配内存（allocating on the heap），有时简称为 “分配”（allocating）。</p>
+<p>当你的代码调用一个函数时，传递给函数的值（包括可能指向堆上数据的指针）和函数的局部变量被压入栈中。当函数结束时，这些值被移出栈。</p>
+<p><strong>跟踪哪部分代码正在使用堆上的哪些数据，最大限度的减少堆上的重复数据的数量，以及清理堆上不再使用的数据确保不会耗尽空间，这些问题正是所有权系统要处理的。所有权的主要目的就是管理堆数据。</strong></p>
+<h2 id="所有权-1"><a class="header" href="#所有权-1">所有权</a></h2>
+<p>Rust 中的每一个值都有一个 所有者（owner）。
+值在任一时刻有且只有一个所有者。
+当所有者（变量）离开作用域，这个值将被丢弃。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span> {
+        let s = String::from("hello"); // 从此处起，s 是有效的
+
+        // 使用 s
+    }                                  // 此作用域已结束，
+                                       // s 不再有效
+<span class="boring">}</span></code></pre></pre>
+<p>当变量离开作用域，Rust 为我们调用一个特殊的函数。这个函数叫做 drop，在这里 String 的作者可以放置释放内存的代码。Rust 在结尾的 } 处自动调用 drop。</p>
+<h2 id="简单介绍-string-类型"><a class="header" href="#简单介绍-string-类型">简单介绍 string 类型</a></h2>
+<h2 id="移动"><a class="header" href="#移动">移动</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span>
+<span class="boring">fn main() {
+</span>    // 将 5 绑定到 x；接着生成一个值 x 的拷贝并绑定到 y 因为整数是有已知固定大小的简单值，所以这两个 5 被放入了栈中
+    // 像 i32 这种数字类型是简单类型，所以赋值的时候是直接拷贝的，然后存在栈中
+    let x = 5;
+    let y = x;
+
+    // String 这种复杂类型，不会拷贝堆上的值
+    // 复制了指针，长度，容量，并不会复制堆上的数据
+    // 如果复制了堆上的数据，堆上数据比较大的时候会对运行时性能造成非常大的影响
+    let s1 = String::from("hello");
+    let s2 = s1;
+<span class="boring">}</span></code></pre></pre>
+<p><img src="base/./img/trpl04-01.svg" alt="trpl04-01" /></p>
+<p>当变量离开作用域后，Rust 自动调用 drop 函数并清理变量的堆内存。这就有了一个问题：当 s2 和 s1 离开作用域，它们都会尝试释放相同的内存。这是一个叫做 二次释放（double free）的错误。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    let s1 = String::from("hello");
+    let s2 = s1;
+
+    println!("{s1}, world!");
+
+    // Compiling ownership v0.1.0 (file:///projects/ownership)
+    // error[E0382]: borrow of moved value: `s1`
+<span class="boring">}</span></code></pre></pre>
+<p><img src="base/./img/trpl04-04.svg" alt="trpl04-04" /></p>
+<p>Rust 使第一个变量无效了，这个操作被称为 移动（move）。上面的例子可以解读为 s1 被 移动 到了 s2 中。</p>
+<h2 id="克隆"><a class="header" href="#克隆">克隆</a></h2>
+<p>如果我们 确实 需要深度复制 String 中堆上的数据，而不仅仅是栈上的数据，可以使用一个叫做 clone 的通用函数。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    let s1 = String::from("hello");
+    let s2 = s1.clone();
+
+    println!("s1 = {s1}, s2 = {s2}");
+<span class="boring">}</span></code></pre></pre>
+<p>Rust 有一个叫做 Copy trait 的特殊注解，可以用在类似整型这样的存储在栈上的类型上。如果一个类型实现了 Copy trait，那么一个旧的变量在将其赋值给其他变量后仍然可用。</p>
+<p>Rust 不允许自身或其任何部分实现了 Drop trait 的类型使用 Copy trait。如果我们对其值离开作用域时需要特殊处理的类型使用 Copy 注解，将会出现一个编译时错误。</p>
+<p>任何一组简单标量值的组合都可以实现 Copy，任何不需要分配内存或某种形式资源的类型都可以实现 Copy 。如下是一些 Copy 的类型：</p>
+<ul>
+<li>所有整数类型，比如 u32。</li>
+<li>布尔类型，bool，它的值是 true 和 false。</li>
+<li>所有浮点数类型，比如 f64。</li>
+<li>字符类型，char。</li>
+<li>元组，当且仅当其包含的类型也都实现 Copy 的时候。比如，(i32, i32) 实现了 Copy，但 (i32, String) 就没有。</li>
+<li>不可变引用 &amp;T ，但是注意：可变引用 &amp;mut T 是不可以 Copy 的</li>
+</ul>
+<h2 id="所有权与函数"><a class="header" href="#所有权与函数">所有权与函数</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let s = String::from("hello");  // s 进入作用域
+
+    takes_ownership(s);             // s 的值移动到函数里 ...
+                                    // ... 所以到这里不再有效
+
+    let x = 5;                      // x 进入作用域
+
+    makes_copy(x);                  // x 应该移动函数里，
+                                    // 但 i32 是 Copy 的，
+                                    // 所以在后面可继续使用 x
+
+} // 这里，x 先移出了作用域，然后是 s。但因为 s 的值已被移走，
+  // 没有特殊之处
+
+fn takes_ownership(some_string: String) { // some_string 进入作用域
+    println!("{}", some_string);
+} // 这里，some_string 移出作用域并调用 `drop` 方法。
+  // 占用的内存被释放
+
+fn makes_copy(some_integer: i32) { // some_integer 进入作用域
+    println!("{}", some_integer);
+} // 这里，some_integer 移出作用域。没有特殊之处</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let s1 = gives_ownership();         // gives_ownership 将返回值
+                                        // 转移给 s1
+
+    let s2 = String::from("hello");     // s2 进入作用域
+
+    let s3 = takes_and_gives_back(s2);  // s2 被移动到
+                                        // takes_and_gives_back 中，
+                                        // 它也将返回值移给 s3
+} // 这里，s3 移出作用域并被丢弃。s2 也移出作用域，但已被移走，
+  // 所以什么也不会发生。s1 离开作用域并被丢弃
+
+fn gives_ownership() -&gt; String {             // gives_ownership 会将
+                                             // 返回值移动给
+                                             // 调用它的函数
+
+    let some_string = String::from("yours"); // some_string 进入作用域。
+
+    some_string                              // 返回 some_string
+                                             // 并移出给调用的函数
+                                             //
+}
+
+// takes_and_gives_back 将传入字符串并返回该值
+fn takes_and_gives_back(a_string: String) -&gt; String { // a_string 进入作用域
+                                                      //
+
+    a_string  // 返回 a_string 并移出给调用的函数
+}</code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="引用与借用"><a class="header" href="#引用与借用">引用与借用</a></h1>
+<h2 id="引用"><a class="header" href="#引用">引用</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let s1 = String::from("hello");
+
+    let len = calculate_length(&amp;s1);
+
+    println!("The length of '{s1}' is {len}.");
+}
+
+fn calculate_length(s: &amp;String) -&gt; usize { // s 是 String 的引用
+    s.len()
+}  // 这里，s 离开了作用域。但因为它并不拥有引用值的所有权，
+  // 所以什么也不会发生</code></pre></pre>
+<p>上面例子中的这些 &amp; 符号就是 引用，它们允许你使用值但不获取其所有权。创建一个引用的行为被称为 借用（borrowing）。</p>
+<p><img src="base/./img/trpl04-05.svg" alt="trpl04-05" /></p>
+<p>如果修改借用的变量，会报错。</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let s = String::from("hello");
+
+    change(&amp;s);
+}
+
+fn change(some_string: &amp;String) {
+    some_string.push_str(", world"); // 会报错 （默认）不允许修改引用的值
+}</code></pre></pre>
+<h1 id="可变引用"><a class="header" href="#可变引用">可变引用</a></h1>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let mut s = String::from("hello");
+
+    change(&amp;mut s);
+}
+
+fn change(some_string: &amp;mut String) {
+    some_string.push_str(", world");
+}</code></pre></pre>
+<p>可变引用有一个很大的限制：如果你有一个对该变量的可变引用，你就不能再创建对该变量的引用。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    let mut s = String::from("hello");
+
+    let r1 = &amp;mut s;
+    let r2 = &amp;mut s;
+
+    println!("{}, {}", r1, r2); // cannot borrow `s` as mutable more than once at a time 报错了
+    // 不能在同一时间多次将 s 作为可变变量借用
+
+<span class="boring">}</span></code></pre></pre>
+<p>这一限制以一种非常小心谨慎的方式允许可变性，防止同一时间对同一数据存在多个可变引用。这个限制的好处是 Rust 可以在编译时就避免数据竞争。数据竞争（data race）类似于竞态条件，它可由这三个行为造成：</p>
+<ul>
+<li>两个或更多指针同时访问同一数据。</li>
+<li>至少有一个指针被用来写入数据。</li>
+<li>没有同步数据访问的机制。</li>
+</ul>
+<p>想拥有多个可变引用，可以使用作用域</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    let mut s = String::from("hello");
+
+    {
+        let r1 = &amp;mut s;
+    } // r1 在这里离开了作用域，所以我们完全可以创建一个新的引用
+
+    let r2 = &amp;mut s;
+<span class="boring">}</span></code></pre></pre>
+<p>我们 也 不能在拥有不可变引用的同时拥有可变引用。</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    let mut s = String::from("hello");
+
+    let r1 = &amp;s; // 没问题
+    let r2 = &amp;s; // 没问题
+    let r3 = &amp;mut s; // 大问题
+
+    println!("{}, {}, and {}", r1, r2, r3); // cannot borrow `s` as mutable because it is also borrowed as immutable
+    // 多个不可变引用是允许的，但一旦有了可变引用，就不能再创建可变引用或者不可变引用
+<span class="boring">}</span></code></pre></pre>
+<p>注意一个引用的作用域从声明的地方开始一直持续到最后一次使用为止。例如，因为最后一次使用不可变引用（println!)，发生在声明可变引用之前</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    let mut s = String::from("hello");
+
+    let r1 = &amp;s; // 没问题
+    let r2 = &amp;s; // 没问题
+    println!("{} and {}", r1, r2);
+    // 此位置之后 r1 和 r2 不再使用
+
+    let r3 = &amp;mut s; // 没问题
+    println!("{}", r3);
+
+<span class="boring">}</span></code></pre></pre>
+<p>不可变引用 r1 和 r2 的作用域在 println! 最后一次使用之后结束，这也是创建可变引用 r3 的地方。它们的作用域没有重叠，所以代码是可以编译的。编译器可以在作用域结束之前判断不再使用的引用。</p>
+<h2 id="悬垂引用dangling-references"><a class="header" href="#悬垂引用dangling-references">悬垂引用（Dangling References）</a></h2>
+<p>尝试创建一个悬垂引用，Rust 会通过一个编译时错误来避免</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let reference_to_nothing = dangle();
+}
+
+fn dangle() -&gt; &amp;String {
+    let s = String::from("hello");
+
+    &amp;s
+}
+// missing lifetime specifier
+// this function's return type contains a borrowed value, but there is no value for it to be borrowed from
+// dangle 方法返回了一个字符串的引用，但是这个字符串在 dangle作用域结束的时候被释放，因此报错</code></pre></pre>
+<p>下面是实际发生了什么的解释</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn dangle() -&gt; &amp;String { // dangle 返回一个字符串的引用
+
+    let s = String::from("hello"); // s 是一个新字符串
+
+    &amp;s // 返回字符串 s 的引用
+} // 这里 s 离开作用域并被丢弃。其内存被释放。
+  // 危险！
+<span class="boring">}</span></code></pre></pre>
+<p>这里的解决方法是直接返回 String</p>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<ul>
+<li>在任意给定时间，要么 只能有一个可变引用，要么 只能有多个不可变引用。</li>
+<li>引用必须总是有效的。</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="复合类型"><a class="header" href="#复合类型">复合类型</a></h1>
+<h2 id="字符串"><a class="header" href="#字符串">字符串</a></h2>
+<h3 id="切片slice"><a class="header" href="#切片slice">切片(slice)</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let s = String::from("hello world");
+
+// 创建字符串切片的语法 方括号包括的一个序列：[开始索引..终止索引]
+let hello = &amp;s[0..5];
+let world = &amp;s[6..11];
+
+// 索引从0开始，下面两种等效
+let slice = &amp;s[0..2];
+let slice = &amp;s[..2];
+
+// 想包含最后一个字符，下面两种等效
+let len = s.len();
+
+let slice = &amp;s[4..len];
+let slice = &amp;s[4..];
+
+// 也可以截取完整的切片
+let slice = &amp;s[0..len];
+let slice = &amp;s[..];
+
+// 硬编码的字符串就是字符串切片 &amp;str类型，该切片指向了程序可执行文件中的某个点，所以是不可变引用
+let s = "Hello, world!";
+let s: &amp;str = "Hello, world!";
+
+
+// 切片是对集合的部分引用，因此不仅仅字符串有切片，其它集合类型也有，例如数组
+let a = [1, 2, 3, 4, 5];
+let slice = &amp;a[1..3];
+<span class="boring">}</span></code></pre></pre>
+<h3 id="什么是字符串"><a class="header" href="#什么是字符串">什么是字符串？</a></h3>
+<p><strong>Rust 中的字符是 Unicode 类型，因此每个字符占据 4 个字节内存空间，但是在字符串中不一样，字符串是 UTF-8 编码，也就是字符串中的字符所占的字节数是变化的(1 - 4)，这样有助于大幅降低字符串所占用的内存空间。</strong></p>
+<p>str 类型是硬编码进可执行文件，也无法被修改，但是 String 则是一个可增长、可改变且具有所有权的 UTF-8 编码字符串，<strong>当 Rust 用户提到字符串时，往往指的就是 String 类型和 &amp;str 字符串切片类型，这两个类型都是 UTF-8 编码。</strong></p>
+<h3 id="string-与-str-的转换"><a class="header" href="#string-与-str-的转换">String 与 &amp;str 的转换</a></h3>
+<pre><pre class="playground"><code class="language-rust">// &amp;str 转 String
+String::from("hello,world")
+"hello,world".to_string()
+
+// String 转 &amp;str 直接取引用
+fn main() {
+    let s = String::from("hello,world!");
+    say_hello(&amp;s);
+    say_hello(&amp;s[..]);
+    say_hello(s.as_str());
+}
+
+fn say_hello(s: &amp;str) {
+    println!("{}",s);
+}</code></pre></pre>
+<h3 id="字符串索引"><a class="header" href="#字符串索引">字符串索引</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// rust 中使用索引访问字符串会报错
+let s1 = String::from("hello");
+let h = s1[0]; // `String` cannot be indexed by `{integer}`
+
+// 字符串底层是字节数组，而且是 utf-8编码，所以使用切片的形式非常危险，无法保证索引区间正好在字符的字节边界，有可能会导致崩溃
+// 因为索引的数字是字节为单位，但是汉字utf-8编码的时候所占的字节是不一定的，所以无法保证索引正好取到了边界位置
+let hello = "中国人";
+let s = &amp;hello[0..2];
+<span class="boring">}</span></code></pre></pre>
+<h3 id="操作字符串"><a class="header" href="#操作字符串">操作字符串</a></h3>
+<pre><pre class="playground"><code class="language-rust">// 追加，在原有的字符串上追加，改变原字符串，字符串变量必须由 mut 关键字修饰
+// push 追加单个字符
+// push_str 追加字符串字面量
+fn main() {
+    let mut s = String::from("Hello ");
+
+    s.push_str("rust");
+    println!("追加字符串 push_str() -&gt; {}", s); // 追加字符串 push_str() -&gt; Hello rust
+
+    s.push('!');
+    println!("追加字符 push() -&gt; {}", s); // 追加字符 push() -&gt; Hello rust!
+}
+
+// 插入，第一个参数是插入位置，第二个参数是插入的片段，字符串变量必须由 mut 关键字修饰
+// insert 插入单个字符
+// insert_str 插入字符串字面量
+fn main() {
+    let mut s = String::from("Hello rust!");
+    s.insert(5, ',');
+    println!("插入字符 insert() -&gt; {}", s); // 插入字符 insert() -&gt; Hello, rust!
+    s.insert_str(6, " I like");
+    println!("插入字符串 insert_str() -&gt; {}", s); // insert_str() -&gt; Hello, I like rust!
+}
+
+// 替换1 replace 第一个参数是要被替换的字符串，第二个参数是新的字符串，replace 方法返回一个新的字符串
+// 适用于 String 和 &amp;str 类型
+fn main() {
+    let string_replace = String::from("I like rust. Learning rust is my favorite!");
+    let new_string_replace = string_replace.replace("rust", "RUST");
+    dbg!(new_string_replace); // new_string_replace = "I like RUST. Learning RUST is my favorite!"
+}
+
+// 替换2 replacen 第一个参数是要被替换的字符串，第二个参数是新的字符串，第三个参数则表示替换的个数，replacen 方法返回一个新的字符串
+// 适用于 String 和 &amp;str 类型
+fn main() {
+    let string_replace = "I like rust. Learning rust is my favorite!";
+    let new_string_replacen = string_replace.replacen("rust", "RUST", 1);
+    dbg!(new_string_replacen); // new_string_replacen = "I like RUST. Learning rust is my favorite!"
+}
+
+// 替换3 replace_range 第一个参数是要替换字符串的范围（Range），第二个参数是新的字符串，replace_range 直接操作原来的字符串，变量需要使用 mut 关键字修饰
+// 适用于 String 类型
+fn main() {
+    let mut string_replace_range = String::from("I like rust!");
+    string_replace_range.replace_range(7..8, "R");
+    dbg!(string_replace_range); // string_replace_range = "I like Rust!"
+}
+
+// 删除1 pop 删除并返回字符串的最后一个字符，直接操作原来的字符串，返回 Option 类型，直接操作原来的字符串，需要 mut 关键字修饰
+fn main() {
+    let mut string_pop = String::from("rust pop 中文!");
+    let p1 = string_pop.pop();
+    let p2 = string_pop.pop();
+    dbg!(p1);
+    dbg!(p2);
+    dbg!(string_pop);
+    /*
+        p1 = Some(
+        '!',
+        )
+        p2 = Some(
+        '文',
+        )
+        string_pop = "rust pop 中"
+    */
+}
+
+// 删除2 remove 删除并返回字符串中指定位置的字符，直接操作原来的字符串，接收一个参数被删除的字符的索引
+// remove() 方法是按照字节来处理字符串的，如果参数所给的位置不是合法的字符边界，则会发生错误
+fn main() {
+    let mut string_remove = String::from("测试remove方法");
+    println!(
+        "string_remove 占 {} 个字节",
+        std::mem::size_of_val(string_remove.as_str())
+    ); // string_remove 占 18 个字节
+    // 删除第一个汉字
+    string_remove.remove(0);
+    // 下面代码会发生错误
+    // string_remove.remove(1);
+    // 直接删除第二个汉字
+    // string_remove.remove(3);
+    dbg!(string_remove); // string_remove = "试remove方法"
+}
+
+// 删除3 truncate 删除字符串中从指定位置开始到结尾的全部字符，直接操作原来的字符串，接收一个参数被删除的字符串的起始索引，无返回值
+// truncate() 方法是按照字节来处理字符串的，如果参数所给的位置不是合法的字符边界，则会发生错误
+fn main() {
+    let mut string_truncate = String::from("测试truncate");
+    string_truncate.truncate(3);
+    dbg!(string_truncate); // string_truncate = "测"
+}
+
+// 删除4 clear 清空字符串，直接操作原来的字符串，删除字符串中的所有字符，相当于 truncate() 方法参数为 0 的时候
+fn main() {
+    let mut string_clear = String::from("string clear");
+    string_clear.clear();
+    dbg!(string_clear); // string_clear = ""
+}
+
+
+// 使用 + 或者 += 连接字符串
+// 使用 + 或者 += 连接字符串，要求右边的参数必须为字符串的切片引用（Slice）类型
+// + 是返回一个新的字符串，所以不需要 mut 关键字修饰
+fn main() {
+    let string_append = String::from("hello ");
+    let string_rust = String::from("rust");
+    // &amp;string_rust会自动解引用为&amp;str
+    let result = string_append + &amp;string_rust;
+    let mut result = result + "!"; // `result + "!"` 中的 `result` 是不可变的
+    result += "!!!";
+
+    println!("连接字符串 + -&gt; {}", result); // 连接字符串 + -&gt; hello rust!!!!
+}
+
+// 当调用 + 的操作符时，相当于调用了 std::string 标准库中的 add() 方法，s1变量通过调用 add() 方法后，s1所有权被转移到 add() 方法里面， add() 方法调用后就被释放
+fn main() {
+    let s1 = String::from("hello,");
+    let s2 = String::from("world!");
+    // 在下句中，s1的所有权被转移走了，因此后面不能再使用s1
+    let s3 = s1 + &amp;s2;
+    assert_eq!(s3,"hello,world!");
+    // 下面的语句如果去掉注释，就会报错
+    // println!("{}",s1);
+}
+
+// 使用 format! 连接字符串 适用于 String 和 &amp;str
+fn main() {
+    let s1 = "hello";
+    let s2 = String::from("rust");
+    let s = format!("{} {}!", s1, s2);
+    println!("{}", s); // hello rust!
+}</code></pre></pre>
+<h3 id="字符串转义"><a class="header" href="#字符串转义">字符串转义</a></h3>
+<p>可以通过转义的方式 \ 输出 ASCII 和 Unicode 字符</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    // 通过 \ + 字符的十六进制表示，转义输出一个字符
+    let byte_escape = "I'm writing \x52\x75\x73\x74!";
+    println!("What are you doing\x3F (\\x3F means ?) {}", byte_escape);
+
+    // \u 可以输出一个 unicode 字符
+    let unicode_codepoint = "\u{211D}";
+    let character_name = "\"DOUBLE-STRUCK CAPITAL R\"";
+
+    println!(
+        "Unicode character {} (U+211D) is called {}",
+        unicode_codepoint, character_name
+    );
+
+    // 换行了也会保持之前的字符串格式
+    // 使用\忽略换行符
+    let long_string = "String literals
+                        can span multiple lines.
+                        The linebreak and indentation here -&gt;\
+                        &lt;- can be escaped too!";
+    println!("{}", long_string);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    println!("{}", "hello \\x52\\x75\\x73\\x74"); // hello \x52\x75\x73\x74
+    let raw_str = r"Escapes don't work here: \x3F \u{211D}";
+    println!("{}", raw_str); // Escapes don't work here: \x3F \u{211D}
+
+    // 如果字符串包含双引号，可以在开头和结尾加 #
+    let quotes = r#"And then I said: "There is no escape!""#;
+    println!("{}", quotes); // And then I said: "There is no escape!"
+
+    // 如果字符串中包含 # 号，可以在开头和结尾加多个 # 号，最多加255个，只需保证与字符串中连续 # 号的个数不超过开头和结尾的 # 号的个数即可
+    let longer_delimiter = r###"A string with "# in it. And even "##!"###;
+    println!("{}", longer_delimiter); // A string with "# in it. And even "##!
+}</code></pre></pre>
+<h3 id="操作-utf-8-字符串"><a class="header" href="#操作-utf-8-字符串">操作 UTF-8 字符串</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>for c in "中国人".chars() {
+    println!("{}", c);
+}
+
+/*
+中
+国
+人
+*/
+
+for b in "中国人".bytes() {
+    println!("{}", b);
+}
+
+/*
+228
+184
+173
+229
+155
+189
+228
+186
+186
+*/
+<span class="boring">}</span></code></pre></pre>
+<h2 id="元组-1"><a class="header" href="#元组-1">元组</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let tup: (i32, f64, u8) = (500, 6.4, 1);
+
+    let (x, y, z) = tup;
+
+    println!("The value of y is: {}", y);
+
+    let five_hundred = tup.0;
+
+    let six_point_four = tup.1;
+
+    let one = tup.2;
+}
+
+
+fn main() {
+    let s1 = String::from("hello");
+
+    let (s2, len) = calculate_length(s1);
+
+    println!("The length of '{}' is {}.", s2, len);
+}
+
+fn calculate_length(s: String) -&gt; (String, usize) {
+    let length = s.len(); // len() 返回字符串的长度
+
+    (s, length)
+}</code></pre></pre>
+<h2 id="结构体"><a class="header" href="#结构体">结构体</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 定义结构体
+struct User {
+    active: bool,
+    username: String,
+    email: String,
+    sign_in_count: u64,
+}
+
+// 创建 User 结构体实例
+// 初始化实例时，每个字段都需要进行初始化
+// 初始化时的字段顺序不需要和结构体定义时的顺序一致
+let mut user1 = User {
+    email: String::from("someone@example.com"),
+    username: String::from("someusername123"),
+    active: true,
+    sign_in_count: 1,
+};
+
+// 通过 . 操作符访问结构体内的值，也可以修改值。修改值需要 mut
+user1.email = String::from("anotheremail@example.com");
+
+// 元组结构体 结构体的字段可以没有名称
+struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
+
+let black = Color(0, 0, 0);
+let origin = Point(0, 0, 0);
+
+<span class="boring">}</span></code></pre></pre>
+<h2 id="枚举"><a class="header" href="#枚举">枚举</a></h2>
+<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
+enum PokerSuit {
+    Clubs,
+    Spades,
+    Diamonds,
+    Hearts,
+}
+
+struct PokerCard {
+    suit: PokerSuit,
+    value: u8
+}
+
+fn main() {
+   let c1 = PokerCard {
+       suit: PokerSuit::Clubs,
+       value: 1,
+   };
+   let c2 = PokerCard {
+       suit: PokerSuit::Diamonds,
+       value: 12,
+   };
+}
+
+// 下面是简洁的写法，将数据关联到枚举成员上
+enum PokerCard {
+    Clubs(u8),
+    Spades(u8),
+    Diamonds(u8),
+    Hearts(u8),
+}
+
+fn main() {
+   let c1 = PokerCard::Spades(5);
+   let c2 = PokerCard::Diamonds(13);
+}
+
+// 下面是更复杂的例子
+/*
+Quit 没有任何关联数据
+Move 包含一个匿名结构体
+Write 包含一个 String 字符串
+ChangeColor 包含三个 i32
+*/
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+fn main() {
+    let m1 = Message::Quit;
+    let m2 = Message::Move{x:1,y:1};
+    let m3 = Message::ChangeColor(255,255,0);
+}</code></pre></pre>
+<h2 id="数组-1"><a class="header" href="#数组-1">数组</a></h2>
+<pre><pre class="playground"><code class="language-rust">let months = ["January", "February", "March", "April", "May", "June", "July",
+              "August", "September", "October", "November", "December"];
+
+// i32 是元素类型，分号后面的数字 5 是数组长度
+let a: [i32; 5] = [1, 2, 3, 4, 5];
+
+// 包含 5 个元素，这些元素的初始化值为 3
+let a = [3; 5];
+
+
+fn main() {
+    let a = [9, 8, 7, 6, 5];
+
+    let first = a[0]; // 获取a数组第一个元素
+    let second = a[1]; // 获取第二个元素
+}</code></pre></pre>
+<ul>
+<li>数组越界访问会造成 panic 崩溃</li>
+</ul>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+  // 编译器自动推导出one的类型
+  let one             = [1, 2, 3];
+  // 显式类型标注
+  let two: [u8; 3]    = [1, 2, 3];
+  let blank1          = [0; 3];
+  let blank2: [u8; 3] = [0; 3];
+
+  // arrays是一个二维数组，其中每一个元素都是一个数组，元素类型是[u8; 3]
+  let arrays: [[u8; 3]; 4]  = [one, two, blank1, blank2];
+
+  // 借用arrays的元素用作循环中
+  for a in &amp;arrays {
+    print!("{:?}: ", a);
+    // 将a变成一个迭代器，用于循环
+    // 你也可以直接用for n in a {}来进行循环
+    for n in a.iter() {
+      print!("\t{} + 10 = {}", n, n+10);
+    }
+
+    let mut sum = 0;
+    // 0..a.len,是一个 Rust 的语法糖，其实就等于一个数组，元素是从0,1,2一直增加到到a.len-1
+    for i in 0..a.len() {
+      sum += a[i];
+    }
+    println!("\t({:?} = {})", a, sum);
+  }
+}</code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="流程控制"><a class="header" href="#流程控制">流程控制</a></h1>
+<h2 id="if-else-if"><a class="header" href="#if-else-if">if else if</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let condition = true;
+    let number = if condition {
+        5
+    } else {
+        6
+    };
+
+    println!("The value of number is: {}", number);
+}
+
+fn main() {
+    let n = 6;
+
+    if n % 4 == 0 {
+        println!("number is divisible by 4");
+    } else if n % 3 == 0 {
+        println!("number is divisible by 3");
+    } else if n % 2 == 0 {
+        println!("number is divisible by 2");
+    } else {
+        println!("number is not divisible by 4, 3, or 2");
+    }
+}</code></pre></pre>
+<h2 id="循环"><a class="header" href="#循环">循环</a></h2>
+<h3 id="for"><a class="header" href="#for">for</a></h3>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    for i in 1..=5 {
+        println!("{}", i);
+    }
+}</code></pre></pre>
+<div class="table-wrapper"><table><thead><tr><th>使用方法</th><th>等价使用方式</th><th>所有权</th></tr></thead><tbody>
+<tr><td><code>for item in collection</code></td><td><code>for item in IntoIterator::into_iter(collection)</code></td><td>转移所有权</td></tr>
+<tr><td><code>for item in &amp;collection</code></td><td><code>for item in collection.iter()</code></td><td>不可变借用</td></tr>
+<tr><td><code>for item in &amp;mut collection</code></td><td><code>for item in collection.iter_mut()</code></td><td>可变借用</td></tr>
+</tbody></table>
+</div>
+<pre><pre class="playground"><code class="language-rust">// 如果想在循环中获取元素的索引
+fn main() {
+    let a = [4, 3, 2, 1];
+    // `.iter()` 方法把 `a` 数组变成一个迭代器
+    for (i, v) in a.iter().enumerate() {
+        println!("第{}个元素是{}", i + 1, v);
+    }
+}</code></pre></pre>
+<p>两种循环方式优劣对比</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 第一种
+let collection = [1, 2, 3, 4, 5];
+for i in 0..collection.len() {
+  let item = collection[i];
+  // ...
+}
+
+// 第二种
+for item in collection {
+
+}
+
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li>
+<p>性能：第一种使用方式中 collection[index] 的索引访问，会因为边界检查(Bounds Checking)导致运行时的性能损耗 —— Rust 会检查并确认 index 是否落在集合内，但是第二种直接迭代的方式就不会触发这种检查，因为编译器会在编译时就完成分析并证明这种访问是合法的</p>
+</li>
+<li>
+<p>安全：第一种方式里对 collection 的索引访问是非连续的，存在一定可能性在两次访问之间，collection 发生了变化，导致脏数据产生。而第二种直接迭代的方式是连续访问，因此不存在这种风险( 由于所有权限制，在访问过程中，数据并不会发生变化)。</p>
+</li>
+</ul>
+<h3 id="continue-break"><a class="header" href="#continue-break">continue break</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// continue跳过当前循环
+for i in 1..4 {
+    if i == 2 {
+        continue;
+    }
+    println!("{}", i);
+}
+
+// break跳出整个循环
+for i in 1..4 {
+    if i == 2 {
+        break;
+    }
+    println!("{}", i);
+}
+
+<span class="boring">}</span></code></pre></pre>
+<h3 id="while"><a class="header" href="#while">while</a></h3>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let mut n = 0;
+
+    while n &lt;= 5  {
+        println!("{}!", n);
+
+        n = n + 1;
+    }
+
+    println!("我出来了！");
+}
+
+// while 循环 如果索引长度不正确会导致程序 panic。这也使程序更慢，因为编译器增加了运行时代码来对每次循环的每个元素进行条件检查
+fn main() {
+    let a = [10, 20, 30, 40, 50];
+    let mut index = 0;
+
+    while index &lt; 5 {
+        println!("the value is: {}", a[index]);
+
+        index = index + 1;
+    }
+}
+
+// for 并不会使用索引去访问数组，因此更安全也更简洁，同时避免 运行时的边界检查，性能更高
+fn main() {
+    let a = [10, 20, 30, 40, 50];
+
+    for element in a.iter() {
+        println!("the value is: {}", element);
+    }
+}</code></pre></pre>
+<h3 id="loop"><a class="header" href="#loop">loop</a></h3>
+<pre><pre class="playground"><code class="language-rust">// break 可以单独使用，也可以带一个返回值，有些类似 return
+// loop 是一个表达式，因此可以返回一个值
+fn main() {
+    let mut counter = 0;
+
+    let result = loop {
+        counter += 1;
+
+        if counter == 10 {
+            break counter * 2;
+        }
+    };
+
+    println!("The result is {}", result);
+}</code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="模式匹配"><a class="header" href="#模式匹配">模式匹配</a></h1>
+<h2 id="match-if-let"><a class="header" href="#match-if-let">match if let</a></h2>
+<pre><pre class="playground"><code class="language-rust">enum Direction {
+    East,
+    West,
+    North,
+    South,
+}
+
+fn main() {
+    let dire = Direction::South;
+    match dire {
+        Direction::East =&gt; println!("East"),
+        Direction::North | Direction::South =&gt; {
+            println!("South or North");
+        },
+        _ =&gt; println!("West"),
+    };
+}</code></pre></pre>
+<ul>
+<li>match 的匹配必须要穷举出所有可能，因此这里用 _ 来代表未列出的所有可能性</li>
+<li>match 的每一个分支都必须是一个表达式，且所有分支的表达式最终返回值的类型必须相同</li>
+<li>X | Y，类似逻辑运算符 或，代表该分支可以匹配 X 也可以匹配 Y，只要满足一个即可</li>
+</ul>
+<pre><pre class="playground"><code class="language-rust">// 枚举中的值在 match 中也可以被模式匹配获取到
+enum Action {
+    Say(String),
+    MoveTo(i32, i32),
+    ChangeColorRGB(u16, u16, u16),
+}
+
+fn main() {
+    let actions = [
+        Action::Say("Hello Rust".to_string()),
+        Action::MoveTo(1,2),
+        Action::ChangeColorRGB(255,255,0),
+    ];
+    for action in actions {
+        match action {
+            Action::Say(s) =&gt; {
+                println!("{}", s);
+            },
+            Action::MoveTo(x, y) =&gt; {
+                println!("point from (0, 0) move to ({}, {})", x, y);
+            },
+            Action::ChangeColorRGB(r, g, _) =&gt; {
+                println!("change color into '(r:{}, g:{}, b:0)', 'b' has been ignored",
+                    r, g,
+                );
+            }
+        }
+    }
+}
+
+// 除了_通配符，用一个变量来承载其他情况也是可以的
+#[derive(Debug)]
+enum Direction {
+    East,
+    West,
+    North,
+    South,
+}
+
+fn main() {
+    let dire = Direction::South;
+    match dire {
+        Direction::East =&gt; println!("East"),
+        other =&gt; println!("other direction: {:?}", other),
+    };
+}</code></pre></pre>
+<h3 id="if-let"><a class="header" href="#if-let">if let</a></h3>
+<p>当你只要匹配一个条件，且忽略其他条件时就用 if let ，否则都用 match</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    let v = Some(3u8);
+    match v {
+        Some(3) =&gt; println!("three"),
+        _ =&gt; (),
+    }
+
+
+if let Some(3) = v {
+    println!("three");
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="matches宏"><a class="header" href="#matches宏">matches!宏</a></h3>
+<pre><pre class="playground"><code class="language-rust">enum MyEnum {
+    Foo,
+    Bar
+}
+
+fn main() {
+    let v = vec![MyEnum::Foo,MyEnum::Bar,MyEnum::Foo];
+
+    // 下面这句会报错，x 无法与 MyEnum::Foo 比较
+    v.iter().filter(|x| x == MyEnum::Foo);
+
+    v.iter().filter(|x| matches!(x, MyEnum::Foo));
+
+}</code></pre></pre>
+<h3 id="变量遮蔽"><a class="header" href="#变量遮蔽">变量遮蔽</a></h3>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+   let age = Some(30);
+   println!("在匹配前，age是{:?}",age);
+   if let Some(age) = age {
+       println!("匹配出来的age是{}",age);
+   }
+
+   println!("在匹配后，age是{:?}",age);
+}
+
+fn main() {
+   let age = Some(30);
+   println!("在匹配前，age是{:?}",age);
+   match age {
+       Some(age) =&gt;  println!("匹配出来的age是{}",age),
+       _ =&gt; ()
+   }
+   println!("在匹配后，age是{:?}",age);
+}</code></pre></pre>
+<h2 id="解构-option"><a class="header" href="#解构-option">解构 Option</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 一个变量要么有值：Some(T), 要么为空：None
+enum Option&lt;T&gt; {
+    None,
+    Some(T),
+}
+
+fn plus_one(x: Option&lt;i32&gt;) -&gt; Option&lt;i32&gt; {
+    match x {
+        None =&gt; None,
+        Some(i) =&gt; Some(i + 1),
+    }
+}
+
+let five = Some(5);
+let six = plus_one(five);
+let none = plus_one(None);
+<span class="boring">}</span></code></pre></pre>
+<h2 id="模式适用场景"><a class="header" href="#模式适用场景">模式适用场景</a></h2>
+<pre><pre class="playground"><code class="language-rust">// match 匹配所有模式
+match VALUE {
+    PATTERN =&gt; EXPRESSION,
+    PATTERN =&gt; EXPRESSION,
+    PATTERN =&gt; EXPRESSION,
+}
+
+// 匹配一个模式，忽略其他模式
+if let PATTERN = SOME_VALUE {
+
+}
+
+// while let 条件循环，只要模式匹配就一直进行 while 循环
+let mut stack = Vec::new();
+
+stack.push(1);
+stack.push(2);
+stack.push(3);
+
+while let Some(top) = stack.pop() {
+    println!("{}", top);
+}
+
+// 这里使用 enumerate 方法产生一个迭代器，该迭代器每次迭代会返回一个 (索引，值) 形式的元组，然后用 (index,value) 来匹配
+let v = vec!['a', 'b', 'c'];
+
+for (index, value) in v.iter().enumerate() {
+    println!("{} is at index {}", value, index);
+}
+
+// 将匹配的值绑定到变量 x 上，变量名也是一种模式
+let PATTERN = EXPRESSION;
+let (x, y, z) = (1, 2, 3);
+
+// 函数参数也是一种模式
+fn print_coordinates(&amp;(x, y): &amp;(i32, i32)) {
+    println!("Current location: ({}, {})", x, y);
+}
+
+fn main() {
+    let point = (3, 5);
+    print_coordinates(&amp;point);
+}
+
+// 以下代码，编译器会报错
+// 因为右边的值可能不为 Some，而是 None，这种时候就不能进行匹配，也就是上面的代码遗漏了 None 的匹配。
+// 类似 let , for和match 都必须要求完全覆盖匹配，才能通过编译( 不可驳模式匹配 )。
+let Some(x) = some_option_value;
+
+// if let 允许匹配一种模式，而忽略其余的模式( 可驳模式匹配 )。
+if let Some(x) = some_option_value {
+    println!("{}", x);
+}
+
+
+// 使用 let-else 匹配，即可使 let 变为可驳模式。它可以使用 else 分支来处理模式不匹配的情况
+// 但是 else 分支中必须用发散的代码块处理（例如：break、return、panic）。
+use std::str::FromStr;
+
+fn get_count_item(s: &amp;str) -&gt; (u64, &amp;str) {
+    let mut it = s.split(' ');
+    let (Some(count_str), Some(item)) = (it.next(), it.next()) else {
+        panic!("Can't segment count item pair: '{s}'");
+    };
+    let Ok(count) = u64::from_str(count_str) else {
+        panic!("Can't parse integer: '{count_str}'");
+    };
+    // error: `else` clause of `let...else` does not diverge
+    // let Ok(count) = u64::from_str(count_str) else { 0 };
+    (count, item)
+}
+
+fn main() {
+    assert_eq!(get_count_item("3 chairs"), (3, "chairs"));
+}
+
+
+// 与 match 和 if let 相比，let-else 的一个显著特点在于其解包成功时所创建的变量具有更广的作用域。
+// 在 let-else 语句中，成功匹配后的变量不再仅限于特定分支内使用
+// if let
+if let Some(x) = some_option_value {
+    println!("{}", x);
+}
+
+// let-else
+let Some(x) = some_option_value else { return; }
+println!("{}", x);
+</code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="方法"><a class="header" href="#方法">方法</a></h1>
+<h2 id="定义方法"><a class="header" href="#定义方法">定义方法</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Circle {
+    x: f64,
+    y: f64,
+    radius: f64,
+}
+
+impl Circle {
+    // new是Circle的关联函数，因为它的第一个参数不是self，且new并不是关键字
+    // 这种方法往往用于初始化当前结构体的实例
+    fn new(x: f64, y: f64, radius: f64) -&gt; Circle {
+        Circle {
+            x: x,
+            y: y,
+            radius: radius,
+        }
+    }
+
+    // Circle的方法，&amp;self表示借用当前的Circle结构体
+    fn area(&amp;self) -&gt; f64 {
+        std::f64::consts::PI * (self.radius * self.radius)
+    }
+}
+
+<span class="boring">}</span></code></pre></pre>
+<p>impl 是实现 implementation 的缩写</p>
+<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+impl Rectangle {
+    fn area(&amp;self) -&gt; u32 {
+        self.width * self.height
+    }
+}
+
+fn main() {
+    let rect1 = Rectangle { width: 30, height: 50 };
+
+    println!(
+        "The area of the rectangle is {} square pixels.",
+        rect1.area()
+    );
+}</code></pre></pre>
+<p>在 area 的签名中，我们使用 &amp;self 替代 rectangle: &amp;Rectangle，&amp;self 其实是 self: &amp;Self 的简写（注意大小写）。在一个 impl 块内，Self 指代被实现方法的结构体类型，self 指代此类型的实例，换句话说，self 指代的是 Rectangle 结构体实例。</p>
+<ul>
+<li>self 表示 Rectangle 的所有权转移到该方法中，这种形式用的较少</li>
+<li>&amp;self 表示该方法对 Rectangle 的不可变借用</li>
+<li>&amp;mut self 表示可变借用</li>
+</ul>
+<p>简单总结下，使用方法代替函数有以下好处：</p>
+<ul>
+<li>不用在函数签名中重复书写 self 对应的类型</li>
+<li>代码的组织性和内聚性更强，对于代码维护和阅读来说，好处巨大</li>
+</ul>
+<h2 id="多个参数"><a class="header" href="#多个参数">多个参数</a></h2>
+<pre><pre class="playground"><code class="language-rust">impl Rectangle {
+    fn area(&amp;self) -&gt; u32 {
+        self.width * self.height
+    }
+
+    fn can_hold(&amp;self, other: &amp;Rectangle) -&gt; bool {
+        self.width &gt; other.width &amp;&amp; self.height &gt; other.height
+    }
+}
+
+fn main() {
+    let rect1 = Rectangle { width: 30, height: 50 };
+    let rect2 = Rectangle { width: 10, height: 40 };
+    let rect3 = Rectangle { width: 60, height: 45 };
+
+    println!("Can rect1 hold rect2? {}", rect1.can_hold(&amp;rect2));
+    println!("Can rect1 hold rect3? {}", rect1.can_hold(&amp;rect3));
+}</code></pre></pre>
+<h2 id="关联函数"><a class="header" href="#关联函数">关联函数</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Rectangle {
+    fn new(w: u32, h: u32) -&gt; Rectangle {
+        Rectangle { width: w, height: h }
+    }
+}
+
+let sq = Rectangle::new(3, 3);
+<span class="boring">}</span></code></pre></pre>
+<p>定义在 impl 中且没有 self 的函数被称之为关联函数： 因为它没有 self，不能用 f.read() 的形式调用，因此它是一个函数而不是方法，它又在 impl 中，与结构体紧密关联，因此称为关联函数。</p>
+<h2 id="为枚举实现方法"><a class="header" href="#为枚举实现方法">为枚举实现方法</a></h2>
+<pre><pre class="playground"><code class="language-rust">#![allow(unused)]
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+impl Message {
+    fn call(&amp;self) {
+        // 在这里定义方法体
+    }
+}
+
+fn main() {
+    let m = Message::Write(String::from("hello"));
+    m.call();
+}</code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="泛型和特征"><a class="header" href="#泛型和特征">泛型和特征</a></h1>
+<h2 id="泛型"><a class="header" href="#泛型">泛型</a></h2>
+<p>我们在编程中，经常有这样的需求：用同一功能的函数处理不同类型的数据，例如两个数的加法，无论是整数还是浮点数，甚至是自定义类型，都能进行支持。在不支持泛型的编程语言中，通常需要为每一种类型编写一个函数</p>
+<p>实际上，泛型就是一种多态。泛型主要目的是为程序员提供编程的便利，减少代码的臃肿，同时可以极大地丰富语言本身的表达能力。想想，一个函数，可以代替几十个，甚至数百个函数，是一件多么让人兴奋的事情：</p>
+<pre><pre class="playground"><code class="language-rust">fn add&lt;T&gt;(a:T, b:T) -&gt; T {
+    a + b
+}
+
+fn main() {
+    println!("add i8: {}", add(2i8, 3i8));
+    println!("add i32: {}", add(20, 30));
+    println!("add f64: {}", add(1.23, 1.23));
+}</code></pre></pre>
+<h3 id="详解"><a class="header" href="#详解">详解</a></h3>
+<p>使用泛型参数，有一个先决条件，必需在使用前对其进行声明：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn largest&lt;T&gt;(list: &amp;[T]) -&gt; T {
+<span class="boring">}</span></code></pre></pre>
+<p>我们可以这样理解这个函数定义：函数 largest 有泛型类型 T，它有个参数 list，其类型是元素为 T 的数组切片，最后，该函数返回值的类型也是 T。</p>
+<p>下面是一个错误的泛型函数的实现：</p>
+<pre><pre class="playground"><code class="language-rust">fn largest&lt;T&gt;(list: &amp;[T]) -&gt; T {
+    let mut largest = list[0];
+
+    for &amp;item in list.iter() {
+        if item &gt; largest {
+            largest = item;
+        }
+    }
+
+    largest
+}
+
+fn main() {
+    let number_list = vec![34, 50, 25, 100, 65];
+
+    let result = largest(&amp;number_list);
+    println!("The largest number is {}", result);
+
+    let char_list = vec!['y', 'm', 'a', 'q'];
+
+    let result = largest(&amp;char_list);
+    println!("The largest char is {}", result);
+}
+
+
+/*
+error[E0369]: binary operation `&gt;` cannot be applied to type `T` // `&gt;`操作符不能用于类型`T`
+ --&gt; src/main.rs:5:17
+  |
+5 |         if item &gt; largest {
+  |            ---- ^ ------- T
+  |            |
+  |            T
+  |
+help: consider restricting type parameter `T` // 考虑对T进行类型上的限制 :
+  |
+1 | fn largest&lt;T: std::cmp::PartialOrd&gt;(list: &amp;[T]) -&gt; T {
+  |             ++++++++++++++++++++++
+*/</code></pre></pre>
+<p>因为 T 可以是任何类型，但不是所有的类型都能进行比较，因此上面的错误中，编译器建议我们给 T 添加一个类型限制：使用 std::cmp::PartialOrd 特征（Trait）对 T 进行限制</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn largest&lt;T: std::cmp::PartialOrd&gt;(list: &amp;[T]) -&gt; T {
+    let mut largest = list[0];
+
+    for &amp;item in list.iter() {
+        if item &gt; largest {
+            largest = item;
+        }
+    }
+
+    largest
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="显式地指定泛型的类型参数"><a class="header" href="#显式地指定泛型的类型参数">显式地指定泛型的类型参数</a></h3>
+<pre><pre class="playground"><code class="language-rust">use std::fmt::Display;
+
+fn create_and_print&lt;T&gt;() where T: From&lt;i32&gt; + Display {
+    let a: T = 100.into(); // 创建了类型为 T 的变量 a，它的初始值由 100 转换而来
+    println!("a is: {}", a);
+}
+
+fn main() {
+    create_and_print();
+}
+
+/*
+error[E0283]: type annotations needed // 需要标明类型
+ --&gt; src/main.rs:9:5
+  |
+9 |     create_and_print();
+  |     ^^^^^^^^^^^^^^^^ cannot infer type of the type parameter `T` declared on the function `create_and_print` // 无法推断函数 `create_and_print` 的类型参数 `T` 的类型
+  |
+  = note: multiple `impl`s satisfying `_: From&lt;i32&gt;` found in the `core` crate:
+          - impl From&lt;i32&gt; for AtomicI32;
+          - impl From&lt;i32&gt; for f64;
+          - impl From&lt;i32&gt; for i128;
+          - impl From&lt;i32&gt; for i64;
+note: required by a bound in `create_and_print`
+ --&gt; src/main.rs:3:35
+  |
+3 | fn create_and_print&lt;T&gt;() where T: From&lt;i32&gt; + Display {
+  |                                   ^^^^^^^^^ required by this bound in `create_and_print`
+help: consider specifying the generic argument // 尝试指定泛型参数
+  |
+9 |     create_and_print::&lt;T&gt;();
+  |                     +++++
+
+*/</code></pre></pre>
+<p>报错里说得很清楚，编译器不知道 T 到底应该是什么类型。不过好心的编译器已经帮我们列出了满足条件的类型，然后告诉我们解决方法：显式指定类型：create_and_print::<T>()</p>
+<pre><pre class="playground"><code class="language-rust">use std::fmt::Display;
+
+fn create_and_print&lt;T&gt;() where T: From&lt;i32&gt; + Display {
+    let a: T = 100.into(); // 创建了类型为 T 的变量 a，它的初始值由 100 转换而来
+    println!("a is: {}", a);
+}
+
+fn main() {
+    create_and_print::&lt;i64&gt;(); // 显式指定T类型
+}</code></pre></pre>
+<h3 id="结构体中使用泛型"><a class="header" href="#结构体中使用泛型">结构体中使用泛型</a></h3>
+<pre><pre class="playground"><code class="language-rust">struct Point&lt;T,U&gt; {
+    x: T,
+    y: U,
+}
+fn main() {
+    let p = Point{x: 1, y :1.1};
+}</code></pre></pre>
+<h3 id="枚举中使用泛型"><a class="header" href="#枚举中使用泛型">枚举中使用泛型</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Option&lt;T&gt; 是一个拥有泛型 T 的枚举类型，它第一个成员是 Some(T)，存放了一个类型为 T 的值
+enum Option&lt;T&gt; {
+    Some(T),
+    None,
+}
+
+// 如果函数正常运行，则最后返回一个 Ok(T)，T 是函数具体的返回值类型，如果函数异常运行，则返回一个 Err(E)，E 是错误类型
+enum Result&lt;T, E&gt; {
+    Ok(T),
+    Err(E),
+}
+
+<span class="boring">}</span></code></pre></pre>
+<h3 id="方法中使用泛型"><a class="header" href="#方法中使用泛型">方法中使用泛型</a></h3>
+<pre><pre class="playground"><code class="language-rust">struct Point&lt;T&gt; {
+    x: T,
+    y: T,
+}
+
+impl&lt;T&gt; Point&lt;T&gt; {
+    fn x(&amp;self) -&gt; &amp;T {
+        &amp;self.x
+    }
+}
+
+fn main() {
+    let p = Point { x: 5, y: 10 };
+
+    println!("p.x = {}", p.x());
+}</code></pre></pre>
+<p>除了结构体中的泛型参数，我们还能在该结构体的方法中定义额外的泛型参数，就跟泛型函数一样：</p>
+<pre><pre class="playground"><code class="language-rust">struct Point&lt;T, U&gt; {
+    x: T,
+    y: U,
+}
+
+impl&lt;T, U&gt; Point&lt;T, U&gt; {
+    fn mixup&lt;V, W&gt;(self, other: Point&lt;V, W&gt;) -&gt; Point&lt;T, W&gt; {
+        Point {
+            x: self.x,
+            y: other.y,
+        }
+    }
+}
+
+fn main() {
+    let p1 = Point { x: 5, y: 10.4 };
+    let p2 = Point { x: "Hello", y: 'c'};
+
+    let p3 = p1.mixup(p2);
+
+    println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
+}</code></pre></pre>
+<p>这个例子中，T,U 是定义在结构体 Point 上的泛型参数，V,W 是单独定义在方法 mixup 上的泛型参数，它们并不冲突，说白了，你可以理解为，一个是结构体泛型，一个是函数泛型。</p>
+<p>对于 Point<T> 类型，你不仅能定义基于 T 的方法，还能针对特定的具体类型，进行方法定义：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Point&lt;f32&gt; {
+    fn distance_from_origin(&amp;self) -&gt; f32 {
+        (self.x.powi(2) + self.y.powi(2)).sqrt()
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="const-泛型rust-151-版本引入的重要特性"><a class="header" href="#const-泛型rust-151-版本引入的重要特性">const 泛型（Rust 1.51 版本引入的重要特性）</a></h3>
+<pre><pre class="playground"><code class="language-rust">fn display_array(arr: [i32; 3]) {
+    println!("{:?}", arr);
+}
+fn main() {
+    let arr: [i32; 3] = [1, 2, 3];
+    display_array(arr);
+
+    let arr: [i32; 2] = [1, 2];
+    display_array(arr);
+}
+
+error[E0308]: mismatched types // 类型不匹配
+  --&gt; src/main.rs:10:19
+   |
+10 |     display_array(arr);
+   |                   ^^^ expected an array with a fixed size of 3 elements, found one with 2 elements
+                          // 期望一个长度为3的数组，却发现一个长度为2的
+</code></pre></pre>
+<p>[i32; 3] 和 [i32; 2] 确实是两个完全不同的类型，因此无法用同一个函数调用。</p>
+<p>只要使用数组切片，然后传入 arr 的不可变引用即可。</p>
+<p>接着，将 i32 改成所有类型的数组：</p>
+<pre><pre class="playground"><code class="language-rust">fn display_array&lt;T: std::fmt::Debug&gt;(arr: &amp;[T]) {
+    println!("{:?}", arr);
+}
+fn main() {
+    let arr: [i32; 3] = [1, 2, 3];
+    display_array(&amp;arr);
+
+    let arr: [i32; 2] = [1, 2];
+    display_array(&amp;arr);
+}</code></pre></pre>
+<p>唯一要注意的是需要对 T 加一个限制 std::fmt::Debug，该限制表明 T 可以用在 println!("{:?}", arr) 中，因为 {:?} 形式的格式化输出需要 arr 实现该特征。</p>
+<p>现在咱们有了 const 泛型，也就是针对值的泛型，正好可以用于处理数组长度的问题：</p>
+<pre><pre class="playground"><code class="language-rust">fn display_array&lt;T: std::fmt::Debug, const N: usize&gt;(arr: [T; N]) {
+    println!("{:?}", arr);
+}
+fn main() {
+    let arr: [i32; 3] = [1, 2, 3];
+    display_array(arr);
+
+    let arr: [i32; 2] = [1, 2];
+    display_array(arr);
+}</code></pre></pre>
+<p>如上所示，我们定义了一个类型为 [T; N] 的数组，其中 T 是一个基于类型的泛型参数，这个和之前讲的泛型没有区别，而重点在于 N 这个泛型参数，它是一个基于值的泛型参数！因为它用来替代的是数组的长度。</p>
+<p>N 就是 const 泛型，定义的语法是 const N: usize，表示 const 泛型 N ，它基于的值类型是 usize。</p>
+<h4 id="const-泛型表达式"><a class="header" href="#const-泛型表达式">const 泛型表达式</a></h4>
+<p>假设我们某段代码需要在内存很小的平台上工作，因此需要限制函数参数占用的内存大小，此时就可以使用 const 泛型表达式来实现：</p>
+<pre><pre class="playground"><code class="language-rust">// 目前只能在nightly版本下使用
+#![allow(incomplete_features)]
+#![feature(generic_const_exprs)]
+
+fn something&lt;T&gt;(val: T)
+where
+    Assert&lt;{ core::mem::size_of::&lt;T&gt;() &lt; 768 }&gt;: IsTrue,
+    //       ^-----------------------------^ 这里是一个 const 表达式，换成其它的 const 表达式也可以
+{
+    //
+}
+
+fn main() {
+    something([0u8; 0]); // ok
+    something([0u8; 512]); // ok
+    something([0u8; 1024]); // 编译错误，数组长度是1024字节，超过了768字节的参数长度限制
+}
+
+// ---
+
+pub enum Assert&lt;const CHECK: bool&gt; {
+    //
+}
+
+pub trait IsTrue {
+    //
+}
+
+impl IsTrue for Assert&lt;true&gt; {
+    //
+}</code></pre></pre>
+<h4 id="为什么需要-const-fn"><a class="header" href="#为什么需要-const-fn">为什么需要 const fn</a></h4>
+<p>有了 const fn，我们可以在编译期执行这些函数，从而将计算结果直接嵌入到生成的代码中。这不仅以高了运行时的性能，还使代码更加简洁和安全。</p>
+<pre><pre class="playground"><code class="language-rust">const fn add(a: usize, b: usize) -&gt; usize {
+    a + b
+}
+
+const RESULT: usize = add(5, 10);
+
+fn main() {
+    println!("The result is: {}", RESULT);
+}</code></pre></pre>
+<h4 id="结合-const-fn-与-const-泛型"><a class="header" href="#结合-const-fn-与-const-泛型">结合 const fn 与 const 泛型</a></h4>
+<pre><pre class="playground"><code class="language-rust">
+struct Buffer&lt;const N: usize&gt; {
+    data: [u8; N],
+}
+
+const fn compute_buffer_size(factor: usize) -&gt; usize {
+    factor * 1024
+}
+
+fn main() {
+    const SIZE: usize = compute_buffer_size(4);
+    let buffer = Buffer::&lt;SIZE&gt; {
+        data: [0; SIZE],
+    };
+    println!("Buffer size: {} bytes", buffer.data.len());
+}
+</code></pre></pre>
+<p>在这个例子中，compute_buffer_size 是一个常量函数，它根据传入的 factor 计算缓冲区的大小。在 main 函数中，我们使用 compute_buffer_size(4) 来计算缓冲区大小为 4096 字节，并将其作为泛型参数传递给 Buffer 结构体。这样，缓冲区的大小在编译期就被确定下来，避免了运行时的计算开销。</p>
+<h2 id="trait"><a class="header" href="#trait">Trait</a></h2>
+<p>trait 定义了一组可以被共享的行为，只要实现了特征，你就能使用这组行为。如果不同的类型具有相同的行为，那么我们就可以定义一个特征，然后为这些类型实现该特征。</p>
+<p>特征只定义行为看起来是什么样的，而不定义行为具体实现。因此，我们只定义特征方法的签名，而不进行实现，此时方法签名结尾是 ;，而不是一个 {}。</p>
+<pre><pre class="playground"><code class="language-rust">pub trait Summary {
+    fn summarize(&amp;self) -&gt; String;
+}
+pub struct Post {
+    pub title: String, // 标题
+    pub author: String, // 作者
+    pub content: String, // 内容
+}
+
+impl Summary for Post {
+    fn summarize(&amp;self) -&gt; String {
+        format!("文章{}, 作者是{}", self.title, self.author)
+    }
+}
+
+pub struct Weibo {
+    pub username: String,
+    pub content: String
+}
+
+impl Summary for Weibo {
+    fn summarize(&amp;self) -&gt; String {
+        format!("{}发表了微博{}", self.username, self.content)
+    }
+}
+
+fn main() {
+    let post = Post{title: "Rust语言简介".to_string(),author: "Sunface".to_string(), content: "Rust棒极了!".to_string()};
+    let weibo = Weibo{username: "sunface".to_string(),content: "好像微博没Tweet好用".to_string()};
+
+    println!("{}",post.summarize());
+    println!("{}",weibo.summarize());
+}
+
+// 文章 Rust 语言简介, 作者是Sunface
+// sunface发表了微博好像微博没Tweet好用</code></pre></pre>
+<h3 id="特征定义与实现的位置孤儿规则"><a class="header" href="#特征定义与实现的位置孤儿规则">特征定义与实现的位置(孤儿规则)</a></h3>
+<p>关于特征实现与定义的位置，有一条非常重要的原则：如果你想要为类型 A 实现特征 T，那么 A 或者 T 至少有一个是在当前作用域中定义的！ 例如我们可以为上面的 Post 类型实现标准库中的 Display 特征，这是因为 Post 类型定义在当前的作用域中。同时，我们也可以在当前包中为 String 类型实现 Summary 特征，因为 Summary 定义在当前作用域中。</p>
+<p>但是你无法在当前作用域中，为 String 类型实现 Display 特征，因为它们俩都定义在标准库中，其定义所在的位置都不在当前作用域，跟你半毛钱关系都没有，看看就行了。</p>
+<p>该规则被称为孤儿规则，可以确保其它人编写的代码不会破坏你的代码，也确保了你不会莫名其妙就破坏了风马牛不相及的代码。</p>
+<h3 id="默认实现"><a class="header" href="#默认实现">默认实现</a></h3>
+<p>你可以在特征中定义具有默认实现的方法，这样其它类型无需再实现该方法，或者也可以选择重载该方法：</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span>
+<span class="boring">fn main() {
+</span>pub trait Summary {
+    fn summarize(&amp;self) -&gt; String {
+        String::from("(Read more...)")
+    }
+}
+
+impl Summary for Post {}
+impl Summary for Weibo {
+    fn summarize(&amp;self) -&gt; String {
+        format!("{}发表了微博{}", self.username, self.content)
+    }
+}
+
+println!("{}",post.summarize());
+println!("{}",weibo.summarize());
+
+// (Read more...)
+// sunface发表了微博好像微博没Tweet好用
+<span class="boring">}</span></code></pre></pre>
+<h3 id="使用特征作为函数参数"><a class="header" href="#使用特征作为函数参数">使用特征作为函数参数</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn notify(item: &amp;impl Summary) {
+    println!("Breaking news! {}", item.summarize());
+}
+
+<span class="boring">}</span></code></pre></pre>
+<p>impl Summary，只能说想出这个类型的人真的是起名鬼才，简直太贴切了，顾名思义，它的意思是 实现了Summary特征 的 item 参数。</p>
+<p>你可以使用任何实现了 Summary 特征的类型作为该函数的参数，同时在函数体内，还可以调用该特征的方法，例如 summarize 方法。具体的说，可以传递 Post 或 Weibo 的实例来作为参数，而其它类如 String 或者 i32 的类型则不能用做该函数的参数，因为它们没有实现 Summary 特征。</p>
+<h3 id="特征约束trait-bound"><a class="header" href="#特征约束trait-bound">特征约束(trait bound)</a></h3>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

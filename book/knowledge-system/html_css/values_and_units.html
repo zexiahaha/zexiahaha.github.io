@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>值与单位 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="值与单位"><a class="header" href="#值与单位">值与单位</a></h1>
+<h2 id="数字长度和百分比"><a class="header" href="#数字长度和百分比">数字长度和百分比</a></h2>
+<h3 id="数字"><a class="header" href="#数字">数字</a></h3>
+<p>css 中的值使用数字的时候，分以下四种：</p>
+<ul>
+<li>整数 integer 例如 10</li>
+<li>数字 number 例如 10.5</li>
+<li>尺寸 dimention 例如 10px</li>
+<li>百分比 例如 50%</li>
+</ul>
+<h3 id="长度"><a class="header" href="#长度">长度</a></h3>
+<p>绝对长度</p>
+<div class="table-wrapper"><table><thead><tr><th>单位</th><th>名称</th><th>等价换算</th></tr></thead><tbody>
+<tr><td>cm</td><td>厘米</td><td>1cm = 96px/2.54</td></tr>
+<tr><td>mm</td><td>毫米</td><td>1mm = 1/10th of 1cm</td></tr>
+<tr><td>Q</td><td>四分之一毫米</td><td>1Q = 1/40th of 1cm</td></tr>
+<tr><td>in</td><td>英寸</td><td>1in = 2.54cm = 96px</td></tr>
+<tr><td>pc</td><td>十二点活字</td><td>1pc = 1/16th of 1in</td></tr>
+<tr><td>pt</td><td>点</td><td>1pt = 1/72th of 1in</td></tr>
+<tr><td>px</td><td>像素</td><td>1px = 1/96th of 1in</td></tr>
+</tbody></table>
+</div>
+<p>1in = 2.54cm = 25.4 mm = 101.6q = 72pt = 6pc = 96px</p>
+<p>相对长度</p>
+<div class="table-wrapper"><table><thead><tr><th>单位</th><th>相对于</th></tr></thead><tbody>
+<tr><td>em</td><td>在 font-size 中使用是相对于父元素的字体大小，在其他属性中使用是相对于自身的字体大小，如 width</td></tr>
+<tr><td>ex</td><td>字符 x 的高度</td></tr>
+<tr><td>ch</td><td>数字 0 的宽度</td></tr>
+<tr><td>rem</td><td>根元素的字体大小</td></tr>
+<tr><td>lh</td><td>元素的 line-height</td></tr>
+<tr><td>vw</td><td>视窗宽度的1%</td></tr>
+<tr><td>vh</td><td>视窗高度的1%</td></tr>
+<tr><td>vmin</td><td>视窗较小尺寸的1%</td></tr>
+<tr><td>vmax</td><td>视图大尺寸的1%</td></tr>
+</tbody></table>
+</div>
+<h3 id="百分比"><a class="header" href="#百分比">百分比</a></h3>
+<p>如果将元素的字体大小设置为百分比，那么它将是元素父元素字体大小的百分比。如果使用百分比作为宽度值，那么它将是父值宽度的百分比。</p>
+<h3 id="calc"><a class="header" href="#calc">calc()</a></h3>
+<p>calc() 此 CSS 函数允许在声明 CSS 属性值时执行一些计算。</p>
+<pre><code class="language-css">div {
+    width: calc(100% - 80px);
+}
+</code></pre>
+<h2 id="颜色"><a class="header" href="#颜色">颜色</a></h2>
+<ul>
+<li>颜色关键字</li>
+<li>transparent 关键字</li>
+<li>currentColor 关键字</li>
+<li>RGB RGBA 颜色</li>
+<li>HSL HSLA 颜色</li>
+</ul>
+<h3 id="颜色关键字"><a class="header" href="#颜色关键字">颜色关键字</a></h3>
+<p>用英文单词表示的颜色，例如 white black。</p>
+<h3 id="transparent-关键字"><a class="header" href="#transparent-关键字">transparent 关键字</a></h3>
+<p>表示一个完全透明的颜色，即该颜色看上去将是背景色。从技术上说，它是带有 alpha 通道为最小值的黑色，是 rgba(0,0,0,0) 的简写。</p>
+<p>补充：css 画三角形</p>
+<pre><code class="language-css">    div {
+        border-top-color: #ffc107;
+        border-right-color: #00bcd4;
+        border-bottom-color: #e26b6b;
+        border-left-color: #cc7cda;
+        border-width: 50px;
+        border-style: solid;
+        width: 0px;
+    }
+</code></pre>
+<p>这样画出来如下：</p>
+<p><img src="../img/square.png" alt="正方形" /></p>
+<pre><code class="language-css">/*等腰三角形*/
+div {
+    border-left: 30px solid #cc7cda;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    width: 0px;
+}
+</code></pre>
+<p><img src="../img/triangle.png" alt="等腰三角形" /></p>
+<pre><code class="language-css">div {
+    border-left: 30px solid #cc7cda;
+    border-bottom: 30px solid transparent;
+    width: 0px;
+}
+</code></pre>
+<p><img src="../img/triangle2.png" alt="直角三角形" /></p>
+<h3 id="currentcolor-关键字"><a class="header" href="#currentcolor-关键字">currentColor 关键字</a></h3>
+<p>取当前元素继承父级元素的文本颜色值或声明的文本颜色值，即 computed 后的 color 值。</p>
+<pre><code class="language-css">/*该元素的边框颜色会是 red*/
+.btn {
+    color: red;
+    border: 1px solid currentColor;
+}
+</code></pre>
+<h3 id="rgb-rgba-颜色"><a class="header" href="#rgb-rgba-颜色">RGB RGBA 颜色</a></h3>
+<p>R(red)-G(green)-B(blue)-A(alpha) 组成的色彩空间。在 CSS 中，它有两种表示形式：</p>
+<ul>
+<li>十六进制符号；</li>
+</ul>
+<p>RGB 中的每种颜色的值范围是 00~ff，值越大表示颜色越深。所以一个颜色正常是 6 个十六进制字符加上 # 组成，比如红色就是 #ff0000。</p>
+<p>2 个十六进制表示一个颜色，如果这 2 个字符相同，还可以缩减成只写 1 个，比如，红色 #f00</p>
+<ul>
+<li>函数符；</li>
+</ul>
+<p>当 RGB 用函数表示的时候，每个值的范围是 0~255 或者 0%~100%，所以红色是 rgb(255, 0, 0)， 或者 rgb(100%, 0, 0)。</p>
+<p>如果需要使用函数来表示带不透明度的颜色值，值的范围是 0~1 及其之间的小数或者 0%~100%，比如带 67% 不透明度的红色是 rgba(255, 0, 0, 0.67) 或者 rgba(100%, 0%, 0%, 67%)</p>
+<h3 id="hsl-hsla-颜色"><a class="header" href="#hsl-hsla-颜色">HSL HSLA 颜色</a></h3>
+<p>由色相(hue)-饱和度(saturation)-亮度(lightness)-不透明度组成的颜色体系。</p>
+<ul>
+<li>色相（H）是色彩的基本属性，值范围是 0 ~ 360 或者 0deg ~ 360deg， 0 (或 360) 为红色, 120 为绿色, 240 为蓝色；</li>
+<li>饱和度（S）是指色彩的纯度，越高色彩越纯，低则逐渐变灰，取 0~100% 的数值；0% 为灰色， 100% 全色；</li>
+<li>亮度（L），取 0~100%，0% 为暗，100% 为白；</li>
+<li>不透明度（A），取 0~100%，或者 0~1 及之间的小数；</li>
+</ul>
+<p>设置不透明度为 67% 的红色的 color 的写法：</p>
+<pre><code class="language-css">button {
+    color: #ff0000aa;
+    color: #f00a;
+    color: rgba(255, 0, 0, 0.67);
+    color: rgb(100% 0% 0% / 67%);
+    color: hsla(0, 100%, 50%, 67%);
+    color: hsl(0deg 100% 50% / 67%);
+}
+
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../html_css/pseudo.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../html_css/block_inline.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../html_css/pseudo.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../html_css/block_inline.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>csp - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="csp"><a class="header" href="#csp">csp</a></h1>
+<h2 id="概念"><a class="header" href="#概念">概念</a></h2>
+<p>csp 全称 Content-Security-Policy（内容安全策略）用来防止 xss 跨域脚本攻击，它允许站点管理者控制浏览器能够为指定的页面加载哪些资源，它的指令的值主要设置的是从指定域名加载资源。它有两种用法：</p>
+<ul>
+<li>在 html 的 meta 标签中设置</li>
+</ul>
+<pre><code class="language-js">&lt;meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https://*; child-src 'none';"&gt;
+</code></pre>
+<ul>
+<li>服务器返回 Content-Security-Policy 响应头</li>
+</ul>
+<p>一般情况都使用服务器返回响应头的形式来设置。</p>
+<h2 id="指令"><a class="header" href="#指令">指令</a></h2>
+<p>Content-Security-Policy 有多个指令。下面列举一些常见的指令：</p>
+<ul>
+<li>font-src 设置允许通过 @font-face 加载的字体的源</li>
+<li>frame-src 设置允许通过类似 iframe 标签加载的内嵌内容的源</li>
+<li>img-src 加载图片的源</li>
+<li>script-src 加载 js 文件的源</li>
+<li>media-src 加载媒体文件（audio video 标签）的源</li>
+<li>style-src 加载 css 文件的源</li>
+<li>default-src 为其他指令设置默认的值，如果有指令没有设置则取 default-src 的值</li>
+</ul>
+<p>指令的语法如下：</p>
+<pre><code class="language-js">Content-Security-Policy: style-src &lt;source&gt;;
+Content-Security-Policy: style-src &lt;source&gt; &lt;source&gt;;
+</code></pre>
+<p>不同的指令后面的值都是相同的，都有如下几种值：</p>
+<ul>
+<li><code>&lt;host-source&gt;</code></li>
+<li><code>&lt;scheme-source&gt;</code></li>
+<li>'self'</li>
+<li>'unsafe-eval'</li>
+<li>'unsafe-hashes'</li>
+<li>'unsafe-inline'</li>
+<li>'none'</li>
+<li><code>'nonce-&lt;base64-value&gt;'</code></li>
+<li><code>'&lt;hash-algorithm&gt;-&lt;base64-value&gt;'</code></li>
+<li>'strict-dynamic'</li>
+<li>'report-sample'</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th>指令的值</th><th>描述</th></tr></thead><tbody>
+<tr><td><code>&lt;host-source&gt;</code></td><td>域名。可以加上可选的协议和端口号。域名前面可以使用 * 表示未知的域名部分，最后面也可以使用 * 表示任意合法的端口号。</td></tr>
+<tr><td><code>&lt;scheme-source&gt;</code></td><td>协议。例如 http: 或者 https: 。必须带上后面的冒号。也可以指定其他数据协议，例如 data:   mediastream:  blob:   filesystem:</td></tr>
+<tr><td>'self'</td><td>只能加载和当前页面同域名的地址。协议和主机和端口号必须一样。使用这个值的时候必须带上单引号</td></tr>
+<tr><td>'unsafe-eval'</td><td>允许使用 eval() 或者类似的方法从字符串创建代码。使用这个值的时候必须带上单引号</td></tr>
+<tr><td>'unsafe-hashes'</td><td>允许开启指定的行内事件处理器。</td></tr>
+<tr><td>'unsafe-inline'</td><td>允许使用行内的资源。例如 script 元素   javascript:;  行内事件处理器  行内 style 元素。使用这个值的时候必须带上单引号</td></tr>
+<tr><td>'none'</td><td>不匹配任何 url</td></tr>
+<tr><td><code>'nonce-&lt;base64-value&gt;'</code></td><td>使用加密随机数（使用一次的数字）的特定内联脚本组成的允许列表。服务器每次传输策略时都必须生成唯一的随机数值。提供不可猜测的随机数至关重要，否则绕过资源的策略是微不足道的。指定 nonce 会使现代浏览器忽略 'unsafe-inline'，但它仍然可以为没有 nonce 支持的旧浏览器设置。</td></tr>
+<tr><td><code>'&lt;hash-algorithm&gt;-&lt;base64-value&gt;'</code></td><td>js 脚本或 css 样式的 sha256、sha384 或 sha512 哈希值。此源的使用由用破折号分隔的两部分组成：用于创建散列的加密算法和 js 脚本或 css 样式的 base64 编码散列。生成哈希时，不要包含 script 或 style 标签，并注意大小写和空格很重要，包括前导或尾随空格。在 CSP 2.0 中，这仅适用于内联脚本。CSP 3.0 允许在script-src外部脚本的情况下使用它。</td></tr>
+<tr><td>'strict-dynamic'</td><td>strict-dynamic 允许将信任关系传递给动态生成的脚本，也就是说，strict-dynamic 允许js 动态添加的脚本执行，而忽略其他任何允许列表或源表达式。</td></tr>
+<tr><td>'report-sample'</td><td>要求在违规报告中包含违规代码的样本。</td></tr>
+</tbody></table>
+</div>
+<h2 id="使用"><a class="header" href="#使用">使用</a></h2>
+<ol>
+<li>先在项目中使用 Content-Security-Policy-Report-Only 而不是直接使用 Content-Security-Policy。因为 Content-Security-Policy-Report-Only 会将违反政策的情况发送 post 请求到指定 uri 上报。当出现违反策略的情况只会上报，不会阻塞资源加载。</li>
+</ol>
+<pre><code class="language-js">Content-Security-Policy: img-src www.qq.com; report-uri https://a.b.c/report
+</code></pre>
+<p>当设置这个 header 的页面加载 www.qq.com 之外的图片的时候，将会阻塞加载，并在控制台报错，再上报到 https://a.b.c/report。</p>
+<p>因此页面改造第一步是先通过仅仅上报的头来观察一段时间，看看哪些资源哪些情况是不符合 CSP 的，漏掉的加上，不合理的干掉。</p>
+<ol start="2">
+<li>观察一段时间后，自己的上报站点如果有 CSP 报错，那么去解决掉，然后继续观察一段时间重复同样的步骤，直到没有CSP 错误。当上报站点再也没有 CSP 错误或者错误比较少能接受范围内，将 Content-Security-Policy-Report-Only 换成 Content-Security-Policy 再次上线。</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../browser/security.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../browser/csrf.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../browser/security.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../browser/csrf.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

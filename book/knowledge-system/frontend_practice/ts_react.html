@@ -1,0 +1,444 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>typescript 和 react 最佳实践 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="typescript-react-最佳实践"><a class="header" href="#typescript-react-最佳实践">typescript react 最佳实践</a></h1>
+<h2 id="tsconfigjson"><a class="header" href="#tsconfigjson">tsconfig.json</a></h2>
+<pre><code class="language-ts">{
+  "compilerOptions": {
+    "target": "es5", // 指定ECMAScript目标版本
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ], // 要包含在编译中的库文件列表
+    "allowJs": true, // 允许编译JavaScript文件
+    "skipLibCheck": true, // 跳过所有声明文件的类型检查
+    "esModuleInterop": true, // 禁用命名空间导入(import * as fs from "fs") ，并启用CJS/AMD/UMD风格导入(import fs from "fs")
+    "allowSyntheticDefaultImports": true, // 允许从没有默认导出的模块中进行默认导入
+    "strict": true, // 启用所有严格类型检查选项
+    "forceConsistentCasingInFileNames": true, // 禁止对同一文件使用大小写不一致的引用。
+    "module": "esnext", //  指定模块代码生成
+    "moduleResolution": "node", // 使用Node.js风格解析模块
+    "isolatedModules": true, // 无条件地发出未解析文件的导入
+    "resolveJsonModule": true, // 包括以.json扩展名导入的模块
+    "noEmit": true, // 不输出结果(意思是不编译代码，只执行类型检查)
+    "jsx": "react", // Support JSX in .tsx files
+    "sourceMap": true, // 生成相应的.map文件
+    "declaration": true, // 生成相应的.d.ts文件
+    "noUnusedLocals": true, // 报告未使用的局部变量的错误
+    "noUnusedParameters": true, // 报告未使用参数的错误
+    "incremental": true, // 通过从先前的编译中读取/写入磁盘上的文件来启用增量编译
+    "noFallthroughCasesInSwitch": true // 报告switch语句中不可命中情况的错误
+  },
+  "include": [
+    "src/**/*" // *** 需要做类型检查的文件 ***
+  ],
+  "exclude": ["node_modules", "build"] // *** 避免检查类型的文件 ***
+}
+</code></pre>
+<h2 id="引入-react"><a class="header" href="#引入-react">引入 React</a></h2>
+<p>以下这种方式最可靠，因为未来可能会放弃默认导出的方式</p>
+<pre><code class="language-ts">import * as React from 'react'
+
+import * as ReactDOM from 'react-dom'
+</code></pre>
+<p>另外一种就是如下</p>
+<pre><code class="language-ts">import React from 'react'
+
+import ReactDOM from 'react-dom'
+</code></pre>
+<p>需要 tsconfig.json 添加额外的配置："allowSyntheticDefaultImports": true</p>
+<h2 id="props"><a class="header" href="#props">props</a></h2>
+<p>常用 props 类型</p>
+<pre><code class="language-ts">type AppProps = {
+  message: string;
+  count: number;
+  disabled: boolean;
+  /** array of a type! */
+  names: string[];
+  /** string literals to specify exact string values, with a union type to join them together */
+  status: "waiting" | "success";
+  /** an object with any number of properties (PREFERRED) */
+  obj3: {
+    id: string;
+    title: string;
+  };
+  /** array of objects! (common) */
+  objArr: {
+    id: string;
+    title: string;
+  }[];
+  /** a dict object with any number of properties of the same type */
+  dict1: {
+    [key: string]: MyTypeHere;
+  };
+  dict2: Record&lt;string, MyTypeHere&gt;; // equivalent to dict1
+  /** function that doesn't take or return anything (VERY COMMON) */
+  onClick: () =&gt; void;
+  /** function with named prop (VERY COMMON) */
+  onChange: (id: number) =&gt; void;
+  /** function type syntax that takes an event (VERY COMMON) */
+  onChange: (event: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void;
+  /** alternative function type syntax that takes an event (VERY COMMON) */
+  onClick(event: React.MouseEvent&lt;HTMLButtonElement&gt;): void;
+  /** an optional prop (VERY COMMON!) */
+  optional?: OptionalType;
+};
+
+export declare interface AppProps {
+  children1: JSX.Element; // bad, doesnt account for arrays
+  children2: JSX.Element | JSX.Element[]; // meh, doesn't accept strings
+  children3: React.ReactChildren; // despite the name, not at all an appropriate type; it is a utility
+  children4: React.ReactChild[]; // better, accepts array children
+  children: React.ReactNode; // best, accepts everything (see edge case below)
+  functionChildren: (name: string) =&gt; React.ReactNode; // recommended function as a child render prop type
+  style?: React.CSSProperties; // to pass through style props
+  onChange?: React.FormEventHandler&lt;HTMLInputElement&gt;; // form events! the generic parameter is the type of event.target
+  //  more info: https://react-typescript-cheatsheet.netlify.app/docs/advanced/patterns_by_usecase/#wrappingmirroring
+  props: Props &amp; React.ComponentPropsWithoutRef&lt;"button"&gt;; // to impersonate all the props of a button element and explicitly not forwarding its ref
+  props2: Props &amp; React.ComponentPropsWithRef&lt;MyButtonWithForwardRef&gt;; // to impersonate all the props of MyButtonForwardedRef and explicitly forwarding its ref
+}
+</code></pre>
+<h2 id="函数组件"><a class="header" href="#函数组件">函数组件</a></h2>
+<p>经常可以看到代码中这样定义函数组件：</p>
+<pre><code class="language-ts">const App: React.FunctionComponent&lt;{ message: string }&gt; = ({ message }) =&gt; (
+  &lt;div&gt;{message}&lt;/div&gt;
+);
+</code></pre>
+<p>而当前已经<a href="https://github.com/facebook/create-react-app/pull/8177">不建议</a>使用 React.FunctionComponent 或简写 React.FC。它与普通的函数的写法有以下区别：</p>
+<ul>
+<li>React.FC 会显示定义返回类型，而普通函数是隐式定义的</li>
+<li>React.FC 会对静态属性进行类型检查和自动补全（例如 <code>displayName</code>, <code>propTypes</code>, <code>defaultProps</code>），而普通函数不会。React.FC 使用 <code>defaultProps</code> 存在<a href="https://github.com/typescript-cheatsheets/react-typescript-cheatsheet/issues/87">已知问题</a></li>
+<li>React.FC 提供了 <code>children</code> 的隐式定义，这存在一些<a href="https://github.com/DefinitelyTyped/DefinitelyTyped/issues/33006">已知问题</a></li>
+<li>未来 React.FC 可能会自动将 props 标记成 readonly</li>
+</ul>
+<p>不建议使用 React.FC 的原因：</p>
+<ul>
+<li>提供了 <code>children</code> 的隐式定义。这意味这所有组件都将接受 <code>children</code>，即使它们本不应该接收 <code>children</code></li>
+<li>不支持泛型。
+<ul>
+<li>例如，可以这样定义一个泛型组件：</li>
+</ul>
+<pre><code class="language-ts">    type GenericComponentProps&lt;T&gt; = {
+        prop: T
+        callback: (t: T) =&gt; void
+    }
+    const GenericComponent = &lt;T&gt;(props: GenericComponentProps&lt;T&gt;) =&gt; {/*...*/}
+</code></pre>
+但是使用 React.FC 后就不行了，无法保证 React.FC 返回的泛型 T
+<pre><code class="language-ts">    const GenericComponent: React.FC&lt;/* ??? */&gt; = &lt;T&gt;(props: GenericComponentProps&lt;T&gt;) =&gt; {/*...*/}
+</code></pre>
+</li>
+<li>使命名空间组件的写法变得别扭</li>
+</ul>
+<pre><code class="language-ts">// use React.FC
+const  Select: React.FC&lt;SelectProps&gt; &amp; { Item: React.FC&lt;ItemProps&gt; } = (props) =&gt; {/* ... */ }
+Select.Item = (props) =&gt; { /*...*/ }
+
+// don't use
+const Select = (props: SelectProps) =&gt; {/* ... */}
+Select.Item = (props: ItemProps) =&gt; { /*...*/ }
+
+</code></pre>
+<ul>
+<li>defaultProps 存在问题</li>
+</ul>
+<pre><code class="language-ts">type  ComponentProps = { name: string; }
+
+const  Component = ({ name }: ComponentProps) =&gt; (&lt;div&gt;
+	{name.toUpperCase()} /* Safe since name is required */
+&lt;/div&gt;);
+Component.defaultProps = { name: "John" };
+
+const  Example = () =&gt; (&lt;Component /&gt;) /* Safe to omit since name has a default value */
+</code></pre>
+<p>如果这时候 name 是可选的，使用 <code>React.FC&lt;{name?: string}&gt;</code> 就会使 name.toUpperCase() 报错</p>
+<h2 id="hook"><a class="header" href="#hook">hook</a></h2>
+<h3 id="usestate"><a class="header" href="#usestate">useState</a></h3>
+<p>默认情况下，会自动推导 state 的类型</p>
+<pre><code class="language-ts">const [val, toggle] = React.useState(false);
+// 推导为 boolean
+</code></pre>
+<p>如果想要显式设置类型，则可以使用联合类型</p>
+<pre><code class="language-ts">const [user, setUser] = React.useState&lt;IUser | null&gt;(null);
+</code></pre>
+<p>如果 state 声明后会立马赋值，也可以使用断言</p>
+<pre><code class="language-ts">const [user, setUser] = React.useState&lt;IUser&gt;({} as IUser);
+</code></pre>
+<p>这样会暂时骗过编译器 {} 是 IUser 类型，后续你需要给 state 设置一个值，否则后续会产生错误</p>
+<h3 id="useeffect"><a class="header" href="#useeffect">useEffect</a></h3>
+<p>useEffect 需要注意回调函数的返回值只能是函数或者 undefined。当使用箭头函数的时候可能会忽视这个问题</p>
+<pre><code class="language-ts">function DelayedEffect(props: { timerMs: number }) {
+  const { timerMs } = props;
+
+  useEffect(
+    () =&gt;
+      setTimeout(() =&gt; {
+        /* do stuff */
+      }, timerMs),
+    [timerMs]
+  );
+  // bad example! setTimeout implicitly returns a number
+  // because the arrow function body isn't wrapped in curly braces
+  return null;
+}
+</code></pre>
+<h3 id="useref"><a class="header" href="#useref">useRef</a></h3>
+<p>useRef 返回一个引用，它是只读的或者可变的。</p>
+<ul>
+<li>DOM 元素引用</li>
+</ul>
+<p>传入元素类型作为其类型参数，null 作为初始值。这时候 userRef 返回的对象将是一个 readonly 的属性 current。</p>
+<pre><code class="language-ts">function Foo() {
+  // - If possible, prefer as specific as possible. For example, HTMLDivElement
+  //   is better than HTMLElement and way better than Element.
+  // - Technical-wise, this returns RefObject&lt;HTMLDivElement&gt;
+  const divRef = useRef&lt;HTMLDivElement&gt;(null);
+
+  useEffect(() =&gt; {
+    // Note that ref.current may be null. This is expected, because you may
+    // conditionally render the ref-ed element, or you may forgot to assign it
+    if (!divRef.current) throw Error("divRef is not assigned");
+
+    // Now divRef.current is sure to be HTMLDivElement
+    doSomethingWith(divRef.current);
+  });
+
+  // Give the ref to an element so React can manage it for you
+  return &lt;div ref={divRef}&gt;etc&lt;/div&gt;;
+}
+</code></pre>
+<ul>
+<li>可变值引用</li>
+</ul>
+<p>提供你自定义的类型，初始值保证和这个类型对应即可</p>
+<pre><code class="language-ts">function Foo() {
+  // Technical-wise, this returns MutableRefObject&lt;number | null&gt;
+  const intervalRef = useRef&lt;number | null&gt;(null);
+
+  // You manage the ref yourself (that's why it's called MutableRefObject!)
+  useEffect(() =&gt; {
+    intervalRef.current = setInterval(...);
+    return () =&gt; clearInterval(intervalRef.current);
+  }, []);
+
+  // The ref is not passed to any element's "ref" prop
+  return &lt;button onClick={/* clearInterval the ref */}&gt;Cancel timer&lt;/button&gt;;
+}
+</code></pre>
+<h3 id="usememo-usecallback"><a class="header" href="#usememo-usecallback">useMemo useCallback</a></h3>
+<p>下面是 useMemo useCallback 的<a href="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/89bbde51aa72e04375685a8a7b3e0e319700dc94/types/react/v16/index.d.ts#L1104">官方定义</a></p>
+<pre><code class="language-ts">    function useCallback&lt;T extends (...args: any[]) =&gt; any&gt;(callback: T, deps: DependencyList): T;
+
+    function useMemo&lt;T&gt;(factory: () =&gt; T, deps: DependencyList | undefined): T;
+</code></pre>
+<p>因此，useCallBack 使用时需要使用泛型参数指定 callback 的参数的类型，否则就是 any；useMemo 使用的时候可以通过泛型参数指定返回值的类型</p>
+<pre><code class="language-ts">const handleChange = React.useCallback&lt;React.ChangeEventHandler&lt;HTMLInputElement&gt;&gt;(evt =&gt; {console.log(evt.target.value)}, []);
+
+const result = React.useMemo&lt;number&gt;(() =&gt; 2, []);
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../frontend_practice/ts_basic.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../frontend_practice/concurrency.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../frontend_practice/ts_basic.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../frontend_practice/concurrency.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

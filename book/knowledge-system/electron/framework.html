@@ -1,0 +1,453 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>开发框架搭建 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="开发框架搭建"><a class="header" href="#开发框架搭建">开发框架搭建</a></h1>
+<ul>
+<li>
+<p>现在来搭建一个本地开发框架，要分两种情况</p>
+<ul>
+<li>第一种，主进程使用 esm 模块和 typescript，package.json 设置 <code>"type": "module"</code>，运行或者打包的时候还是将主进程代码编译成 esm 模块</li>
+<li>第二章，主进程依然使用 esm 模块，但是 package.json 设置 <code>"type": "commonjs"</code>，运行打包时编译成 commonjs 模块</li>
+</ul>
+</li>
+<li>
+<p>这样分开的原因：</p>
+<ul>
+<li><a href="https://github.com/electron/electron/releases/tag/v28.0.0">electron v28.0.0</a> 版本开始才全面支持 esm 模块，也就是之前的版本主进程代码都使用 commonjs 模块，而最后一个支持 windows7 系统的版本是 <code>electron v22</code>，如果还需要开发支持 win7 的应用，那就只能用 commonjs 模块来写主进程代码了。</li>
+</ul>
+<pre><code>  Electron will be ending support for Windows 7/8/8.1 after version 22.x.y following Chromium's plan to end support. Older versions of Electron will continue to work, but no further updates will be made for these operating systems.
+</code></pre>
+<ul>
+<li>虽然官方说 v22 是最后一个支持 win7 的版本，但是看到有人测试发帖说 v22 在 win7 运行会报错，所以兼容 win7 需要使用 v21.4.4 版本，v21 的最后一个版本</li>
+</ul>
+<p><img src="./img/electron_dev.png" alt="electron_dev" /></p>
+</li>
+</ul>
+<h2 id="esm-模块"><a class="header" href="#esm-模块">esm 模块</a></h2>
+<ul>
+<li>设置 ts 配置，这个设置作为编译主进程代码时的配置，而 preload.js 建议还使用 commonjs 所有创建第二个 ts 配置用于编译 preload.js</li>
+</ul>
+<pre><code class="language-js">// tsconfig.json 或取名 tsconfig.es.json 编译主进程代码
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "outDir": "dist",
+    "rootDir": "src/main",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/**/*.d.ts",
+      "./src/main/types"
+    ],
+    "types": ["node", "electron"],
+    "skipLibCheck": true,
+    "allowUmdGlobalAccess": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+  },
+  "include": ["./src/main/**/*", "./src/main/types/global.d.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/main/renderer/*",
+    "src/main/preload.ts"
+  ]
+}
+
+// tsconfig.cjs.json 编译 preload.js
+
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./dist",
+    "module": "CommonJS",
+    "target": "ES6",
+    "moduleResolution": "Node",
+    "rootDir": "./src/main",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["./src/main/preload.ts"],
+  "exclude": ["node_modules", "dist"]
+}
+
+</code></pre>
+<ul>
+<li>然后再处理渲染进程页面的问题，demo 中简单使用原生 html，只需要将页面相关文件复制到最终 dist 目录即可完成编译，最后我们的 npm scripts</li>
+</ul>
+<pre><code class="language-js">{
+    "scripts": {
+    "dev:ts": "tsc -p tsconfig.json", // 编译主进程 js
+    "dev:cjs": "tsc -p tsconfig.cjs.json", // 编译 preload.js
+    "dev:copy": "copyfiles -u 2 ./src/renderer/* ./dist", // 复制渲染进程页面到 dist
+    "dev:watch": "nodemon --watch ./src --ext ts,js,html,css --exec \"npm run dev\"", // 监测代码变化重新编译启动
+    "dev": "npm run clean &amp;&amp; npm run dev:cjs &amp;&amp; npm run dev:ts &amp;&amp;  npm run dev:copy &amp;&amp; electron .", // 启动本地dev环境
+    "clean": "rimraf ./dist",
+  },
+}
+
+</code></pre>
+<ul>
+<li>这样编译出来的所有文件都在 dist 目录下，所以主进程寻找 <code>preload.js</code> 和 <code>html</code> 文件的时候就很方便，都基于当前模块的路径就能找到</li>
+</ul>
+<pre><code class="language-js">const win = new BrowserWindow({
+  width: 800,
+  height: 600,
+  webPreferences: {
+    preload: path.join(__dirname, 'preload.js'),
+  },
+});
+global.win = win;
+
+const html = path.join(__dirname, 'index.html');
+</code></pre>
+<ul>
+<li>如果渲染进程页面使用了其他前端框架，例如 vue react svelte 等，dev 环境就不需要复制 html 相关文件到 dist 目录了，只需要主进程窗口加载页面时区分 dev 和 prod 就行了</li>
+</ul>
+<pre><code class="language-js">const win = new BrowserWindow({
+  show: false,
+  frame: false,
+  webPreferences: {
+    webSecurity: false,
+    nodeIntegration: true,
+    preload: path.join(__dirname, 'preload.js'),
+  },
+});
+
+if (app.isPackaged) {
+  // 判断打包后的环境，加载编译目录的文件，app.getAppPath() 获取当前应用程序的目录，获取到的目录就是 `你的安装目录/resources/app.asar`
+  const filePath = path.join(app.getAppPath(), 'maindist/index.html');
+  win
+    .loadFile(filePath)
+    .then(() =&gt; {
+      log.info('win.lodaFile successful');
+    })
+    .catch(err =&gt; {
+      logErrorInfo('win.lodaFile failed', err);
+    });
+} else {
+  // dev开发环境直接加载前端框架(vue react svelte)的本地 dev 服务器提供的页面
+  win.loadURL('http://localhost:5173/login');
+}
+</code></pre>
+<h2 id="commonjs-模块兼容-win7"><a class="header" href="#commonjs-模块兼容-win7">commonjs 模块兼容 win7</a></h2>
+<ul>
+<li>从主分支新建一个 <code>feature/electron-v21.4.4</code> 分支，以支持 win7 系统打包，electron 版本切换到 21.4.4 版本</li>
+</ul>
+<pre><code class="language-bash">npm install electron@21.4.4 --save-dev
+</code></pre>
+<ul>
+<li><code>package.json</code> 中 type 设置为 <code>commonjs</code></li>
+</ul>
+<pre><code class="language-json">{
+  "type": "commonjs"
+}
+</code></pre>
+<ul>
+<li>ts 配置文件修改 module 为 commonjs</li>
+</ul>
+<pre><code class="language-json">{
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./maindist",
+    "module": "CommonJS",
+    "target": "esnext",
+    "moduleResolution": "Node",
+    "rootDir": "./main",
+    "removeComments": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "include": ["./main/**/*"],
+  "exclude": ["node_modules", "dist", "./main/preload.ts"]
+}
+</code></pre>
+<ul>
+<li>vite 配置文件中配置需要修改成 cjs <code>build.lib.formats</code> <code>build.rollupOptions.output.format</code></li>
+</ul>
+<pre><code class="language-js">import { defineConfig } from 'vite';
+import path from 'path';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+
+const nodeBuiltins = [
+  'node:http',
+  'node:https',
+  'node:fs',
+  'node:fs/promises',
+  'node:path',
+  'node:url',
+  'node:child_process',
+  'module',
+];
+
+export default defineConfig({
+  root: path.resolve(__dirname, './main'),
+  build: {
+    outDir: path.resolve(__dirname, 'maindist'),
+    emptyOutDir: false,
+    target: 'node22',
+    lib: {
+      entry: ['index.ts'],
+      formats: ['cjs'],
+      fileName: (format, entryName) =&gt; {
+        return `${entryName}.js`;
+      },
+    },
+    rollupOptions: {
+      external: [
+        ...nodeBuiltins,
+        'electron',
+        'electron-log',
+        'dotenv',
+        'electron-updater',
+        'iconv-lite',
+        'better-sqlite3',
+      ],
+      plugins: [
+        nodeResolve({
+          preferBuiltins: true,
+          browser: false,
+        }),
+        commonjs({
+          include: /node_modules/,
+          esmExternals: false,
+        }),
+      ],
+      output: {
+        entryFileNames: 'index.js',
+        format: 'cjs',
+        externalLiveBindings: true,
+        globals: {
+          electron: 'electron',
+        },
+        sourcemap: true,
+        sourcemapExcludeSources: false,
+      },
+    },
+  },
+});
+</code></pre>
+<h2 id="参考链接"><a class="header" href="#参考链接">参考链接</a></h2>
+<ul>
+<li><a href="https://www.electronjs.org/docs/latest/tutorial/esm">ES Modules (ESM) in Electron</a></li>
+<li><a href="https://github.com/electron/electron/pull/37535">feat: I guess it's esm #37535</a></li>
+<li><a href="https://github.com/electron/electron/releases/tag/v28.0.0">electron v28.0.0</a></li>
+<li><a href="https://github.com/electron/electron/releases/tag/v22.0.0">electron v22.0.0</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../electron/asar_update.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../electron/build.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../electron/asar_update.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../electron/build.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

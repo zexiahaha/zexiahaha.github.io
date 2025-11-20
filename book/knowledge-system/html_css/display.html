@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>display - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="display"><a class="header" href="#display">display</a></h1>
+<h2 id="概念"><a class="header" href="#概念">概念</a></h2>
+<p>display 指定了盒子的两个类型：</p>
+<ul>
+<li>外部显示类型(outer display type) 定义了元素本身如何参与流式布局的处理</li>
+<li>内部显示类型(inner display type) 定义了元素内子元素的布局方式。</li>
+</ul>
+<pre><code class="language-js">display: [ &lt;display-outside&gt; || &lt;display-inside&gt; ] | &lt;display-listitem&gt; | &lt;display-internal&gt; | &lt;display-box&gt; | &lt;display-legacy&gt;
+
+// 下面是不同参数的取值
+
+&lt;display-outside&gt;  = block | inline | run-in
+&lt;display-inside&gt;   = flow | flow-root | table | flex | grid | ruby
+&lt;display-listitem&gt; = &lt;display-outside&gt;? &amp;&amp; [ flow | flow-root ]? &amp;&amp; list-item
+&lt;display-internal&gt; = table-row-group | table-header-group |
+                     table-footer-group | table-row | table-cell |
+                     table-column-group | table-column | table-caption |
+                     ruby-base | ruby-text | ruby-base-container |
+                     ruby-text-container
+&lt;display-box&gt;      = contents | none
+&lt;display-legacy&gt;   = inline-block | inline-table | inline-flex | inline-grid
+</code></pre>
+<p>以下是不同值的说明表</p>
+<div class="table-wrapper"><table><thead><tr><th>简短写法</th><th>完整写法</th><th>生成的盒子</th></tr></thead><tbody>
+<tr><td>none</td><td></td><td>从盒子树（box tree）中删除子树</td></tr>
+<tr><td>contents</td><td></td><td>元素被盒子树（box tree）中内容取代</td></tr>
+<tr><td>block</td><td>block flow</td><td>块级块容器，也叫块盒子</td></tr>
+<tr><td>flow-root</td><td>block flow-root</td><td>块级块容器创建一个新的 BFC</td></tr>
+<tr><td>inline</td><td>inline flow</td><td>行内盒子</td></tr>
+<tr><td>inline-block</td><td>inline flow-root</td><td>行内级别块容器，也叫行内块</td></tr>
+<tr><td>list-item</td><td>block flow list-item</td><td>带有附加标记盒的块盒</td></tr>
+<tr><td>inline list-item</td><td>inline flow list-item</td><td>带有附加标记盒的行内盒</td></tr>
+<tr><td>flex</td><td>block flex</td><td>块级别 flex 容器</td></tr>
+<tr><td>inline-flex</td><td>inline flex</td><td>行内级别 flex 容器</td></tr>
+<tr><td>grid</td><td>block grid</td><td>块级别 grid 容器</td></tr>
+<tr><td>inline-grid</td><td>inline grid</td><td>行内级别 grid 容器</td></tr>
+<tr><td>table</td><td>block table</td><td>块级表格包装盒包含了表格网格盒</td></tr>
+<tr><td>inline-table</td><td>inline table</td><td>行内级表格包装盒包含了表格网格盒</td></tr>
+</tbody></table>
+</div>
+<h2 id="display-outside-的取值"><a class="header" href="#display-outside-的取值">display-outside 的取值</a></h2>
+<ul>
+<li>block 当在流布局中，生成一个块级盒子</li>
+<li>inline 当在流布局中，生成一个内联级盒子</li>
+</ul>
+<h2 id="display-inside-的取值"><a class="header" href="#display-inside-的取值">display-inside 的取值</a></h2>
+<ul>
+<li>flow
+<ul>
+<li>元素内容使用流布局。</li>
+<li>如果其 outer display 类型是 inline 或 run-in，且其正在参与块或内联格式化上下文，则它会生成 inline box；否则会生成一个块容器盒。</li>
+<li>根据其他属性的值（比如 position，float 或 overflow）以及它本身是否参与块或内联格式化上下文，它要么为其内容建立新的块格式化上下文，要么将其内容集成到其父格式化上下文</li>
+</ul>
+</li>
+<li>flow-root
+<ul>
+<li>该元素生成一个块容器盒，并使用流布局布置其内容。它总是为其内容建立一个新的块格式化上下文</li>
+</ul>
+</li>
+<li>table
+<ul>
+<li>该元素生成一个主要的表格包装盒，它建立了一个块格式化上下文，它包含一个额外生成的表格网格盒，它建立了一个表格格式化上下文</li>
+</ul>
+</li>
+<li>flex
+<ul>
+<li>该元素生成一个主 flex 容器盒并建立一个 flex 格式化上下文。</li>
+</ul>
+</li>
+<li>grid
+<ul>
+<li>该元素生成一个主 grid 容器盒，并建立一个 grid 格式化上下文。</li>
+</ul>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../html_css/position.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../html_css/flex.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../html_css/position.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../html_css/flex.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

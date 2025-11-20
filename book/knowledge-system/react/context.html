@@ -1,0 +1,460 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>context - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="context"><a class="header" href="#context">context</a></h1>
+<h2 id="context-的使用场景"><a class="header" href="#context-的使用场景">context 的使用场景</a></h2>
+<ul>
+<li>当所有组件有一些共享的或者全局的数据，那么使用 props 传递这些数据给深层次的组件将变得繁琐，这时候应该使用 context。</li>
+</ul>
+<pre><code class="language-js">class App extends React.Component {
+  render() {
+    return &lt;Toolbar theme="dark" /&gt;;
+  }
+}
+
+function Toolbar(props) {
+  // Toolbar 组件接受一个额外的“theme”属性，然后传递给 ThemedButton 组件。
+  // 如果应用中每一个单独的按钮都需要知道 theme 的值，这会是件很麻烦的事，
+  // 因为必须将这个值层层传递所有组件。
+  return (
+    &lt;div&gt;
+      &lt;ThemedButton theme={props.theme} /&gt;
+    &lt;/div&gt;
+  );
+}
+
+class ThemedButton extends React.Component {
+  render() {
+    return &lt;Button theme={this.props.theme} /&gt;;
+  }
+}
+
+</code></pre>
+<p>如果使用 context 如下</p>
+<pre><code class="language-js">// Context 可以让我们无须明确地传遍每一个组件，就能将值深入传递进组件树。
+// 为当前的 theme 创建一个 context（“light”为默认值）。
+const ThemeContext = React.createContext('light');
+class App extends React.Component {
+  render() {
+    // 使用一个 Provider 来将当前的 theme 传递给以下的组件树。
+    // 无论多深，任何组件都能读取这个值。
+    // 在这个例子中，我们将 “dark” 作为当前的值传递下去。
+    return (
+      &lt;ThemeContext.Provider value="dark"&gt;
+        &lt;Toolbar /&gt;
+      &lt;/ThemeContext.Provider&gt;
+    );
+  }
+}
+
+// 中间的组件再也不必指明往下传递 theme 了。
+function Toolbar() {
+  return (
+    &lt;div&gt;
+      &lt;ThemedButton /&gt;
+    &lt;/div&gt;
+  );
+}
+
+class ThemedButton extends React.Component {
+  // 指定 contextType 读取当前的 theme context。
+  // React 会往上找到最近的 theme Provider，然后使用它的值。
+  // 在这个例子中，当前的 theme 值为 “dark”。
+  static contextType = ThemeContext;
+  render() {
+    return &lt;Button theme={this.context} /&gt;;
+  }
+}
+</code></pre>
+<ul>
+<li>如果只是想避免层层传递一些属性，这些属性并不是全局的，那么没有必要使用 context，因为会使得复用性变差，这时候应该使用组合的形式，也就是将深层的组件作为 props 从顶层传递下去，最后在深层使用直接显示即可。或者将深层组件放在顶层组件的闭合标签之内包裹（类似插槽），然后使用 props.children 传递下去。</li>
+</ul>
+<pre><code class="language-js">function Page(props) {
+  const user = props.user;
+  const userLink = (
+    &lt;Link href={user.permalink}&gt;
+      &lt;Avatar user={user} size={props.avatarSize} /&gt;
+    &lt;/Link&gt;
+  );
+  return &lt;PageLayout userLink={userLink} /&gt;;
+}
+
+// 现在，我们有这样的组件：
+&lt;Page user={user} avatarSize={avatarSize} /&gt;
+// ... 渲染出 ...
+&lt;PageLayout userLink={...} /&gt;
+// ... 渲染出 ...
+&lt;NavigationBar userLink={...} /&gt;
+// ... 渲染出 ...
+{props.userLink}
+</code></pre>
+<h2 id="context-api"><a class="header" href="#context-api">context api</a></h2>
+<ul>
+<li>
+<p>React.createContext</p>
+<ul>
+<li>创建一个 Context 对象。当 React 渲染一个订阅了这个 Context 对象的组件，这个组件会从组件树中离自身最近的那个匹配的 Provider 中读取到当前的 context 值。</li>
+</ul>
+<pre><code class="language-js">    const MyContext = React.createContext(defaultValue);
+</code></pre>
+</li>
+<li>
+<p>Context.Provider</p>
+<ul>
+<li>每个 Context 对象都会返回一个 Provider React 组件，它允许消费组件订阅 context 的变化。Provider 接收一个 value 属性，传递给消费组件。当 Provider 的 value 值发生变化时，它内部的所有消费组件都会重新渲染。</li>
+</ul>
+<pre><code class="language-js">    &lt;MyContext.Provider value={/* 某个值 */}&gt;
+</code></pre>
+<ul>
+<li>Provider 组件的 value 值的新旧变化检测使用的是 Object.is 算法，所以会出现一些问题：如果给 Provider 的 value 传递的值是引用类型，那么每一次 Provider 重新渲染的时候，它包裹的所有消费组件都会重新渲染。因为 value 值总是被赋值为新对象。</li>
+</ul>
+<pre><code class="language-js">    class App extends React.Component {
+        render() {
+            return (
+                &lt;MyContext.Provider value={{something: 'something'}}&gt;
+                    &lt;Toolbar /&gt;
+                &lt;/MyContext.Provider&gt;
+            );
+        }
+    }
+</code></pre>
+<p>将这个对象提到父组件的 state 中可以解决这个问题：</p>
+<pre><code class="language-js">    class App extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                value: {something: 'something'},
+            };
+        }
+
+        render() {
+            return (
+                &lt;MyContext.Provider value={this.state.value}&gt;
+                    &lt;Toolbar /&gt;
+                &lt;/MyContext.Provider&gt;
+            );
+        }
+    }
+</code></pre>
+</li>
+<li>
+<p>Class.contextType</p>
+<ul>
+<li>将 class 上的静态属性 contextType 设置为 React.createContext 创建的 context 对象，就可以在任意生命周期和 render 函数中使用 this.context 获取到最近的 provider 提供的值。</li>
+</ul>
+<pre><code class="language-js">    class MyClass extends React.Component {
+        // static contextType = MyContext; 这样写也可以
+        componentDidMount() {
+            let value = this.context;
+            /* 在组件挂载完成后，使用 MyContext 组件的值来执行一些有副作用的操作 */
+        }
+        componentDidUpdate() {
+            let value = this.context;
+            /* ... */
+        }
+        componentWillUnmount() {
+            let value = this.context;
+            /* ... */
+        }
+        render() {
+            let value = this.context;
+            /* 基于 MyContext 组件的值进行渲染 */
+        }
+    }
+    MyClass.contextType = MyContext;
+</code></pre>
+</li>
+<li>
+<p>Context.Consumer</p>
+<ul>
+<li>Context.Consumer 使得函数式组件可以订阅 context 中的数据。这种方法需要一个函数作为子元素。这个函数接收当前的 context 值，并返回一个 React 节点。</li>
+</ul>
+<pre><code class="language-js">    export const ThemeContext = React.createContext({
+        theme: themes.dark,
+        toggleTheme: () =&gt; {},
+    });
+
+    function ThemeTogglerButton() {
+        return (
+            &lt;ThemeContext.Consumer&gt;
+                {({theme, toggleTheme}) =&gt; (
+                    &lt;button
+                        onClick={toggleTheme}
+                        style={{backgroundColor: theme.background}}&gt;
+                        Toggle Theme
+                    &lt;/button&gt;
+                )}
+            &lt;/ThemeContext.Consumer&gt;
+        );
+    }
+</code></pre>
+</li>
+<li>
+<p>Context.displayName</p>
+<ul>
+<li>可以为 context 对象设置 displayName 属性，在 React DevTools 中将显示为该 displayName 属性</li>
+</ul>
+<pre><code class="language-js">    const MyContext = React.createContext(/* some value */);
+    MyContext.displayName = 'MyDisplayName';
+
+    &lt;MyContext.Provider&gt; // "MyDisplayName.Provider" 在 DevTools 中
+    &lt;MyContext.Consumer&gt; // "MyDisplayName.Consumer" 在 DevTools 中
+</code></pre>
+</li>
+</ul>
+<h2 id="例子"><a class="header" href="#例子">例子</a></h2>
+<ul>
+<li>消费多个 context</li>
+</ul>
+<pre><code class="language-js">// Theme context，默认的 theme 是 “light” 值
+const ThemeContext = React.createContext('light');
+
+// 用户登录 context
+const UserContext = React.createContext({
+  name: 'Guest',
+});
+
+class App extends React.Component {
+  render() {
+    const {signedInUser, theme} = this.props;
+
+    // 提供初始 context 值的 App 组件
+    return (
+      &lt;ThemeContext.Provider value={theme}&gt;
+        &lt;UserContext.Provider value={signedInUser}&gt;
+          &lt;Layout /&gt;
+        &lt;/UserContext.Provider&gt;
+      &lt;/ThemeContext.Provider&gt;
+    );
+  }
+}
+
+function Layout() {
+  return (
+    &lt;div&gt;
+      &lt;Sidebar /&gt;
+      &lt;Content /&gt;
+    &lt;/div&gt;
+  );
+}
+
+// 一个组件可能会消费多个 context
+function Content() {
+  return (
+    &lt;ThemeContext.Consumer&gt;
+      {theme =&gt; (
+        &lt;UserContext.Consumer&gt;
+          {user =&gt; (
+            &lt;ProfilePage user={user} theme={theme} /&gt;
+          )}
+        &lt;/UserContext.Consumer&gt;
+      )}
+    &lt;/ThemeContext.Consumer&gt;
+  );
+}
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../react/lifecycle.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../react/hoc_renderProps_props.children.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../react/lifecycle.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../react/hoc_renderProps_props.children.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

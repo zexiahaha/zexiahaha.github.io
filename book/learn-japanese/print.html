@@ -1,0 +1,407 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>learn-japanese</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">learn-japanese</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="50-音"><a class="header" href="#50-音">50 音</a></h1>
+<h2 id="基础知识"><a class="header" href="#基础知识">基础知识</a></h2>
+<ul>
+<li>日语中汉字大概占 70%, 固有词占 20%（包含汉字和平假名），外来词占 10%（片假名）</li>
+<li>平假名圆润潦草，类似中文的草体；片假名更工整，其中有汉字和偏旁部首，类似中文的楷书</li>
+<li>平假名的用处：<code>发音和助词</code>；片假名的用处：<code>外来词</code></li>
+</ul>
+<p>下面是平假名和片假名的表格，其中水平方向叫<code>行</code>，一共 10 行，垂直方向叫<code>段</code>，一共 5 段</p>
+<p>下面是平假名表格</p>
+<div class="table-wrapper"><table><thead><tr><th>あ段</th><th>い段</th><th>う段</th><th>え段</th><th>お段</th></tr></thead><tbody>
+<tr><td>あ</td><td>い</td><td>う</td><td>え</td><td>お</td></tr>
+<tr><td>か</td><td>き</td><td>く</td><td>け</td><td>こ</td></tr>
+<tr><td>さ</td><td>し</td><td>す</td><td>せ</td><td>そ</td></tr>
+<tr><td>た</td><td>ち</td><td>つ</td><td>て</td><td>と</td></tr>
+<tr><td>な</td><td>に</td><td>ぬ</td><td>ね</td><td>の</td></tr>
+<tr><td>は</td><td>ひ</td><td>ふ</td><td>へ</td><td>ほ</td></tr>
+<tr><td>ま</td><td>み</td><td>む</td><td>め</td><td>も</td></tr>
+<tr><td>や</td><td></td><td>ゆ</td><td></td><td>よ</td></tr>
+<tr><td>ら</td><td>り</td><td>る</td><td>れ</td><td>ろ</td></tr>
+<tr><td>わ</td><td></td><td></td><td></td><td>を</td></tr>
+<tr><td>ん</td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
+</div>
+<p>下面是片假名表格</p>
+<div class="table-wrapper"><table><thead><tr><th>ア段</th><th>イ段</th><th>ウ段</th><th>エ段</th><th>オ段</th></tr></thead><tbody>
+<tr><td>ア</td><td>イ</td><td>ウ</td><td>エ</td><td>オ</td></tr>
+<tr><td>カ</td><td>キ</td><td>ク</td><td>ケ</td><td>コ</td></tr>
+<tr><td>サ</td><td>シ</td><td>ス</td><td>セ</td><td>ソ</td></tr>
+<tr><td>タ</td><td>チ</td><td>ツ</td><td>テ</td><td>ト</td></tr>
+<tr><td>ナ</td><td>ニ</td><td>ヌ</td><td>ネ</td><td>ノ</td></tr>
+<tr><td>ハ</td><td>ヒ</td><td>フ</td><td>ヘ</td><td>ホ</td></tr>
+<tr><td>マ</td><td>ミ</td><td>ム</td><td>メ</td><td>モ</td></tr>
+<tr><td>ヤ</td><td></td><td>ユ</td><td></td><td>ヨ</td></tr>
+<tr><td>ラ</td><td>リ</td><td>ル</td><td>レ</td><td>ロ</td></tr>
+<tr><td>ワ</td><td></td><td></td><td></td><td>ヲ</td></tr>
+<tr><td>ン</td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
+</div>
+<h2 id="あ行-5-个元音"><a class="header" href="#あ行-5-个元音">あ行 5 个元音</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>a</th><th>i</th><th>u</th><th>e</th><th>o</th></tr></thead><tbody>
+<tr><td>あ</td><td>い</td><td>う</td><td>え</td><td>お</td></tr>
+<tr><td>ア</td><td>イ</td><td>ウ</td><td>エ</td><td>オ</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>あア 发音<code>a 啊</code>，あ来源于汉字的<code>安</code>, ア 来源于汉字偏旁右耳旁<code>阝</code>去掉一竖（汉语读音 fǔ）
+<ul>
+<li>联想记忆：天【安】门好雄伟【啊】！</li>
+</ul>
+</li>
+<li>いイ 发音<code>yi 依</code> い来源于汉字<code>以</code>左半部分，イ 来源于汉字 <code>以</code>右半部分，也可以看作是汉字单人旁<code>亻</code>（汉语读音为 rén）
+<ul>
+<li>联想记忆：我【以】为你【依】然一个人</li>
+</ul>
+</li>
+<li>うウ 发音<code>wu 乌</code>，念的时候不要撅嘴，う和ウ 都源于汉字的宝盖头<code>宀</code>（汉语读音 mián）
+<ul>
+<li>联想记忆：【宇宙】无限大！</li>
+</ul>
+</li>
+<li>えエ 发音<code>ai 唉</code>, え来源于汉字的 <code>元</code>，エ 就是汉字的<code>工</code>
+<ul>
+<li>联想记忆：唉？！【元】旦也要【工】作？</li>
+</ul>
+</li>
+<li>おオ 发音<code>o 哦</code> お 来源汉字的<code>我</code>或者<code>术</code>，オ 来源汉字的<code>才</code>
+<ul>
+<li>联想记忆：我是【天才】！</li>
+</ul>
+</li>
+</ul>
+<h2 id="音调"><a class="header" href="#音调">音调</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>假名</th><th>日本字</th><th>中文意思</th><th>音调</th></tr></thead><tbody>
+<tr><td>うえ 0</td><td>上</td><td>上</td><td>0 升调，第 1 个音低音，其余均为高音</td></tr>
+<tr><td>あい 1</td><td>愛</td><td>爱</td><td>1 降调，第 1 个音高音，后面的音均为低音</td></tr>
+<tr><td>いえ 2</td><td>家</td><td>家</td><td>2 上升再下降，第 1 个音低音，第 2 个音高音，后面的音均为低音</td></tr>
+<tr><td>あおい 2</td><td>青い</td><td>蓝色</td><td>2 上升再下降，第 1 个音低音，第 2 个音高音，后面的音均为低音</td></tr>
+</tbody></table>
+</div>
+<p>下面是音调的说明</p>
+<div class="table-wrapper"><table><thead><tr><th>数字</th><th>调</th><th>说明</th></tr></thead><tbody>
+<tr><td>0 调</td><td>升调</td><td>第 1 个音低音，后续均为高音</td></tr>
+<tr><td>1 调</td><td>降调</td><td>第 1 个音为高音，后续均为低音</td></tr>
+<tr><td>2 调</td><td>低高低</td><td>第 2 个音为高音，其余均为低音</td></tr>
+<tr><td>3 调</td><td>低高低</td><td>第 2，第 3 个音为高音，其余均为低音</td></tr>
+<tr><td>4 调</td><td>低高低</td><td>第 2，第 3，第 4 个音为高音，其余均为低音</td></tr>
+</tbody></table>
+</div>
+<h2 id="か行"><a class="header" href="#か行">か行</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>ka</th><th>ki</th><th>ku</th><th>ke</th><th>ko</th></tr></thead><tbody>
+<tr><td>か</td><td>き</td><td>く</td><td>け</td><td>こ</td></tr>
+<tr><td>カ</td><td>キ</td><td>ク</td><td>ケ</td><td>コ</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>かカ 发音<code>ka 咖</code>，来源于汉字<code>力</code>
+<ul>
+<li>联想记忆：每天多努【力】一点，你就是大咖！</li>
+</ul>
+</li>
+<li>きキ 发音<code>ki</code>，片假名キ就是平假名き的前三笔
+<ul>
+<li>联想记忆：弹吉他之前要调 key</li>
+</ul>
+</li>
+<li>くク 发音<code>ku 哭</code>，平假名く像鼻子的侧面，片假名ク加一笔就是汉字<code>久</code>
+<ul>
+<li>联想记忆：哭鼻子【哭】了很【久】</li>
+</ul>
+</li>
+<li>けケ 发音<code>ke 开</code>，片假名ケ再加一笔捺，就像汉字的反文旁<code>攵</code>（汉语读音 pū）
+<ul>
+<li>联想记忆：有个女生一直在做曲腿练习，她不【care】有多累</li>
+</ul>
+</li>
+<li>こコ 发音<code>ko 扣</code> こ像是倒着的圆括号()，コ像是右方括号<code>]</code>
+<ul>
+<li>联想记忆：() 和 <code>]</code></li>
+</ul>
+</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th>假名</th><th>日本字</th><th>中文意思</th></tr></thead><tbody>
+<tr><td>かき 0</td><td>柿</td><td>柿子</td></tr>
+<tr><td>あか 1</td><td>赤</td><td>红色</td></tr>
+<tr><td>あき 1</td><td>秋</td><td>秋天</td></tr>
+<tr><td>きく 2</td><td>菊</td><td>菊花</td></tr>
+<tr><td>いけ 2</td><td>池</td><td>水池</td></tr>
+<tr><td>こい 1</td><td>恋</td><td>恋爱</td></tr>
+</tbody></table>
+</div>
+<h2 id="さ行"><a class="header" href="#さ行">さ行</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>sa</th><th>si</th><th>su</th><th>se</th><th>so</th></tr></thead><tbody>
+<tr><td>さ</td><td>し</td><td>す</td><td>せ</td><td>そ</td></tr>
+<tr><td>サ</td><td>シ</td><td>ス</td><td>セ</td><td>ソ</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>さサ 发音 <code>sa 撒</code> さ像是き少了一横，サ像中文的草字头<code>艹 cǎo</code>
+<ul>
+<li>联想记忆法：杀人=草菅人命</li>
+</ul>
+</li>
+<li>しシ 发音 <code>si 西</code> し像倒置的吸管，シ像中文部首三点水<code>氵 shuǐ</code>
+<ul>
+<li>联想记忆法：吸管吸水</li>
+<li>单词： おいしい 好吃的，美味的</li>
+</ul>
+</li>
+<li>すス 发音 <code>su 丝</code> す像汉字十和数字 9，ス有点像折叠椅侧面
+<ul>
+<li>联想记忆法：站在折叠椅上去摘【一根】【丝瓜】</li>
+<li>单词：すし 寿司</li>
+</ul>
+</li>
+<li>せセ 发音 <code>se 塞</code> せ像世界的世
+<ul>
+<li>联想记忆法：跟世界 say hello</li>
+<li>单词：せかい 世界</li>
+</ul>
+</li>
+<li>そソ 发音 <code>so 搜</code> そ像 z 和 c
+<ul>
+<li>联想记忆法：湖南人用筷子【so 粉】配【榨菜】</li>
+</ul>
+</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th>假名</th><th>日本字</th><th>中文意思</th></tr></thead><tbody>
+<tr><td>さけ 0</td><td>酒</td><td>酒</td></tr>
+<tr><td>しき 2</td><td>四季</td><td>四季</td></tr>
+<tr><td>すし 1</td><td>寿司</td><td>寿司</td></tr>
+<tr><td>あせ 1</td><td>汗</td><td>汗</td></tr>
+<tr><td>うそ 1</td><td>嘘</td><td>谎言</td></tr>
+</tbody></table>
+</div>
+<h2 id="た行"><a class="header" href="#た行">た行</a></h2>
+<div class="table-wrapper"><table><thead><tr><th>ta</th><th>ti</th><th>tu</th><th>te</th><th>to</th></tr></thead><tbody>
+<tr><td>た</td><td>ち</td><td>つ</td><td>て</td><td>と</td></tr>
+<tr><td>タ</td><td>チ</td><td>ツ</td><td>テ</td><td>ト</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>たタ 发音 <code>ta 它</code> た一横一撇然后下面是一个 ko こ， タ是夕阳的夕
+<ul>
+<li>联想记忆法：【ta】太喜欢【夕】阳了</li>
+</ul>
+</li>
+<li>ちチ 发音 <code>qi 七</code> ち像汉字七最后多一个回勾，チ像汉字千
+<ul>
+<li>联想记忆法：我有七千万</li>
+</ul>
+</li>
+<li>つツ 发音 <code>ci 刺</code> つ像反着的字母 C
+<ul>
+<li>联想记忆法：刺猬</li>
+</ul>
+</li>
+<li>てテ 发音 <code>te 胎</code> て像一横然后一个 C，テ像一个二然后一撇
+<ul>
+<li>联想记忆法：两个人一起打 Tennis</li>
+</ul>
+</li>
+<li>とト <code>tou 偷</code> と像一点一个 C，ト像萝卜的卜
+<ul>
+<li>联想记忆法：一个驼背拔萝卜</li>
+</ul>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

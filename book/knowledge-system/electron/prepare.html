@@ -1,0 +1,316 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>electron 开发踩坑 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="electron-开发踩坑"><a class="header" href="#electron-开发踩坑">electron 开发踩坑</a></h1>
+<h2 id="electron-应用的一些重要路径"><a class="header" href="#electron-应用的一些重要路径">electron 应用的一些重要路径</a></h2>
+<ul>
+<li>默认安装目录 <code>C:\Users\用户名\AppData\Local\Programs\应用名</code></li>
+<li>electron-builder 打包时需要用到的 electron 包会下载到 <code>C:\Users\用户名\AppData\Local\electron\Cache</code></li>
+<li>electron-builder 打包时需要用到的 nsis 和 winCodeSign 在 <code>C:\Users\用户名\AppData\Local\electron-builder\Cache</code></li>
+<li>electron-updater 更新时下载的全量安装包会下载到 <code>C:\Users\用户名\AppData\Local\应用名-updater</code></li>
+<li>默认日志或者缓存目录 （使用 app.getPath('userData')） <code>C:\Users\用户名\AppData\Roaming\应用名</code></li>
+</ul>
+<h2 id="关于网速慢装包失败"><a class="header" href="#关于网速慢装包失败">关于网速慢装包失败</a></h2>
+<ul>
+<li>
+<p>有时候网速太慢，下载 electron 会失败，这时候需要切换源。切换最快的源后再装包，成功率就高一些</p>
+<pre><code class="language-bash">  npm i nrm -g
+
+  nrm test
+
+    npm ---------- 1551 ms
+    yarn --------- timeout (Fetch timeout over 5000 ms)
+    tencent ------ 534 ms
+    cnpm --------- 3778 ms
+    taobao ------- 2210 ms
+    npmMirror ---- 4206 ms (Fetch error, if this is your private registry, please ignore)
+  * huawei ------- 480 ms
+
+  // 可以看到 huawei 的源速度最快
+
+  nrm use huawei
+</code></pre>
+</li>
+</ul>
+<h2 id="electron-builder-打包下载相关"><a class="header" href="#electron-builder-打包下载相关">electron-builder 打包下载相关</a></h2>
+<ul>
+<li>electron-builder 打包的时候会根据目标平台和软件位宽去下载对应平台和版本的 electron 包，下载后 windows 系统下放在 <code>C:/Users/用户名/AppData/Local/electron/Cache</code> 目录下</li>
+<li>如果一直下载失败，可以去 <a href="https://registry.npmmirror.com/binary.html?path=electron/">registry.npmmirror.electron</a>手动下载对应版本然后放到 <code>C:/Users/用户名/AppData/Local/electron/Cache</code>目录下</li>
+<li>还需要 winCodeSign 签名工具, 在 <a href="https://github.com/electron-userland/electron-builder-binaries/releases/tag/winCodeSign-2.4.0">electron-builder-binaries/winCodeSign-2.4.0</a> 下载后放在 <code>C:\Users\用户名\AppData\Local\electron-builder\Cache\winCodeSign\winCodeSign-2.6.0</code></li>
+<li>还需要 nsis，在 <a href="https://github.com/electron-userland/electron-builder-binaries/releases/tag/nsis-3.0.3.2">electron-builder-binaries/nsis-3.0.3.2</a> 下载，然后放在 <code>C:\Users\用户名\AppData\Local\electron-builder\Cache\nsis\nsis-3.0.4.1</code></li>
+<li>还需要 nsis-resources, 在 <a href="https://github.com/electron-userland/electron-builder-binaries/releases/tag/nsis-resources-3.4.1">electron-builder-binaries/nsis-resources-3.4.1</a> 下载，放在 <code>C:\Users\用户名\AppData\Local\electron-builder\Cache\nsis\nsis-resources-3.4.1</code></li>
+<li>winCodeSign 和 nsis 和 nsis-resources 都可以在 <a href="https://github.com/electron-userland/electron-builder-binaries/releases">electron-builder-binaries/releases</a> 下载到</li>
+</ul>
+<h2 id="原生模块相关"><a class="header" href="#原生模块相关">原生模块相关</a></h2>
+<ul>
+<li>
+<p>如果要使用原生模块的 npm 包，需提前安装环境，根据 <a href="https://www.npmjs.com/package/node-gyp">node-gyp</a> 官方描述，在 windows 下需要安装 python 环境和 C++ 环境，安装<a href="https://devguide.python.org/versions/">当前版本的 python</a>和<a href="https://visualstudio.microsoft.com/zh-hans/thank-you-downloading-visual-studio/?sku=Community">visual studio 社区版</a>，安装 visual studio 时注意勾选 <code>Desktop development with C++ workload</code></p>
+</li>
+<li>
+<p>有些 npm 包其实主功能是原生编译的模块，例如 <code>sqlite3</code> 或者 <code>better-sqlite3</code> 是使用 c++ 实现的原生模块，然后使用 <code>node-gyp</code> 编译成目标平台（指定 electron 版本的 nodejs 环境和软件位宽）的 <code>.node</code> 文件。碰到这类原生模块，如果默认下载的包和当前使用的 electron 版本不兼容就会碰到如下错误：</p>
+<pre><code class="language-bash">Error: The module '/path/to/native/module.node'
+was compiled against a different Node.js version using
+NODE_MODULE_VERSION $XYZ. This version of Node.js requires
+NODE_MODULE_VERSION $ABC. Please try re-compiling or re-installing
+the module (for instance, using `npm rebuild` or `npm install`).
+</code></pre>
+</li>
+<li>
+<p>这时候就需要 <a href="https://www.npmjs.com/package/@electron/rebuild">@electron/rebuild</a> 来重新编译这些原生模块兼容当前 electron 对应的 nodejs 环境。在 <code>package.json</code> 中新建命令 <code>"rebuild": "electron-rebuild -f -w better-sqlite3"</code> 然后运行 <code>npm run rebuild</code> 等待编译完成即可</p>
+</li>
+</ul>
+<h2 id="闪退问题"><a class="header" href="#闪退问题">闪退问题</a></h2>
+<ul>
+<li>在某些 windows 系统的老旧电脑上碰到 app 启动后，窗口闪了一下就崩溃退出，窗口还没有完全出现，只是出现了透明的框体。查看主进程日志看不出来问题，这时候可以打开 windows 的 cmd，然后输入应用的 exe 文件的绝对路径，然后回车执行，这时候就可以看到崩溃前输出了什么日志</li>
+</ul>
+<p><img src="./img/electron-app-crash.png" alt="electron-app-crash" /></p>
+<ul>
+<li>
+<p>上面的图可以看到 cmd 启动后看到了报错的信息，通过内容可以大概判断是 chromium 的 gpu 进程崩溃导致的，网络上搜查信息后发现可以 cmd 启动时加一些启动参数来尝试修复，例如 <code>--disable-gpu --disable-gpu-compositing --no-sandbox --disable-software-rasterizer</code>。最后发现有这样几个启动参数可以解决这个问题</p>
+<ul>
+<li><code>--no-sandbox</code> 为所有通常处于沙箱模式的进程类型禁用沙箱。此功能仅用作浏览器级别的开关，仅供测试使用 （这里的 “sandbox” 指的是软件沙箱，一种隔离机制，用于限制进程的权限以增强安全性。）</li>
+<li><code>--in-process-gpu</code> 将 GPU 进程作为一个线程运行在浏览器进程中 （这里涉及到软件进程与线程的概念。正常情况下，GPU（图形处理器）相关任务可能会以独立进程的形式运行，而这句话描述的是一种调整机制 —— 让原本独立的 GPU 进程不再单独启动，而是作为浏览器进程内部的一个线程来执行，可能用于特定的调试、性能测试或兼容性场景。）</li>
+<li><code>--disable-gpu-sandbox</code> 禁用 GPU 进程的沙箱 （这里的 “GPU 进程” 指负责处理图形渲染等 GPU 相关任务的进程，“沙箱” 是一种安全隔离机制。该表述通常出现在浏览器或图形处理相关软件的配置说明中，意为关闭对 GPU 进程的沙箱隔离，一般仅用于特定测试场景，正常使用时启用沙箱可增强安全性。）</li>
+</ul>
+</li>
+<li>
+<p>总之可以大概确定由于沙箱的机制导致在这些老旧机器上 gpu 进程崩溃了。除了添加传递给 chromium 的启动参数，还可以在主进程 main.js 最上方写一句 <code>app.commandLine.appendSwitch('--in-process-gpu');</code> 即可在代码层面传递启动参数</p>
+</li>
+<li>
+<p>最后发现其实闪退真正的原因是 electron-builder 打包配置中设置了 <code>requestedExecutionLevel</code> 为 <code>requireAdministrator</code> 造成的，要求管理员权限，如果当前账户不是管理员权限就会闪退，去掉 <code>requestedExecutionLevel</code> 配置即可解决此问题</p>
+</li>
+</ul>
+<h2 id="打包报错"><a class="header" href="#打包报错">打包报错</a></h2>
+<ul>
+<li>
+<p>打包过程中莫名其妙的报错，并且没有任何错误信息提示，那么极有可能是因为使用了 <code>electron-builder</code> 的钩子函数，例如 <code>afterPack</code> <code>afterAllArtifactBuild</code> <code>beforePack</code> 等等指定的 js 文件报错了，所以去 <code>package.json</code> 文件中将这些钩子函数先删掉然后重新打包再看看</p>
+</li>
+<li>
+<p>打包后发现 <code>.asar</code> 中没有 <code>node_modules</code> 目录，环境为 <code>node 22.15.0</code> <code>npm 10.9.2</code> <code>electron-builder@26.0.12</code> windows。windows cmd 设置下面的命令开启 <code>electron-builder</code> <a href="https://www.electron.build/electron-builder/index.html#debug">DEBUG</a> 模式</p>
+<pre><code class="language-bash">set DEBUG=electron-builder
+</code></pre>
+<p>然后会发现 <code>electron-builder</code> 收集到的 <code>node_modules</code> 依赖是空数组，已经在 <a href="https://github.com/electron-userland/electron-builder/issues/8970#issuecomment-3218282500">issue</a> 中留言，等待 <code>electron-builder</code> 官方回复，目前解决方法是将 <code>electron-builder</code> 降低至版本 26.0.2</p>
+</li>
+</ul>
+<h2 id="electron-builder打包之后exe图标问题"><a class="header" href="#electron-builder打包之后exe图标问题">electron-builder打包之后exe图标问题</a></h2>
+<ul>
+<li>出现一种情况，打包之后的 <code>win-unpacked</code> 目录下 exe 文件的图标和右键属性详细信息都是正常的，用自定义的 nsis 打包之后的安装包安装完成之后的软件打开后，任务栏的图标确变成了 electron 默认图标，并且安装目录下的 exe 文件的图标和属性详细信息也变成了 electron 默认的。这有可能是 windows 系统对于图标的缓存造成的，重启系统这个问题就自动好了</li>
+<li>windows 系统图标缓存目录在 <code>C:\Users\用户名\AppData\Local\Microsoft\Windows\Explorer</code> 下，删除所有 <code>iconcache</code> 开头的文件即可清除图标缓存</li>
+</ul>
+<h2 id="参考链接"><a class="header" href="#参考链接">参考链接</a></h2>
+<ul>
+<li><a href="https://www.electronjs.org/zh/docs/latest/tutorial/using-native-node-modules">Node 原生模块</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/248742896">electron-builder 打包采坑问题汇总</a></li>
+<li><a href="https://peter.sh/experiments/chromium-command-line-switches/">List of Chromium Command Line Switches</a></li>
+<li><a href="https://www.electronjs.org/zh/docs/latest/tutorial/sandbox">进程沙盒化</a></li>
+<li><a href="https://stackoverflow.com/questions/77992943/some-windows-pcs-forces-sandbox-mode-on-electron-chromium">Some Windows PCs forces Sandbox mode on Electron Chromium</a></li>
+<li><a href="https://github.com/electron/electron/issues/18265">Need a way to run with --no-sandbox by default #18265</a></li>
+<li><a href="https://github.com/electron-userland/electron-builder/issues/2071">The built exe file is using Electron's Icon #2071</a></li>
+<li><a href="https://github.com/electron-userland/electron-builder/issues/8970#issuecomment-3218282500">"Cannot find module 'sharp'" on Windows only after upgrading to 26.0.11 #8970</a></li>
+<li><a href="https://www.electron.build/electron-builder/index.html#debug">electron-builder Debug</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../nodejs/koa2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../electron/updater.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../nodejs/koa2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../electron/updater.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

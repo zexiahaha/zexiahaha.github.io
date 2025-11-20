@@ -1,0 +1,636 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>复合类型</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="复合类型"><a class="header" href="#复合类型">复合类型</a></h1>
+<h2 id="字符串"><a class="header" href="#字符串">字符串</a></h2>
+<h3 id="切片slice"><a class="header" href="#切片slice">切片(slice)</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let s = String::from("hello world");
+
+// 创建字符串切片的语法 方括号包括的一个序列：[开始索引..终止索引]
+let hello = &amp;s[0..5];
+let world = &amp;s[6..11];
+
+// 索引从0开始，下面两种等效
+let slice = &amp;s[0..2];
+let slice = &amp;s[..2];
+
+// 想包含最后一个字符，下面两种等效
+let len = s.len();
+
+let slice = &amp;s[4..len];
+let slice = &amp;s[4..];
+
+// 也可以截取完整的切片
+let slice = &amp;s[0..len];
+let slice = &amp;s[..];
+
+// 硬编码的字符串就是字符串切片 &amp;str类型，该切片指向了程序可执行文件中的某个点，所以是不可变引用
+let s = "Hello, world!";
+let s: &amp;str = "Hello, world!";
+
+
+// 切片是对集合的部分引用，因此不仅仅字符串有切片，其它集合类型也有，例如数组
+let a = [1, 2, 3, 4, 5];
+let slice = &amp;a[1..3];
+<span class="boring">}</span></code></pre></pre>
+<h3 id="什么是字符串"><a class="header" href="#什么是字符串">什么是字符串？</a></h3>
+<p><strong>Rust 中的字符是 Unicode 类型，因此每个字符占据 4 个字节内存空间，但是在字符串中不一样，字符串是 UTF-8 编码，也就是字符串中的字符所占的字节数是变化的(1 - 4)，这样有助于大幅降低字符串所占用的内存空间。</strong></p>
+<p>str 类型是硬编码进可执行文件，也无法被修改，但是 String 则是一个可增长、可改变且具有所有权的 UTF-8 编码字符串，<strong>当 Rust 用户提到字符串时，往往指的就是 String 类型和 &amp;str 字符串切片类型，这两个类型都是 UTF-8 编码。</strong></p>
+<h3 id="string-与-str-的转换"><a class="header" href="#string-与-str-的转换">String 与 &amp;str 的转换</a></h3>
+<pre><pre class="playground"><code class="language-rust">// &amp;str 转 String
+String::from("hello,world")
+"hello,world".to_string()
+
+// String 转 &amp;str 直接取引用
+fn main() {
+    let s = String::from("hello,world!");
+    say_hello(&amp;s);
+    say_hello(&amp;s[..]);
+    say_hello(s.as_str());
+}
+
+fn say_hello(s: &amp;str) {
+    println!("{}",s);
+}</code></pre></pre>
+<h3 id="字符串索引"><a class="header" href="#字符串索引">字符串索引</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// rust 中使用索引访问字符串会报错
+let s1 = String::from("hello");
+let h = s1[0]; // `String` cannot be indexed by `{integer}`
+
+// 字符串底层是字节数组，而且是 utf-8编码，所以使用切片的形式非常危险，无法保证索引区间正好在字符的字节边界，有可能会导致崩溃
+// 因为索引的数字是字节为单位，但是汉字utf-8编码的时候所占的字节是不一定的，所以无法保证索引正好取到了边界位置
+let hello = "中国人";
+let s = &amp;hello[0..2];
+<span class="boring">}</span></code></pre></pre>
+<h3 id="操作字符串"><a class="header" href="#操作字符串">操作字符串</a></h3>
+<pre><pre class="playground"><code class="language-rust">// 追加，在原有的字符串上追加，改变原字符串，字符串变量必须由 mut 关键字修饰
+// push 追加单个字符
+// push_str 追加字符串字面量
+fn main() {
+    let mut s = String::from("Hello ");
+
+    s.push_str("rust");
+    println!("追加字符串 push_str() -&gt; {}", s); // 追加字符串 push_str() -&gt; Hello rust
+
+    s.push('!');
+    println!("追加字符 push() -&gt; {}", s); // 追加字符 push() -&gt; Hello rust!
+}
+
+// 插入，第一个参数是插入位置，第二个参数是插入的片段，字符串变量必须由 mut 关键字修饰
+// insert 插入单个字符
+// insert_str 插入字符串字面量
+fn main() {
+    let mut s = String::from("Hello rust!");
+    s.insert(5, ',');
+    println!("插入字符 insert() -&gt; {}", s); // 插入字符 insert() -&gt; Hello, rust!
+    s.insert_str(6, " I like");
+    println!("插入字符串 insert_str() -&gt; {}", s); // insert_str() -&gt; Hello, I like rust!
+}
+
+// 替换1 replace 第一个参数是要被替换的字符串，第二个参数是新的字符串，replace 方法返回一个新的字符串
+// 适用于 String 和 &amp;str 类型
+fn main() {
+    let string_replace = String::from("I like rust. Learning rust is my favorite!");
+    let new_string_replace = string_replace.replace("rust", "RUST");
+    dbg!(new_string_replace); // new_string_replace = "I like RUST. Learning RUST is my favorite!"
+}
+
+// 替换2 replacen 第一个参数是要被替换的字符串，第二个参数是新的字符串，第三个参数则表示替换的个数，replacen 方法返回一个新的字符串
+// 适用于 String 和 &amp;str 类型
+fn main() {
+    let string_replace = "I like rust. Learning rust is my favorite!";
+    let new_string_replacen = string_replace.replacen("rust", "RUST", 1);
+    dbg!(new_string_replacen); // new_string_replacen = "I like RUST. Learning rust is my favorite!"
+}
+
+// 替换3 replace_range 第一个参数是要替换字符串的范围（Range），第二个参数是新的字符串，replace_range 直接操作原来的字符串，变量需要使用 mut 关键字修饰
+// 适用于 String 类型
+fn main() {
+    let mut string_replace_range = String::from("I like rust!");
+    string_replace_range.replace_range(7..8, "R");
+    dbg!(string_replace_range); // string_replace_range = "I like Rust!"
+}
+
+// 删除1 pop 删除并返回字符串的最后一个字符，直接操作原来的字符串，返回 Option 类型，直接操作原来的字符串，需要 mut 关键字修饰
+fn main() {
+    let mut string_pop = String::from("rust pop 中文!");
+    let p1 = string_pop.pop();
+    let p2 = string_pop.pop();
+    dbg!(p1);
+    dbg!(p2);
+    dbg!(string_pop);
+    /*
+        p1 = Some(
+        '!',
+        )
+        p2 = Some(
+        '文',
+        )
+        string_pop = "rust pop 中"
+    */
+}
+
+// 删除2 remove 删除并返回字符串中指定位置的字符，直接操作原来的字符串，接收一个参数被删除的字符的索引
+// remove() 方法是按照字节来处理字符串的，如果参数所给的位置不是合法的字符边界，则会发生错误
+fn main() {
+    let mut string_remove = String::from("测试remove方法");
+    println!(
+        "string_remove 占 {} 个字节",
+        std::mem::size_of_val(string_remove.as_str())
+    ); // string_remove 占 18 个字节
+    // 删除第一个汉字
+    string_remove.remove(0);
+    // 下面代码会发生错误
+    // string_remove.remove(1);
+    // 直接删除第二个汉字
+    // string_remove.remove(3);
+    dbg!(string_remove); // string_remove = "试remove方法"
+}
+
+// 删除3 truncate 删除字符串中从指定位置开始到结尾的全部字符，直接操作原来的字符串，接收一个参数被删除的字符串的起始索引，无返回值
+// truncate() 方法是按照字节来处理字符串的，如果参数所给的位置不是合法的字符边界，则会发生错误
+fn main() {
+    let mut string_truncate = String::from("测试truncate");
+    string_truncate.truncate(3);
+    dbg!(string_truncate); // string_truncate = "测"
+}
+
+// 删除4 clear 清空字符串，直接操作原来的字符串，删除字符串中的所有字符，相当于 truncate() 方法参数为 0 的时候
+fn main() {
+    let mut string_clear = String::from("string clear");
+    string_clear.clear();
+    dbg!(string_clear); // string_clear = ""
+}
+
+
+// 使用 + 或者 += 连接字符串
+// 使用 + 或者 += 连接字符串，要求右边的参数必须为字符串的切片引用（Slice）类型
+// + 是返回一个新的字符串，所以不需要 mut 关键字修饰
+fn main() {
+    let string_append = String::from("hello ");
+    let string_rust = String::from("rust");
+    // &amp;string_rust会自动解引用为&amp;str
+    let result = string_append + &amp;string_rust;
+    let mut result = result + "!"; // `result + "!"` 中的 `result` 是不可变的
+    result += "!!!";
+
+    println!("连接字符串 + -&gt; {}", result); // 连接字符串 + -&gt; hello rust!!!!
+}
+
+// 当调用 + 的操作符时，相当于调用了 std::string 标准库中的 add() 方法，s1变量通过调用 add() 方法后，s1所有权被转移到 add() 方法里面， add() 方法调用后就被释放
+fn main() {
+    let s1 = String::from("hello,");
+    let s2 = String::from("world!");
+    // 在下句中，s1的所有权被转移走了，因此后面不能再使用s1
+    let s3 = s1 + &amp;s2;
+    assert_eq!(s3,"hello,world!");
+    // 下面的语句如果去掉注释，就会报错
+    // println!("{}",s1);
+}
+
+// 使用 format! 连接字符串 适用于 String 和 &amp;str
+fn main() {
+    let s1 = "hello";
+    let s2 = String::from("rust");
+    let s = format!("{} {}!", s1, s2);
+    println!("{}", s); // hello rust!
+}</code></pre></pre>
+<h3 id="字符串转义"><a class="header" href="#字符串转义">字符串转义</a></h3>
+<p>可以通过转义的方式 \ 输出 ASCII 和 Unicode 字符</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    // 通过 \ + 字符的十六进制表示，转义输出一个字符
+    let byte_escape = "I'm writing \x52\x75\x73\x74!";
+    println!("What are you doing\x3F (\\x3F means ?) {}", byte_escape);
+
+    // \u 可以输出一个 unicode 字符
+    let unicode_codepoint = "\u{211D}";
+    let character_name = "\"DOUBLE-STRUCK CAPITAL R\"";
+
+    println!(
+        "Unicode character {} (U+211D) is called {}",
+        unicode_codepoint, character_name
+    );
+
+    // 换行了也会保持之前的字符串格式
+    // 使用\忽略换行符
+    let long_string = "String literals
+                        can span multiple lines.
+                        The linebreak and indentation here -&gt;\
+                        &lt;- can be escaped too!";
+    println!("{}", long_string);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    println!("{}", "hello \\x52\\x75\\x73\\x74"); // hello \x52\x75\x73\x74
+    let raw_str = r"Escapes don't work here: \x3F \u{211D}";
+    println!("{}", raw_str); // Escapes don't work here: \x3F \u{211D}
+
+    // 如果字符串包含双引号，可以在开头和结尾加 #
+    let quotes = r#"And then I said: "There is no escape!""#;
+    println!("{}", quotes); // And then I said: "There is no escape!"
+
+    // 如果字符串中包含 # 号，可以在开头和结尾加多个 # 号，最多加255个，只需保证与字符串中连续 # 号的个数不超过开头和结尾的 # 号的个数即可
+    let longer_delimiter = r###"A string with "# in it. And even "##!"###;
+    println!("{}", longer_delimiter); // A string with "# in it. And even "##!
+}</code></pre></pre>
+<h3 id="操作-utf-8-字符串"><a class="header" href="#操作-utf-8-字符串">操作 UTF-8 字符串</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>for c in "中国人".chars() {
+    println!("{}", c);
+}
+
+/*
+中
+国
+人
+*/
+
+for b in "中国人".bytes() {
+    println!("{}", b);
+}
+
+/*
+228
+184
+173
+229
+155
+189
+228
+186
+186
+*/
+<span class="boring">}</span></code></pre></pre>
+<h2 id="元组"><a class="header" href="#元组">元组</a></h2>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    let tup: (i32, f64, u8) = (500, 6.4, 1);
+
+    let (x, y, z) = tup;
+
+    println!("The value of y is: {}", y);
+
+    let five_hundred = tup.0;
+
+    let six_point_four = tup.1;
+
+    let one = tup.2;
+}
+
+
+fn main() {
+    let s1 = String::from("hello");
+
+    let (s2, len) = calculate_length(s1);
+
+    println!("The length of '{}' is {}.", s2, len);
+}
+
+fn calculate_length(s: String) -&gt; (String, usize) {
+    let length = s.len(); // len() 返回字符串的长度
+
+    (s, length)
+}</code></pre></pre>
+<h2 id="结构体"><a class="header" href="#结构体">结构体</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// 定义结构体
+struct User {
+    active: bool,
+    username: String,
+    email: String,
+    sign_in_count: u64,
+}
+
+// 创建 User 结构体实例
+// 初始化实例时，每个字段都需要进行初始化
+// 初始化时的字段顺序不需要和结构体定义时的顺序一致
+let mut user1 = User {
+    email: String::from("someone@example.com"),
+    username: String::from("someusername123"),
+    active: true,
+    sign_in_count: 1,
+};
+
+// 通过 . 操作符访问结构体内的值，也可以修改值。修改值需要 mut
+user1.email = String::from("anotheremail@example.com");
+
+// 元组结构体 结构体的字段可以没有名称
+struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
+
+let black = Color(0, 0, 0);
+let origin = Point(0, 0, 0);
+
+<span class="boring">}</span></code></pre></pre>
+<h2 id="枚举"><a class="header" href="#枚举">枚举</a></h2>
+<pre><pre class="playground"><code class="language-rust">#[derive(Debug)]
+enum PokerSuit {
+    Clubs,
+    Spades,
+    Diamonds,
+    Hearts,
+}
+
+struct PokerCard {
+    suit: PokerSuit,
+    value: u8
+}
+
+fn main() {
+   let c1 = PokerCard {
+       suit: PokerSuit::Clubs,
+       value: 1,
+   };
+   let c2 = PokerCard {
+       suit: PokerSuit::Diamonds,
+       value: 12,
+   };
+}
+
+// 下面是简洁的写法，将数据关联到枚举成员上
+enum PokerCard {
+    Clubs(u8),
+    Spades(u8),
+    Diamonds(u8),
+    Hearts(u8),
+}
+
+fn main() {
+   let c1 = PokerCard::Spades(5);
+   let c2 = PokerCard::Diamonds(13);
+}
+
+// 下面是更复杂的例子
+/*
+Quit 没有任何关联数据
+Move 包含一个匿名结构体
+Write 包含一个 String 字符串
+ChangeColor 包含三个 i32
+*/
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+fn main() {
+    let m1 = Message::Quit;
+    let m2 = Message::Move{x:1,y:1};
+    let m3 = Message::ChangeColor(255,255,0);
+}</code></pre></pre>
+<h2 id="数组"><a class="header" href="#数组">数组</a></h2>
+<pre><pre class="playground"><code class="language-rust">let months = ["January", "February", "March", "April", "May", "June", "July",
+              "August", "September", "October", "November", "December"];
+
+// i32 是元素类型，分号后面的数字 5 是数组长度
+let a: [i32; 5] = [1, 2, 3, 4, 5];
+
+// 包含 5 个元素，这些元素的初始化值为 3
+let a = [3; 5];
+
+
+fn main() {
+    let a = [9, 8, 7, 6, 5];
+
+    let first = a[0]; // 获取a数组第一个元素
+    let second = a[1]; // 获取第二个元素
+}</code></pre></pre>
+<ul>
+<li>数组越界访问会造成 panic 崩溃</li>
+</ul>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+  // 编译器自动推导出one的类型
+  let one             = [1, 2, 3];
+  // 显式类型标注
+  let two: [u8; 3]    = [1, 2, 3];
+  let blank1          = [0; 3];
+  let blank2: [u8; 3] = [0; 3];
+
+  // arrays是一个二维数组，其中每一个元素都是一个数组，元素类型是[u8; 3]
+  let arrays: [[u8; 3]; 4]  = [one, two, blank1, blank2];
+
+  // 借用arrays的元素用作循环中
+  for a in &amp;arrays {
+    print!("{:?}: ", a);
+    // 将a变成一个迭代器，用于循环
+    // 你也可以直接用for n in a {}来进行循环
+    for n in a.iter() {
+      print!("\t{} + 10 = {}", n, n+10);
+    }
+
+    let mut sum = 0;
+    // 0..a.len,是一个 Rust 的语法糖，其实就等于一个数组，元素是从0,1,2一直增加到到a.len-1
+    for i in 0..a.len() {
+      sum += a[i];
+    }
+    println!("\t({:?} = {})", a, sum);
+  }
+}</code></pre></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../base/7.reference.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../base/9.flow_control.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../base/7.reference.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../base/9.flow_control.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>webpack 基础 - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="webpack基础"><a class="header" href="#webpack基础">webpack基础</a></h1>
+<h2 id="什么是-webpack"><a class="header" href="#什么是-webpack">什么是 webpack？</a></h2>
+<p>webpack 是一个用于现代 JavaScript 应用程序的 静态模块打包工具。当 webpack 处理应用程序时，它会在内部构建一个 依赖图(dependency graph)，此依赖图对应映射到项目所需的每个模块，并生成一个或多个 bundle。</p>
+<p>它可以把浏览器不认识的 web 资源， 比如 sass、less、ts，经过编译后能够在浏览器中正常工作。</p>
+<h2 id="module-chunk-bundle"><a class="header" href="#module-chunk-bundle">module chunk bundle</a></h2>
+<p>这三个术语在 webpack 文档里经常见到，它们的含义：</p>
+<ul>
+<li>module：就是源代码中的模块，一个文件就是一个模块，例如 commonjs 的模块，es6 module 的模块</li>
+<li>chunk：webpack 在执行过程中根据源代码的 module 的引用关系形成的文件就是 chunk</li>
+<li>bundle：最终输出的文件，能够直接在浏览器里运行</li>
+</ul>
+<h2 id="entry"><a class="header" href="#entry">entry</a></h2>
+<p>entry 指示 webpack 应该使用哪个模块，来作为构建其内部依赖图的开始。</p>
+<pre><code class="language-js">{
+    // string方式： 单入口，打包形成一个 trunk，输出一个 buldle 文件。trunk 的名称默认是 main.js
+    entry: "./src/index.js",
+    // array方式：多入口，所有入口文件最终只会形成一个 trunk，输出出去只有一个 bundle 文件
+    entry: ["./src/index.js", "./src/test.js"],
+    // object：多入口，有几个入口文件就形成几个 trunk，输出几个 bundle 文件。此时 trunk 的名称就是对象 key 值
+    entry: {
+        index:"./src/index.js",
+        test:"./src/test.js",
+    }
+}
+</code></pre>
+<h2 id="output"><a class="header" href="#output">output</a></h2>
+<p>output 指示 webpack 打包后的资源输出到哪里，以及如何命名。</p>
+<pre><code class="language-js">    {
+        output: {
+            // 输出文件目录（将来所有资源输出的公共目录，包括 css 和静态文件等等）
+            path: path.resolve(__dirname, "dist"), //默认
+            // 文件名称
+            filename: "[name].js", // 默认
+            // 所有资源引入公共路径前缀，一般用于生产环境，小心使用
+            publicPath: "",
+            /* 
+            非入口文件 chunk 的名称。所谓非入口即 import 动态导入形成的 trunk 或者 optimization 中的 splitChunks 提取的公共 trunk
+            它支持和 filename 一致的内置变量
+            */
+            chunkFilename: "[contenthash:10].chunk.js",
+
+            /* 当用 Webpack 去构建一个可以被其他模块导入使用的库时需要用到 library */
+            library: {
+                name: "[name]", // 整个库向外暴露的变量名
+                type: "window" // 库暴露的方式
+            }
+        }
+    }
+</code></pre>
+<h2 id="loader"><a class="header" href="#loader">loader</a></h2>
+<p>loader 用来处理不同的文件。webpack 自身只能理解 js 和 json 文件，loader 让 webpack 能够处理其他文件。它会将其他类型的文件变成 js 模块。</p>
+<pre><code class="language-js">rules: [
+    {
+        // 匹配哪些文件
+        test: /\.css$/,
+        // 使用哪些 loader 进行处理。执行顺序，从右至左，从下至上
+        use: [
+            // 创建 style 标签，将 js中的样式资源（就是 css-loader 转化成的字符串）拿过来，添加到页面 head 标签生效
+            "style-loader",
+            // 将 css 文件变成 commonjs 一个模块加载到 js 中，里面的内容是样式字符串
+            "css-loader",
+            "sass-loader",
+             {
+                 // css 兼容处理 postcss，注意需要在 package.json 配置 browserslist
+                 loader: "postcss-loader",
+                 options: {
+                     postcssOptions: {
+                         ident: "postcss",
+                         // postcss-preset-env插件：帮 postcss 找到 package.json 中的 browserslist 配置，根据配置加载指定的兼容性样式
+                         plugins: [require("postcss-preset-env")()],
+                     },
+                 },
+             },
+        ],
+    },
+    {
+        test: /\.js$/,
+        // 注意需要在 package.json 配置 browserslist，否则 babel-loader 不生效
+        // js 兼容处理 babel
+        loader: "babel-loader", // 规则只使用一个 loader 时推荐写法
+        options: {
+            presets: [
+                [
+                    "@babel/preset-env",// 预设：指示 babel 做怎么样的兼容处理 
+                    {
+                        useBuiltIns: "usage", //按需加载
+                        corejs: {
+                            version: "3",
+                        },
+                        targets: "defaults",
+                    }
+                ]
+            ]
+        }
+    },
+    /* 
+    Webpack5.0 新增资源模块(asset module)，它是一种模块类型，允许使用资源文件（字体，图标等）而无需配置额外 loader。支持以下四个配置
+    asset/resource 发送一个单独的文件并导出 URL。之前通过使用 file-loader 实现。
+    asset/inline 导出一个资源的 data URI。之前通过使用 url-loader 实现。
+    asset/source 导出资源的源代码。之前通过使用 raw-loader 实现。
+    asset 在导出一个 data URI 和发送一个单独的文件之间自动选择。之前通过使用 url-loader，并且配置资源体积限制实现。
+    */
+    // Webpack4 使用 file-loader 实现
+    {
+        test: /\.(eot|svg|ttf|woff|)$/,
+        type: "asset/resource",
+        generator: {
+            // 输出文件位置以及文件名
+            filename: "fonts/[name][ext]"
+        },
+    },
+    // Webpack4 使用 url-loader 实现
+    {
+        //处理图片资源
+        test: /\.(jpg|png|gif|)$/,
+        type: "asset",
+        generator: {
+            // 输出文件位置以及文件名
+            filename: "images/[name][ext]"
+        },
+        parser: {
+            dataUrlCondition: {
+                maxSize: 10 * 1024 //超过 10kb 不转 base64
+            }
+        }
+    },
+],
+
+</code></pre>
+<h2 id="plugins"><a class="header" href="#plugins">plugins</a></h2>
+<p>插件用于执行 loader 之外的其他功能。例如 打包优化和压缩，定义环境变量等。</p>
+<pre><code class="language-js">// CleanWebpackPlugin 帮助你在打包时自动清除 dist 文件，学习时使用比较方便
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+
+// HtmlWebpackPlugin 帮助你创建 html 文件，并自动引入打包输出的 bundles 文件。支持 html 压缩。
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+// 该插件将 CSS 提取到单独的文件中。它会为每个 trunk 创造一个 css 文件。需配合 loader 一起使用
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+// 该插件将在 webpack 构建过程中搜索 CSS 资源，并优化\最小化 CSS
+const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin");
+
+// vue-loader V15 版本以上，需要引入 VueLoaderPlugin 插件，它的作用是将你定义过的 js、css 等规则应用到 vue 文件中去。
+const { VueLoaderPlugin } = require('vue-loader')
+
+module.exports = {
+    module: {
+        rules: [
+            {
+                test: /\.vue$/,
+                loader: "vue-loader"
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    // MiniCssExtractPlugin.loader的 作用就是把 css-loader 处理好的样式资源（js文件内），单独提取出来成为 css 样式文件
+                    MiniCssExtractPlugin.loader, //生产环境下使用，开发环境还是推荐使用 style-loader
+                    "css-loader",
+                ],
+            },
+        ],
+    },
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            template:"index.html"
+        }),
+        new MiniCssExtractPlugin({
+            filename: "css/built.css",
+        }),
+        new OptimizeCssAssetsWebpackPlugin(),
+        new VueLoaderPlugin(),
+    ]
+}
+
+</code></pre>
+<h2 id="mode"><a class="header" href="#mode">mode</a></h2>
+<p>指示 webpack 使用相应模式的配置。默认为 production。</p>
+<div class="table-wrapper"><table><thead><tr><th>选项</th><th>描述</th></tr></thead><tbody>
+<tr><td>development</td><td>会将 DefinePlugin 中 process.env.NODE_ENV 的值设置为 development。为模块和 chunk 启用有效的名。</td></tr>
+<tr><td>production</td><td>会将 DefinePlugin 中 process.env.NODE_ENV 的值设置为 production。为模块和 chunk 启用确定性的混淆名称，FlagDependencyUsagePlugin，FlagIncludedChunksPlugin，ModuleConcatenationPlugin，NoEmitOnErrorsPlugin 和 TerserPlugin 。</td></tr>
+<tr><td>none</td><td>不使用任何默认优化选项</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>DefinePlugin：用于定义全局变量 process.env.NODE_ENV，区分程序运行状态。</li>
+<li>FlagDependencyUsagePlugin：标记没有用到的依赖。</li>
+<li>FlagIncludedChunksPlugin：标记 chunks，防止 chunks 多次加载。</li>
+<li>ModuleConcatenationPlugin：作用域提升(scope hosting)，预编译功能，提升或者预编译所有模块到一个闭包中，提升代码在浏览器中的执行速度。</li>
+<li>NoEmitOnErrorsPlugin：防止程序报错，就算有错误也继续编译。</li>
+<li>TerserPlugin：压缩 js 代码。</li>
+</ul>
+<h2 id="resolve"><a class="header" href="#resolve">resolve</a></h2>
+<p>配置模块如何被解析。</p>
+<pre><code class="language-js">    // 解析模块的规则：
+    resolve: {
+        // 配置 解析模块路径别名：可简写路径。
+        alias: {
+            "@": path.resolve(__dirname, "src")
+        },
+        // 配置省略文件路径的后缀名。默认省略 js 和 json。也是 webpack 默认认识的两种文件类型
+        extensions: [".js", ".json", ".css"], // 新加 css 文件
+        // 告诉 webpack 解析模块是去找哪个目录
+        // 该配置明确告诉 webpack，直接去上一层找 node_modules。
+        modules: [path.resolve(__dirname, "../node_modules")],
+    },
+</code></pre>
+<h2 id="devserver"><a class="header" href="#devserver">devServer</a></h2>
+<p>配置  webpack-dev-server，在开发环境下启动一个服务提供实时加载改动后的页面，也可以设置代理，将所有请求都转发到另外一个服务，解决开发中跨域问题</p>
+<pre><code class="language-js">    devServer: {
+        // 运行代码的目录
+        contentBase: path.resolve(__dirname, "build"),
+        // 为每个静态文件开启 gzip 压缩
+        compress: true,
+        host: "localhost",
+        port: 5000,
+        open: true, // 自动打开浏览器
+        hot: true, //开启HMR功能
+        // 设置代理
+        proxy: {
+            // 一旦 devServer (5000端口)接收到 /api/xxx 的请求，就会用 devServer 起的服务把请求转发到另外一个服务器（3000）
+            // 以此来解决开发中的跨域问题
+            api: {
+                target: "htttp://localhost:3000",
+                // 发送请求时，请求路径重写：将/api/xxx  --&gt; /xxx （去掉/api）
+                pathRewrite: {
+                    "^api": "",
+                },
+            },
+        },
+    },
+</code></pre>
+<h2 id="optimization"><a class="header" href="#optimization">optimization</a></h2>
+<p>webpack 会根据不同 mode 执行不同的优化，这些预设的优化可以通过 optimization 选项来手动配置和重写。</p>
+<pre><code class="language-js">// optimization（生产环境下配置）
+    optimization: {
+        // 提取公共代码
+        splitChunks: {
+            chunks: "all",
+        },
+        minimizer: [
+            // 配置生产环境的压缩方案：js 和 css
+            new TerserWebpackPlugin({
+                // 多进程打包
+                parallel: true,
+                terserOptions: {
+                    // 启动 source-map
+                    sourceMap: true,
+                },
+            }),
+        ],
+    }
+</code></pre>
+<h2 id="devtool"><a class="header" href="#devtool">devtool</a></h2>
+<p>配置如何生成 source map。source-map 是一种提供源代码到构建后代码映射的技术，如果构建后代码出错了，通过映射可以追踪源代码错误，优化代码调试。</p>
+<ul>
+<li>
+<p>下面几个值不会生成 source-map</p>
+<ul>
+<li>false：不使用 source-map，也就是没有任何和 source-map 相关的内容。</li>
+<li>none：production 模式下的默认值，不生成 source-map。</li>
+<li>eval：development 模式下的默认值，不生成单独的 source-map 文件，但是它会在eval执行的代码中，添加 //# sourceURL=；它会被浏览器在执行时解析，并且在调试面板中生成对应的一些文件目录，方便我们调试代码；</li>
+</ul>
+</li>
+<li>
+<p>source-map：生成一个独立的 source-map 文件，并且在 bundle 文件中有一个注释，指向 source-map 文件；bundle 文件中有如下的注释：开发工具会根据这个注释找到 source-map 文件，并且解析；</p>
+</li>
+</ul>
+<pre><code class="language-js">//# sourceMappingURL=bundle.js.map
+</code></pre>
+<ul>
+<li>
+<p>eval-source-map：会生成 sourcemap，但是 source-map 是以 DataUrl 添加到 eval 函数的后面</p>
+</li>
+<li>
+<p>inline-source-map：会生成 sourcemap，但是 source-map 是以 DataUrl 添加到 bundle 文件的后面</p>
+</li>
+<li>
+<p>cheap-source-map：会生成 sourcemap，但是会更加高效一些（cheap低开销），因为它没有生成列映射（Column Mapping）因为在开发中，我们只需要行信息通常就可以定位到错误了。</p>
+</li>
+<li>
+<p>hidden-source-map：会生成 sourcemap，但是不会对 source-map 文件进行引用；相当于删除了打包文件中对 sourcemap 的引用注释；如果我们手动添加进来，那么 sourcemap 就会生效了</p>
+</li>
+<li>
+<p>nosources-source-map：会生成 sourcemap，但是生成的 sourcemap 只有错误信息的提示，不会生成源代码文件；</p>
+</li>
+<li>
+<p>cheap-module-source-map：会生成 sourcemap，类似于 cheap-source-map，但是对源自 loader 的 sourcemap 处理会更好。这里有一个很模糊的概念：对源自 loader 的 sourcemap 处理会更好，官方也没有给出很好的解释。其实是如果 loader 对我们的源码进行了特殊的处理，比如 babel；</p>
+</li>
+<li>
+<p>事实上，webpack 提供给我们的 26 个值，是可以进行多组合的。</p>
+<ul>
+<li>inline-|hidden-|eval：三个值时三选一；</li>
+<li>nosources：可选值；</li>
+<li>cheap 可选值，并且可以跟随 module 的值；</li>
+</ul>
+</li>
+</ul>
+<pre><code>[inline-|hidden-|eval-][nosources-][cheap-[module-]]source-map
+</code></pre>
+<ul>
+<li>那么在开发中，最佳的实践是什么呢？
+<ul>
+<li>开发阶段：推荐使用 source-map 或者 cheap-module-source-map 这分别是 vue 和 react 使用的值，可以获取调试信息，方便快速开发；</li>
+<li>测试阶段：推荐使用 source-map 或者 cheap-module-source-map 测试阶段我们也希望在浏览器下看到正确的错误提示；</li>
+<li>发布阶段：false、缺省值（不写）</li>
+</ul>
+</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../react/custom_hook.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../webpack/webpack_optimise.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../react/custom_hook.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../webpack/webpack_optimise.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>

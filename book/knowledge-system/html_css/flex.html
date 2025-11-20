@@ -1,0 +1,473 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>flex - knowledge-system</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">knowledge-system</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="flex"><a class="header" href="#flex">flex</a></h1>
+<h2 id="基础概念"><a class="header" href="#基础概念">基础概念</a></h2>
+<ul>
+<li>flex-flow 属性（flex-direction 和 flex-wrap 的简写模式）和书写模式（writing mode）会决定这些条件如何编排组织 物理方向（top/right/bottom/left），坐标轴（vertical/horizontal），大小（width/height）。</li>
+<li>main axis（主轴）：flex 容器中 flex 项目排列的主要坐标轴。书写模式默认情况下（horizontal-tb），主轴为从左到右，水平方向。</li>
+<li>main-start main-end：flex 项目在 flex 容器中从 main-start 开始朝 main-end 的方向排列。</li>
+<li>cross axis（侧轴）：与主轴垂直的轴。书写模式默认情况下（horizontal-tb），侧轴为从上到下，垂直方向。</li>
+<li>cross-start cross-end：flex 行（Flex lines）将项目放置入容器的方向是从 cross-start 开始朝 cross-end 方向排列。</li>
+<li>block axis（块轴）：是沿 块(block) （比如段落元素）的布局方向延伸的轴， 它会垂直穿过行内轴</li>
+<li>inline axis（内联轴）：是在使用特定写作模式中，沿句子单词的流动方向的轴。比如对于英语或者中文来说， 内联轴是水平的</li>
+<li>块轴（Block Axis）又常称为列（Column）, 内联轴（Inline Axis）又常称为行（Row）</li>
+<li>行内轴（Inline Axis）也对标 Flexbox 中的主轴 Main Axis</li>
+<li>块轴（Block Axis）也对标 Flexbox 中的侧轴 Cross Axis</li>
+</ul>
+<h2 id="flex-容器和-flex-项目"><a class="header" href="#flex-容器和-flex-项目">flex 容器和 flex 项目</a></h2>
+<ul>
+<li>在元素上使用 display 设置值为 flex 或 inline-flex ，该容器会成为 flex 容器，该容器下的子元素，包括 文本节点，伪元素会是 flex 项目。</li>
+<li>设置为 display: flex 时，flex 容器未显式设置与宽度相关的属性时，其宽度与其父容器等同（相当于 width: 100% ）</li>
+<li>设置为 display: inline-flex 时，flex 容器未显式设置与宽度相关的属性时，其宽度等同于所有 flex 项目的宽度和</li>
+<li>当 flex 容器中所有 flex 项目所有宽和大于 flex 容器时：
+<ul>
+<li>设置为 display: flex 时，flex 项目会溢出 flex 容器</li>
+<li>设置为 display: inline-flex 时，flex 项目会撑大 flex 容器，有可能造成 flex 容器溢出其父元素（或祖先元素）</li>
+</ul>
+</li>
+</ul>
+<h2 id="flex-容器的属性"><a class="header" href="#flex-容器的属性">flex 容器的属性</a></h2>
+<p><strong>注意：以下的属性讲解都以默认书写模式为准，也就是没有修改 writing-mode direction text-orientation 以及 html 属性 dir 时的主轴和侧轴方向。</strong></p>
+<h3 id="flex-flowflex-direction-flex-wrap"><a class="header" href="#flex-flowflex-direction-flex-wrap">flex-flow（flex-direction flex-wrap）</a></h3>
+<ul>
+<li>flex-flow 属性是 flex-direction 和 flex-wrap 的简写。</li>
+<li>flex-flow 只显式设置一个值，并且该值和 flex-direction 相匹配时， flex-wrap 会取值 initial</li>
+<li>flex-flow 只显式设置一个值，并且该值和 flex-wrap 相匹配时， flex-direction 会取值 initial</li>
+<li>flex-flow 显式设置两个值时， flex-direction 和 flow-wrap 没有先后顺序之分，即可 flex-flow: column wrap 和 flex-flow: wrap column 等同</li>
+</ul>
+<h4 id="flex-direction"><a class="header" href="#flex-direction">flex-direction</a></h4>
+<p>flex-direction 用于设置主轴方向。</p>
+<div class="table-wrapper"><table><thead><tr><th>值</th><th>含义</th></tr></thead><tbody>
+<tr><td>row</td><td>默认值。从左至右，水平方向。</td></tr>
+<tr><td>row-reverse</td><td>和 row 相反。从右至左，水平方向。</td></tr>
+<tr><td>column</td><td>从上至下，垂直方向。</td></tr>
+<tr><td>column-reverse</td><td>和 column 相反。从下至上，垂直方向。</td></tr>
+</tbody></table>
+</div>
+<h4 id="flex-wrap"><a class="header" href="#flex-wrap">flex-wrap</a></h4>
+<p>flex-wrap 指定 flex 项目在 flex 容器换行的方式 。所有 flex 项目宽度总和大于 flex 容器主轴尺寸时，设置 flex-wrap 属性才能生效。</p>
+<div class="table-wrapper"><table><thead><tr><th>值</th><th>含义</th></tr></thead><tbody>
+<tr><td>nowrap</td><td>默认值。 不换行，可能会溢出。</td></tr>
+<tr><td>wrap</td><td>默认值。 换行。</td></tr>
+<tr><td>wrap-reverse</td><td>默认值。 换行。cross-start 和 cross-end 互换</td></tr>
+</tbody></table>
+</div>
+<h3 id="justify-content-主轴方向对齐方式"><a class="header" href="#justify-content-主轴方向对齐方式">justify-content 主轴方向对齐方式</a></h3>
+<p><img src="../img/justify-content.awebp" alt="justify-content" /></p>
+<p>在 flex 容器中使用 justify-content 来控制 flex 项目在 Flex 容器主轴方向的对齐方式，也可以用来分配 flex 容器中主轴方向的剩余空间。使用 justify-content 分配 flex 容器剩余空间，主要是将剩余空间按不同的对齐方式，将剩余空间分配给 flex 项目的两侧，即控制 flex 项目与 flex 项目之间的间距。</p>
+<div class="table-wrapper"><table><thead><tr><th>值</th><th>含义</th></tr></thead><tbody>
+<tr><td>flex-start</td><td>flex 项目从 main-start 开始排列</td></tr>
+<tr><td>flex-end</td><td>flex 项目从 main-end  开始排列</td></tr>
+<tr><td>center</td><td>flex 项目向主轴中心排列，第一个 flex 项目与 main-start 的距离和最后一个 flex 项目与 main-end 的距离相等</td></tr>
+<tr><td>space-between</td><td>会让第一个 flex 项目的盒子起始边缘与 flex 容器主轴起点相稳合，最后一个 flex 项目的盒子结束边缘与 flex 容器主轴终点相稳合，其它相邻 flex 项目之间间距相等。当 flex 容器中只有一个 flex 项目时，其表现行为和 flex-start 等同</td></tr>
+<tr><td>space-around</td><td>会让第一个 flex 项目的盒子起始边缘与 flex 容器主轴起点间距和最后一个 flex 项目的盒子结束边缘与 flex 容器主轴终点间距相等，并且等于其他相邻两个 flex 项目之间间距的一半。当 flex 容器中只有一个 flex 项目时，其表现行为和 center 等同</td></tr>
+<tr><td>space-evenly</td><td>会让第一个 flex 项目的盒子起始边缘与 flex 容器主轴起点间距和最后一个 flex 项目的盒子结束边缘与 flex 容器主轴终点间距相等，并且等于其他相邻两个 flex 项目之间间距。当 flex 容器中只有一个 flex 项目时，其表现行为和 center 等同</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>如果 flex 容器没有额外的剩余空间，或者说剩余空间为负值时， justify-content 的值表现形式：
+<ul>
+<li>flex-start 会让 flex 项目在 Flex 容器主轴结束点处溢出</li>
+<li>flex-end 会让 flex 项目在 flex 容器主轴起点处溢出</li>
+<li>center 会让 flex 项目在 flex 容器两端溢出</li>
+<li>space-between 和 flex-start 相同</li>
+<li>space-around 和 center 相同</li>
+<li>space-evenly 和 center 相同</li>
+</ul>
+</li>
+</ul>
+<h3 id="align-items-侧轴方向对齐方式"><a class="header" href="#align-items-侧轴方向对齐方式">align-items 侧轴方向对齐方式</a></h3>
+<p><img src="../img/align-items.awebp" alt="align-items" /></p>
+<p>align-items 控制 flex 项目在侧轴方向的对齐方式。</p>
+<div class="table-wrapper"><table><thead><tr><th>值</th><th>含义</th></tr></thead><tbody>
+<tr><td>stretch</td><td>flex 项目未显式设置 height (或 width )的时候，flex 项目在侧轴方向被拉伸到与容器相同的高度或宽度</td></tr>
+<tr><td>flex-start</td><td>flex 项目向 cross-start 对齐</td></tr>
+<tr><td>flex-end</td><td>flex 项目向 cross-end 对齐</td></tr>
+<tr><td>center</td><td>flex 项目在侧轴上居中</td></tr>
+<tr><td>baseline</td><td>flex 项目在侧轴与基线对齐</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>如果 flex 容器没有剩余空间或剩余空间为负值是：
+<ul>
+<li>flex-start 会让 flex 项目在 flex 容器侧轴终点处溢出</li>
+<li>flex-end 会让 flex 项目在 flex 容器侧轴起点处溢出</li>
+<li>center 会让 flex 项目在 flex 容器侧轴两侧溢出</li>
+<li>baseline 会让 flex 项目在 flex 容器侧轴终点溢出，有点类似于 flex-start</li>
+</ul>
+</li>
+</ul>
+<h3 id="align-content-多行列对齐方式"><a class="header" href="#align-content-多行列对齐方式">align-content 多行（列）对齐方式</a></h3>
+<p><img src="../img/align-content.awebp" alt="align-content" /></p>
+<p>align-content 只适用于 flex 容器在没有足够空间（所有 flex 项目宽度之和大于 flex 容器主轴尺寸），并且显式设置 flex-wrap 的值为非 wrap 时。</p>
+<p>align-content 表现行为有点类似于 justify-cotent 控制 flex 项目在主轴方向的对齐方式（分配 flex 容器主轴剩余空间），而 align-content 可以用来控制多行状态下，行在 flex 容器侧轴的对齐方式（分配 flex 容器侧轴剩余空间）。可以把 align-content 状态下侧轴中的整行当作是 justify-content 状态下单个 flex 项目。</p>
+<div class="table-wrapper"><table><thead><tr><th>值</th><th>含义</th></tr></thead><tbody>
+<tr><td>flex-start</td><td>所有行从 cross-start 开始填充。</td></tr>
+<tr><td>flex-end</td><td>所有行从 cross-end 开始填充。</td></tr>
+<tr><td>center</td><td>所有行在侧轴居中填充。</td></tr>
+<tr><td>stretch</td><td>拉伸所有行来填满剩余空间。</td></tr>
+<tr><td>space-between</td><td>第一行与 cross-start 紧贴，最后一行与 cross-end 紧贴，其他行之间距离相等。当 flex 容器中只有一行时，其表现行为和 flex-start 等同</td></tr>
+<tr><td>space-around</td><td>第一行与 cross-start 和 最后一行与 cross-end 的距离相等，是其他行之间距离的一半。当 flex 容器中只有一行时，其表现行为和 center 等同</td></tr>
+<tr><td>space-evenly</td><td>每一行之间距离相等。当 flex 容器中只有一行时，其表现行为和 center 等同</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>当 flex 容器中所有行的尺寸之和大于 flex 容器侧轴尺寸（flex 容器侧轴没有可用空间或可用空间为负值）时，各值表现行为：</li>
+<li>flex-start 会让 flex 容器的行在侧轴结束点溢出</li>
+<li>flex-end 会让 flex 容器的行在侧轴起点溢出</li>
+<li>center 会让 flex 容器行在侧轴两端溢出</li>
+<li>stretch 表现行为类似于 flex-start</li>
+<li>space-around 表现行为类似于 center</li>
+<li>space-between 表现行为类似于 flex-start</li>
+<li>space-evenly 表现行为类似于 center</li>
+</ul>
+<h2 id="flex-项目的属性"><a class="header" href="#flex-项目的属性">flex 项目的属性</a></h2>
+<h3 id="align-self"><a class="header" href="#align-self">align-self</a></h3>
+<p><img src="../img/align-self.awebp" alt="align-self" /></p>
+<div class="table-wrapper"><table><thead><tr><th>值</th><th>含义</th></tr></thead><tbody>
+<tr><td>auto</td><td>设置为 flex 容器的 align-items 值</td></tr>
+<tr><td>flex-start</td><td>对齐至 cross-start</td></tr>
+<tr><td>flex-end</td><td>对齐至 cross-end</td></tr>
+<tr><td>center</td><td>对齐至侧轴中心</td></tr>
+<tr><td>baseline</td><td>在侧轴与基线对齐</td></tr>
+<tr><td>stretch</td><td>拉伸来填满剩余空间。</td></tr>
+</tbody></table>
+</div>
+<h3 id="flex-1"><a class="header" href="#flex-1">flex</a></h3>
+<p>flex 属性使 flex 项目根据 flex 容器的可用空间对自身做伸缩计算，其包含三个子属性： flex-basis 、 flex-shrink 和 flex-grow 。</p>
+<ul>
+<li>
+<p>即 flex 的三个子属性： flex-grow （扩展比率）、 flex-shrink （收缩比率）和 flex-basis （伸缩基准）。这三个属性可以控制Flex项目，具体的表现如下：</p>
+<ul>
+<li>flex-grow ：设置 flex 项目的扩展比率，让 flex 项目得到（扩展）多少 flex 容器剩余空间（Positive Free Space），即 flex 项目可能会变大</li>
+<li>flex-shrink ：设置 flex 项目收缩比率，让 flex 项目减去 flex 容器不足的空间（Negative Free Space），即 flex 项目可能会变小</li>
+<li>flex-basis ：flex 项目未扩展或收缩之前，它的大小，即指定了 flex 项目在主轴方向的初始大小</li>
+</ul>
+</li>
+<li>
+<p>flex 属性可以指定 1个值（单值语法） 、 2个值（双值语法） 或 3个值（三值语法） 。</p>
+<ul>
+<li>单值语法：值必须为以下其中之一：
+<ul>
+<li>一个无单位的数（ <number> ），比如 flex: 1 ，这个时候它会被当作 <flex-grow> 的值</li>
+<li>一个有效的宽度（ width ）值，比如 flex: 30vw ，这个时候它会被当作 <flex-basis> 的值</li>
+<li>关键词 none 、 auto 或 initial （即初始值）</li>
+</ul>
+</li>
+<li>双值语法：第一个值必须为一个无单位数值，并且它会被当作 <flex-grow> 的值；第二个值必须为以下之一：
+<ul>
+<li>一个无单位的数（ <number> ），它会被当作 <flex-shrink> 的值</li>
+<li>一个有效的宽度（ width ）值，它会被当作 <flex-basis> 的值</li>
+</ul>
+</li>
+<li>三值语法：
+<ul>
+<li>第一个值必须是一个无单位数（ <number> ），并且它会被当作 <flex-grow> 的值</li>
+<li>第二个值必须是一个无单位数（ <number> ），并且它会被当作 <flex-shrink> 的值</li>
+<li>第三个值必须为一个有效的宽度（ width ）值，并且它会被当作 <flex-basis> 的值</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th>值</th><th>含义</th></tr></thead><tbody>
+<tr><td>auto</td><td>flex 项目会根据自身的 width 和 height 来确定尺寸，但 flex 项目根据 flex 容器剩余空间进行伸缩。其相当于 flex: 1 1 auto</td></tr>
+<tr><td>initial</td><td>flex 项目会根据自身的 width 和 height 来设置尺寸。它会缩短自身以适应 flex 容器，但不会伸长并吸收 flex 容器中的额外剩余空间来适应 flex 容器。其相当于 flex: 0 1 auto</td></tr>
+<tr><td>none</td><td>flex 项目会根据自身的 width 和 height 来设置尺寸。它是完全非弹性的（既不会缩短，也不会伸长来适应 flex 容器）。其相当于 flex: 0 0 auto</td></tr>
+</tbody></table>
+</div>
+<h3 id="flex-grow"><a class="header" href="#flex-grow">flex-grow</a></h3>
+<p>flex-grow 计算公式：</p>
+<p><img src="../img/flex-grow.awebp" alt="flex-grow" /></p>
+<h3 id="flex-shrink"><a class="header" href="#flex-shrink">flex-shrink</a></h3>
+<p>flex-shrink 计算公式</p>
+<p><img src="../img/flex-shrink.awebp" alt="flex-shrink" /></p>
+<h3 id="flex-basis"><a class="header" href="#flex-basis">flex-basis</a></h3>
+<p>如果 flex 项目未显式指定 flex-basis 的值，那么 flex-basis 将回退到 width （或 inline-size ）属性；如果未显式指定 width （或 inline-size ）属性的值，那么 flex-basis 将回退到基于 flex 项目内容计算宽度。不过，决定 flex 项目尺寸大小，还受 flex-grow 和 flex-shrink 以及 flex 容器大小的影响。而且 flex 项目 最终尺寸 会受 min-width、 max-width(或 min-inline-size 、 max-inline-size )属性限制。</p>
+<h2 id="题目"><a class="header" href="#题目">题目</a></h2>
+<p>第一题</p>
+<p>用 flex 实现 flex 项目是对角线的布局</p>
+<details>
+<summary>答案</summary>
+<pre><code class="language-html">&lt;style&gt;
+        div {
+            box-sizing: border-box;
+        }
+        .box {
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: space-evenly;
+        }
+        .inner-box {
+            padding: 30px;
+        }
+        .inner-box-1 {
+            align-self: flex-start;
+            background-color: blueviolet;
+        }
+        .inner-box-2 {
+            align-self: center;
+            background-color: dodgerblue;
+        }
+        .inner-box-3 {
+            align-self: flex-end;
+            background-color: forestgreen;
+        }
+    &lt;/style&gt;
+    &lt;div class="box"&gt;
+        &lt;div class="inner-box inner-box-1"&gt;&lt;/div&gt;
+        &lt;div class="inner-box inner-box-2"&gt;&lt;/div&gt;
+        &lt;div class="inner-box inner-box-3"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+</code></pre>
+</details>
+<br><br>
+<p>第二题</p>
+<p>用 flex 实现。flex 项目一共有 4 个，1 和 3 在侧轴上方，2 和 4 才侧轴下方。</p>
+<details>
+<summary>答案</summary>
+<pre><code class="language-html">    &lt;style&gt;
+        div {
+            box-sizing: border-box;
+        }
+        .box {
+            width: 400px;
+            height: 130px;
+            display: flex;
+            justify-content: space-evenly;
+        }
+        .inner-box {
+            padding: 30px;
+        }
+        .inner-box-1 {
+            align-self: flex-start;
+            background-color: blueviolet;
+        }
+        .inner-box-2 {
+            align-self: flex-end;
+            background-color: dodgerblue;
+        }
+        .inner-box-3 {
+            align-self: flex-start;
+            background-color: forestgreen;
+        }
+        .inner-box-4 {
+            align-self: flex-end;
+            background-color: lightsalmon;
+        }
+    &lt;/style&gt;
+    &lt;div class="box"&gt;
+        &lt;div class="inner-box inner-box-1"&gt;&lt;/div&gt;
+        &lt;div class="inner-box inner-box-2"&gt;&lt;/div&gt;
+        &lt;div class="inner-box inner-box-3"&gt;&lt;/div&gt;
+        &lt;div class="inner-box inner-box-4"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+</code></pre>
+</details>
+<br><br>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../html_css/display.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../html_css/in_the_middle.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../html_css/display.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../html_css/in_the_middle.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../mermaid.min.js"></script>
+        <script src="../mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>
