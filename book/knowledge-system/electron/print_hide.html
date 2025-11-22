@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>开机自启动 - knowledge-system</title>
+        <title>调用打印机打印小票 - knowledge-system</title>
 
 
         <!-- Custom HTML head -->
@@ -152,86 +152,48 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="开机自启动"><a class="header" href="#开机自启动">开机自启动</a></h1>
-<p>electron 软件想要实现 windows 开机自启动的切换，只需要去修改注册表就行了</p>
-<p>下面是主进程代码：</p>
-<pre><code class="language-ts">import { promisify } from 'node:util';
-import child_process from 'node:child_process';
-const execAsync = promisify(child_process.exec);
+                        <h1 id="调用打印机打印小票"><a class="header" href="#调用打印机打印小票">调用打印机打印小票</a></h1>
+<ul>
+<li>
+<p>现在需要实现 electron 应用调用系统打印机然后打印小票的功能，主进程的核心功能实现一个 <code>Printer</code> 类</p>
+<ol>
+<li>首先在渲染进程获取到需要打印的小票数据，以及各种所需要的配置项，比如小票页面的样式配置，用户设置的默认打印机，然后将这些数据组装好，发送 <code>ipc</code> 到主进程请求打印</li>
+<li>主进程收到请求后，将数据传递给 <code>Printer</code> 类的 <code>print</code> <code>静态方法，print</code> 方法主要做的事情就是新建一个 <code>BrowserWindow</code> <code>用来加载小票预览页面，BrowserWindow</code> 初次加载会触发 <code>BrowserWindow.webContents</code> 的 <code>did-finish-load</code> 事件</li>
+<li>监听 <code>did-finish-load</code> 到事件触发，说明窗口已经加载完成，这时候调用 <code>Printer.renderPrintDocument</code> 方法，去将小票预览页需要的所有数据发送给 <code>BrowserWindow</code> 的页面，并且注册双向的 <code>ipc</code> 事件，用来监听页面渲染数据成功的时机</li>
+<li>页面接收到小票数据之后，会渲染网页，在页面 <code>nextTick</code> 之后发送响应的 <code>ipc</code> 事件回去，通知主进程预览页已经加载好，可以开始打印了，主进程收到这个响应之后，经过一些预览日志记录工作以及打印页面尺寸的计算工作之后，就正式调用 <code>BrowserWindow.webContents.print</code> 方法启动操作系统的打印</li>
+<li>监听打印结果，成功或者失败，记录日志，然后关闭 <code>BrowserWindow</code></li>
+</ol>
+</li>
+</ul>
+<pre class="mermaid">  flowchart TD
+    A[渲染进程获取小票数据] --&gt; B[请求主进程打印 ]
+    B --&gt; C[主进程新建 BrowserWindow ]
+    C --&gt; D[监听 BrowserWindow.webContents did-finish-load 事件，主进程将数据传输给渲染进程]
+    D --&gt; E[渲染进程渲染完毕，通知主进程]
+    E --&gt; F[主进程记录预览日志，计算尺寸单位转换，调用 BrowserWindow.webContents.print]
+    F --&gt; G[打印结果（成功/失败）反馈到渲染进程]
+    G --&gt; H[清理资源（关闭窗口）]
+</pre>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<ul>
+<li>此解决方案灵感来源于 <a href="https://www.npmjs.com/package/electron-pos-printer">electron-pos-printer</a> 这个包的源码实现，其实打印功能实现的重点就是页面的像素单位和打印机可以识别的微米单位的互相转换</li>
+<li>其实有个地方还可以继续优化，就是这里计算打印尺寸的时候，直接使用了默认的 dpi 为 96，如果用户的显示器分辨率比较高，dpi 值更大，这里尺寸的转换就会出现精度问题，应该通过浏览器的 <code>window.devicePixelRatio</code> 接口动态获取用户的显示器像素比，计算的时候用默认 dpi 乘以 <code>devicePixelRatio</code> 就可以了， <code>96 * devicePixelRatio</code></li>
+</ul>
+<h2 id="参考链接"><a class="header" href="#参考链接">参考链接</a></h2>
+<ul>
+<li><a href="https://www.electronjs.org/zh/docs/latest/api/web-contents#contentsprintoptions-callback">contents.print([options], [callback])</a></li>
+<li><a href="https://www.npmjs.com/package/electron-pos-printer">electron-pos-printer</a></li>
+</ul>
 
-async function executeRegCommand(command: string) {
-  try {
-    const { stdout, stderr } = await execAsync(command, { windowsHide: true });
-    if (stderr) {
-      global.log.info(`executeRegCommand stderr: ${stderr}`);
-      throw new Error(stderr);
-    }
-    return stdout;
-  } catch (err) {
-    logErrorInfo(`executeRegCommand err`, err);
-    throw err;
-  }
-}
-
-ipcMain.handle('auto-start-on-boot', async (_, toggle: boolean) =&gt; {
-  const regPath = `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run`;
-  const PRODUCT_NAME = `app名字`;
-  const EXE_NAME = `app名字.exe`;
-  const EXEC_PATH = `${path.dirname(process.execPath)}\\${EXE_NAME}`;
-
-  const addCommand = `reg add "${regPath}" /v "${PRODUCT_NAME}" /t REG_SZ /d "${EXEC_PATH}" /f`;
-  const deleteCommand = `reg delete "${regPath}" /v "${PRODUCT_NAME}" /f`;
-
-  try {
-    await executeRegCommand(toggle ? addCommand : deleteCommand);
-    return { code: 0 };
-  } catch (err) {
-    logErrorInfo(`auto-start-on-boot err`, err);
-    return { code: -1 };
-  }
-});
-</code></pre>
-<p>下面是 preload 代码：</p>
-<pre><code class="language-ts">import { contextBridge, ipcRenderer } from 'electron';
-
-contextBridge.exposeInMainWorld('ipc', {
-  autoStartOnBoot: (toggle: boolean): Promise&lt;any&gt; =&gt; {
-    return ipcRenderer.invoke('auto-start-on-boot', toggle);
-  },
-});
-</code></pre>
-<p>下面是渲染进程代码：</p>
-<pre><code class="language-ts">const autoStartRes = await window.ipc?.autoStartOnBoot(
-  autoStartup.value === '1' ? true : false
-);
-if (autoStartRes.code === 0) {
-  console.log('autoStartUpSuccess');
-} else {
-  console.log('autoStartUpFailed');
-}
-</code></pre>
-<h2 id="reg-命令参数说明表"><a class="header" href="#reg-命令参数说明表">reg 命令参数说明表</a></h2>
-<pre><code class="language-cmd">reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "MyApp" /t REG_SZ /d "C:\Program Files\MyApp\app.exe" /f
-
-reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "MyApp" /f
-</code></pre>
-<div class="table-wrapper"><table><thead><tr><th>参数</th><th>作用说明</th><th>示例值</th></tr></thead><tbody>
-<tr><td><code>&lt;注册表路径&gt;</code></td><td>指定要添加键值对的注册表位置，需使用反斜杠 <code>\</code> 分隔层级</td><td><code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code>（当前用户开机启动项路径）</td></tr>
-<tr><td><code>/v</code></td><td>指定要创建的<strong>键名</strong>（即注册表中的“名称”列，如启动项的自定义名称）</td><td><code>MyTestApp</code>（自定义的开机启动项名称）</td></tr>
-<tr><td><code>/t</code></td><td>指定键值的数据类型，需使用系统规定的类型标识，常用字符串类型</td><td><code>REG_SZ</code>（字符串类型，适用于路径、文本等内容）</td></tr>
-<tr><td><code>/d</code></td><td>指定键名对应的<strong>键值</strong>（即注册表中的“数据”列，如程序路径、配置内容）</td><td><code>"C:\Program Files\Test\Test.exe"</code>（程序完整路径，含空格需加双引号）</td></tr>
-<tr><td><code>/f</code></td><td>强制覆盖目标路径下已存在的同名键值对，执行时无需手动确认</td><td>无需额外值，命令中直接加 <code>/f</code> 即可（如 <code>reg add ... /f</code>）</td></tr>
-</tbody></table>
-</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../electron/db_encrypt_hide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../electron/auto_start_up.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../electron/print_hide.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../typescript/base.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -241,11 +203,11 @@ reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "MyApp" /f
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../electron/db_encrypt_hide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../electron/auto_start_up.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../electron/print_hide.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../typescript/base.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

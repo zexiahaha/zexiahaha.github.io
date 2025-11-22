@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>开机自启动 - knowledge-system</title>
+        <title>asar 增量更新 - knowledge-system</title>
 
 
         <!-- Custom HTML head -->
@@ -152,86 +152,52 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="开机自启动"><a class="header" href="#开机自启动">开机自启动</a></h1>
-<p>electron 软件想要实现 windows 开机自启动的切换，只需要去修改注册表就行了</p>
-<p>下面是主进程代码：</p>
-<pre><code class="language-ts">import { promisify } from 'node:util';
-import child_process from 'node:child_process';
-const execAsync = promisify(child_process.exec);
+                        <h1 id="asar-增量更新"><a class="header" href="#asar-增量更新">asar 增量更新</a></h1>
+<p>通过观察发现 <code>electron-builder</code> 和 <code>electron-updater</code> 实现的差分更新，并不能节省多少下载的带宽，这时候就需要实现只更新 <code>asar</code> 包的增量更新，1 包的体积小，更能节省带宽，提升更新的速度，用户体验好。</p>
+<h2 id="两种方案"><a class="header" href="#两种方案">两种方案</a></h2>
+<ul>
+<li>
+<p>不管是哪种方案，<code>asar</code> 更新的本质都是</p>
+<ol>
+<li>下载新版本的 <code>asar</code> 包</li>
+<li>关闭软件之后用新版本包覆盖旧版本包</li>
+<li>重启软件更新完成</li>
+</ol>
+</li>
+<li>
+<p>所以两种方案的区别就在于关闭软件之后覆盖文件的方式不同，因为软件正在运行的途中，<code>asar</code> 包处于锁定状态，是无法覆盖的，所以就是为了解决覆盖文件的问题</p>
+<ol>
+<li>第一种是双 <code>asar</code> 包方案，软件会生成两个 <code>asar</code> 包，<code>electron-builder</code> 默认打包生成的 <code>app.asar</code> 作为入口包，软件启动后还是从 <code>app.asar</code> 启动，但是 <code>app.asar</code> 的代码里只存放检测新版本文件和覆盖的逻辑，做完覆盖操作后就使用 <code>require</code> 或者 <code>import</code> 动态导入 <code>main-v1.0.0.asar</code> 这个主 <code>asar</code> 包，所有软件的业务逻辑都在主包中</li>
+<li>第二种逻辑简单一些，检查升级服务器是否存在新版本包，如果存在就下载下来，下载成功后立即退出软件，同时启动一个子进程，与软件主进程脱离关系，主进程退出后执行一个批处理脚本（或者 shell 脚本）覆盖操作，覆盖成功后再重启软件。所有的覆盖逻辑还有重启逻辑都在批处理脚本中</li>
+</ol>
+</li>
+<li>
+<p>优缺点分析：</p>
+<ul>
+<li>双 <code>asar</code> 方案缺点是会出现两个版本号，因为 <code>asar</code> 包中必须存在 <code>package.json</code> 文件，因此当主包升级后，主包版本号会和入口包版本号不一致，解决办法是实现一个方法，需要读取版本号的时候都要去读取主包内的 <code>package.json</code> 的版本号。双包方案实现起来略微有些复杂</li>
+<li>批处理脚本的优点是，实现起来简单，缺点是有可能批处理脚本的操作会被杀毒软件认为是病毒操作，被误杀</li>
+</ul>
+</li>
+</ul>
+<h2 id="双-asar-方案"><a class="header" href="#双-asar-方案">双 asar 方案</a></h2>
+<p><img src="./img/double_asar_update.png" alt="double_asar_update" /></p>
+<h2 id="批处理方案"><a class="header" href="#批处理方案">批处理方案</a></h2>
+<p><img src="./img/batch_update.png" alt="batch_update" /></p>
+<h2 id="参考链接"><a class="header" href="#参考链接">参考链接</a></h2>
+<ul>
+<li><a href="https://nodejs.org/docs/latest/api/child_process.html#child_processspawncommand-args-options">child_process.spawn(command[, args][, options])</a></li>
+<li><a href="https://nodejs.org/docs/latest/api/child_process.html#subprocessunref">subprocess.unref()</a></li>
+</ul>
 
-async function executeRegCommand(command: string) {
-  try {
-    const { stdout, stderr } = await execAsync(command, { windowsHide: true });
-    if (stderr) {
-      global.log.info(`executeRegCommand stderr: ${stderr}`);
-      throw new Error(stderr);
-    }
-    return stdout;
-  } catch (err) {
-    logErrorInfo(`executeRegCommand err`, err);
-    throw err;
-  }
-}
-
-ipcMain.handle('auto-start-on-boot', async (_, toggle: boolean) =&gt; {
-  const regPath = `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run`;
-  const PRODUCT_NAME = `app名字`;
-  const EXE_NAME = `app名字.exe`;
-  const EXEC_PATH = `${path.dirname(process.execPath)}\\${EXE_NAME}`;
-
-  const addCommand = `reg add "${regPath}" /v "${PRODUCT_NAME}" /t REG_SZ /d "${EXEC_PATH}" /f`;
-  const deleteCommand = `reg delete "${regPath}" /v "${PRODUCT_NAME}" /f`;
-
-  try {
-    await executeRegCommand(toggle ? addCommand : deleteCommand);
-    return { code: 0 };
-  } catch (err) {
-    logErrorInfo(`auto-start-on-boot err`, err);
-    return { code: -1 };
-  }
-});
-</code></pre>
-<p>下面是 preload 代码：</p>
-<pre><code class="language-ts">import { contextBridge, ipcRenderer } from 'electron';
-
-contextBridge.exposeInMainWorld('ipc', {
-  autoStartOnBoot: (toggle: boolean): Promise&lt;any&gt; =&gt; {
-    return ipcRenderer.invoke('auto-start-on-boot', toggle);
-  },
-});
-</code></pre>
-<p>下面是渲染进程代码：</p>
-<pre><code class="language-ts">const autoStartRes = await window.ipc?.autoStartOnBoot(
-  autoStartup.value === '1' ? true : false
-);
-if (autoStartRes.code === 0) {
-  console.log('autoStartUpSuccess');
-} else {
-  console.log('autoStartUpFailed');
-}
-</code></pre>
-<h2 id="reg-命令参数说明表"><a class="header" href="#reg-命令参数说明表">reg 命令参数说明表</a></h2>
-<pre><code class="language-cmd">reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "MyApp" /t REG_SZ /d "C:\Program Files\MyApp\app.exe" /f
-
-reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "MyApp" /f
-</code></pre>
-<div class="table-wrapper"><table><thead><tr><th>参数</th><th>作用说明</th><th>示例值</th></tr></thead><tbody>
-<tr><td><code>&lt;注册表路径&gt;</code></td><td>指定要添加键值对的注册表位置，需使用反斜杠 <code>\</code> 分隔层级</td><td><code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code>（当前用户开机启动项路径）</td></tr>
-<tr><td><code>/v</code></td><td>指定要创建的<strong>键名</strong>（即注册表中的“名称”列，如启动项的自定义名称）</td><td><code>MyTestApp</code>（自定义的开机启动项名称）</td></tr>
-<tr><td><code>/t</code></td><td>指定键值的数据类型，需使用系统规定的类型标识，常用字符串类型</td><td><code>REG_SZ</code>（字符串类型，适用于路径、文本等内容）</td></tr>
-<tr><td><code>/d</code></td><td>指定键名对应的<strong>键值</strong>（即注册表中的“数据”列，如程序路径、配置内容）</td><td><code>"C:\Program Files\Test\Test.exe"</code>（程序完整路径，含空格需加双引号）</td></tr>
-<tr><td><code>/f</code></td><td>强制覆盖目标路径下已存在的同名键值对，执行时无需手动确认</td><td>无需额外值，命令中直接加 <code>/f</code> 即可（如 <code>reg add ... /f</code>）</td></tr>
-</tbody></table>
-</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../electron/db_encrypt_hide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../electron/updater.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../electron/print_hide.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../electron/framework.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -241,11 +207,11 @@ reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "MyApp" /f
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../electron/db_encrypt_hide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../electron/updater.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../electron/print_hide.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../electron/framework.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
