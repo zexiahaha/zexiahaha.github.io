@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>集成日志 - knowledge-system</title>
+        <title>打包流程 - knowledge-system</title>
 
 
         <!-- Custom HTML head -->
@@ -152,117 +152,23 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="集成日志"><a class="header" href="#集成日志">集成日志</a></h1>
-<p>主进程一般需要记录日志，方便查错。这里选用 <code>electron-log</code> 这个库。<code>electron-log</code> 官方没有提供日志滚动的功能，需要通过 <code>archiveLogFn</code> 自己实现</p>
-<pre><code class="language-ts">import { app } from 'electron';
-import path from 'node:path';
-import { format } from 'date-fns';
-import fs from 'node:fs';
-import log from 'electron-log';
-
-let isInitialized = false;
-let fileLimit = 5;  // 日志文件保留的最大数量（超过会自动删除旧文件）
-
-function initLogger(): any {
-  if (isInitialized) {
-    return log;
-  }
-
-  log.transports.file.level = 'info'; // 文件日志只记录 'info' 及以上级别（info/warn/error）
-  log.transports.console.level = 'silly';  // 控制台日志记录所有级别（最详细）
-
-  const logPath = path.join(
-    app.getPath('userData'), // Electron 获取应用数据目录
-    'logs', // 日志文件夹名称
-    `app-${format(new Date(), 'yyyy-MM-dd')}.log` // 日志文件名（包含当前日期，如 app-2023-10-01.log）
-  );
-
-  // 当日志文件达到最大尺寸时，自动对日志进行归档和清理
-  // 检查当前日志文件是否存在，不存在则跳过
-  // 查找同目录下所有同前缀的日志文件（如 app-2023-10-01.log、app-2023-10-01.1.log 等）
-  // 对日志文件按序号排序（0 是最新，1 是前一天，以此类推）
-  // 循环处理文件：
-  // 序号 +1（如 app-xxx.log → app-xxx.1.log，app-xxx.1.log → app-xxx.2.log）
-  // 超过 fileLimit（5 个）的旧文件直接删除
-  const archiveLog = (filePath: any) =&gt; {
-    try {
-      const filePathStr = filePath.toString();
-      if (!fs.existsSync(filePathStr)) {
-        console.warn(`log file doesn't exists, skip the rotate: ${filePath}`);
-        return;
-      }
-
-      const info = path.parse(filePathStr);
-      const baseName = info.name;
-      const ext = info.ext;
-      const dir = info.dir;
-
-      const allFiles = fs
-        .readdirSync(dir)
-        .filter(file =&gt; {
-          return file.startsWith(baseName) &amp;&amp; file.endsWith(ext);
-        })
-        .map(file =&gt; path.join(dir, file));
-
-      const getFileIndex = (file: string) =&gt; {
-        const name = path.parse(file).name;
-        const match = name.match(/\.(\d+)$/);
-        return match ? parseInt(match[1], 10) : 0;
-      };
-
-      allFiles.sort((a, b) =&gt; getFileIndex(a) - getFileIndex(b));
-
-      for (let i = allFiles.length - 1; i &gt;= 0; i--) {
-        const currentFile = allFiles[i];
-        const currentIndex = getFileIndex(currentFile);
-        const newIndex = currentIndex + 1;
-
-        if (newIndex &gt; fileLimit) {
-          fs.unlinkSync(currentFile);
-          continue;
-        }
-
-        const newFileName = `${baseName}.${newIndex}${ext}`;
-        const newFilePath = path.join(dir, newFileName);
-
-        if (fs.existsSync(newFilePath)) {
-          fs.unlinkSync(newFilePath);
-        }
-        fs.renameSync(currentFile, newFilePath);
-      }
-    } catch (e) {
-      console.error('log rotate failed:', e);
-    }
-  };
-  log.transports.file.archiveLogFn = archiveLog; // 绑定日志轮转函数
-  log.transports.file.resolvePathFn = () =&gt; logPath; // 自定义日志文件路径
-  log.transports.file.maxSize = 1024 * 1024 * 10; // 单个日志文件最大尺寸（10MB）
-
-  log.transports.file.format =
-    '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}'; // 日志格式
-
-  isInitialized = true;
-  return log;
-}
-
-export default initLogger();
-
-</code></pre>
+                        <h1 id="打包流程"><a class="header" href="#打包流程">打包流程</a></h1>
 <h2 id="参考链接"><a class="header" href="#参考链接">参考链接</a></h2>
 <ul>
-<li><a href="https://www.npmjs.com/package/electron-log">electron-log</a></li>
-<li><a href="https://github.com/megahertz/electron-log/blob/46a6de343c8b691714025a994420d6d3aeafa1f7/docs/transports/file.md#archivelogfn-oldlogfile-logfile--void">archiveLogFn</a></li>
+<li><a href="https://cn.vitejs.dev/config/build-options.html">vite config build</a></li>
+<li><a href="https://cn.rollupjs.org/configuration-options/#external">rollup config external</a></li>
+<li><a href="https://www.cnblogs.com/longmo666/p/18107406">import resolve from '@rollup/plugin-node-resolve' 这个包的作用是什么</a></li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../electron/custom_nsis_issue.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../electron/framework_hide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../electron/sqlite_hide.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../electron/asar_size_opt.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -272,11 +178,11 @@ export default initLogger();
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../electron/custom_nsis_issue.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../electron/framework_hide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../electron/sqlite_hide.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../electron/asar_size_opt.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
