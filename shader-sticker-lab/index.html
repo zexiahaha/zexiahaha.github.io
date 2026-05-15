@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shader Sticker Lab</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        color: #222;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 420px;
+        gap: 24px;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+
+      .preview-panel,
+      .control-panel {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 16px;
+      }
+
+      .preview-panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        width: 100%;
+        margin: 0 0 16px;
+        font-size: 20px;
+      }
+
+      canvas {
+        width: 512px;
+        height: 512px;
+        max-width: 100%;
+        background: #000;
+      }
+
+      .control-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .control-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .param-row {
+        display: grid;
+        grid-template-columns: 90px 1fr 48px;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      input[type='range'] {
+        width: 100%;
+      }
+
+      button,
+      select,
+      input[type='file'] {
+        font: inherit;
+      }
+
+      @media (max-width: 800px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="preview-panel">
+        <h1>Shader Sticker Lab</h1>
+        <canvas id="glCanvas" width="512" height="512"></canvas>
+      </section>
+
+      <section class="control-panel">
+        <div class="control-group">
+          <label for="imageInput">Image</label>
+          <input id="imageInput" type="file" accept="image/*" />
+        </div>
+
+        <div class="control-group">
+          <label for="effectSelect">Effect</label>
+          <select id="effectSelect">
+            <option value="wave">Wave</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="control-row">
+            <span>Parameters</span>
+            <button id="resetParamsButton" type="button">Reset</button>
+          </div>
+
+          <div id="paramsPanel"></div>
+        </div>
+
+        <button id="exportGifButton" type="button" disabled>Export GIF</button>
+      </section>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
