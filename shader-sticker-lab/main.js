@@ -32,6 +32,32 @@ const effectConfigs = {
       },
     },
   },
+  pulse: {
+    label: 'Pulse',
+    params: {
+      strength: {
+        label: 'Strength',
+        min: 0,
+        max: 0.3,
+        step: 0.01,
+        value: 0.08,
+      },
+      speed: {
+        label: 'Speed',
+        min: 0,
+        max: 10,
+        step: 0.1,
+        value: 4,
+      },
+      secondBeat: {
+        label: 'Second Beat',
+        min: 0,
+        max: 1,
+        step: 0.01,
+        value: 0.45,
+      },
+    },
+  },
 };
 
 const paramState = {};
@@ -88,8 +114,13 @@ function renderParamsPanel(effectName) {
 }
 
 resetParams('wave');
+resetParams('pulse');
 renderParamsPanel('wave');
 
+effectSelect.addEventListener('change', function () {
+  const effectName = effectSelect.value;
+  renderParamsPanel(effectName);
+});
 resetParamsButton.addEventListener('click', function () {
   const effectName = effectSelect.value;
   resetParams(effectName);
@@ -107,13 +138,44 @@ gl.clearColor(0, 0, 0, 1);
 gl.clear(gl.COLOR_BUFFER_BIT);
 
 const vertexShaderSource = `
+precision mediump float;
 attribute vec2 a_position;
 attribute vec2 a_texCoord;
 
 varying vec2 v_texCoord;
 
+uniform float u_time;
+uniform float u_pulseStrength;
+uniform float u_pulseSpeed;
+uniform float u_pulseSecondBeat;
+
+uniform float u_effect;
+
 void main() {
-    gl_Position = vec4(a_position, 0.0, 1.0);
+    float scale = 1.0;
+
+    if (u_effect == 1.0) {
+      // scale = 1.0 + sin(u_time * u_pulseSpeed) * u_pulseStrength;
+
+      // float beat = abs(sin(u_time * u_pulseSpeed));
+      // beat = beat * beat;
+      // scale = 1.0 + beat * u_pulseStrength;
+
+      float t = u_time * u_pulseSpeed;
+      
+      float beat1 = abs(sin(t));
+      beat1 = beat1 * beat1 * beat1;
+
+      float beat2 = abs(sin(t + 0.8));
+      beat2 = beat2 * beat2 * beat2 * u_pulseSecondBeat;
+
+      float beat = max(beat1, beat2);
+
+      scale = 1.0 + beat * u_pulseStrength;
+    }
+    
+    vec2 position = a_position * scale;
+    gl_Position = vec4(position, 0.0, 1.0);
     v_texCoord = a_texCoord;
 }
 `;
@@ -129,11 +191,16 @@ uniform float u_frequency;
 uniform float u_amplitude;
 uniform float u_speed;
 
+uniform float u_effect;
+
 void main() {
     vec2 uv = v_texCoord;
 
-    float wave = sin(uv.y * u_frequency + u_time * u_speed);
-    uv.x = uv.x + wave * u_amplitude;
+    if (u_effect == 0.0) {
+      float wave = sin(uv.y * u_frequency + u_time * u_speed);
+      uv.x = uv.x + wave * u_amplitude;
+    }
+
     gl_FragColor = texture2D(u_image, uv);
 }
 `;
@@ -181,12 +248,21 @@ const fragmentShader = compileShader(
 const program = createProgram(gl, vertexShader, fragmentShader);
 gl.useProgram(program);
 
+const effectLocation = gl.getUniformLocation(program, 'u_effect');
+
 const imageLocation = gl.getUniformLocation(program, 'u_image');
 const timeLocation = gl.getUniformLocation(program, 'u_time');
 
 const frequencyLocation = gl.getUniformLocation(program, 'u_frequency');
 const amplitudeLocation = gl.getUniformLocation(program, 'u_amplitude');
 const speedLocation = gl.getUniformLocation(program, 'u_speed');
+
+const pulseStrengthLocation = gl.getUniformLocation(program, 'u_pulseStrength');
+const pulseSpeedLocation = gl.getUniformLocation(program, 'u_pulseSpeed');
+const pulseSecondBeatLocation = gl.getUniformLocation(
+  program,
+  'u_pulseSecondBeat',
+);
 
 const positions = new Float32Array([
   -1, -1, 1, -1, -1, 1,
@@ -230,14 +306,29 @@ image.src = './assets/test.png';
 function getWaveParams() {
   return paramState.wave;
 }
+function getPulseParams() {
+  return paramState.pulse;
+}
 
 function render(time) {
-  const params = getWaveParams();
+  const effectName = effectSelect.value;
+  const waveParams = getWaveParams();
+  const pulseParams = getPulseParams();
+
+  if (effectName === 'wave') {
+    gl.uniform1f(effectLocation, 0.0);
+  } else if (effectName === 'pulse') {
+    gl.uniform1f(effectLocation, 1.0);
+  }
 
   gl.uniform1f(timeLocation, time * 0.001);
-  gl.uniform1f(frequencyLocation, params.frequency);
-  gl.uniform1f(amplitudeLocation, params.amplitude);
-  gl.uniform1f(speedLocation, params.speed);
+  gl.uniform1f(frequencyLocation, waveParams.frequency);
+  gl.uniform1f(amplitudeLocation, waveParams.amplitude);
+  gl.uniform1f(speedLocation, waveParams.speed);
+
+  gl.uniform1f(pulseStrengthLocation, pulseParams.strength);
+  gl.uniform1f(pulseSpeedLocation, pulseParams.speed);
+  gl.uniform1f(pulseSecondBeatLocation, pulseParams.secondBeat);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
