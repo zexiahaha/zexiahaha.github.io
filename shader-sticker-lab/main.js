@@ -58,6 +58,32 @@ const effectConfigs = {
       },
     },
   },
+  bounce: {
+    label: 'Bounce',
+    params: {
+      height: {
+        label: 'Height',
+        min: 0,
+        max: 0.5,
+        step: 0.01,
+        value: 0.4,
+      },
+      speed: {
+        label: 'Speed',
+        min: 0,
+        max: 10,
+        step: 0.1,
+        value: 2.5,
+      },
+      squash: {
+        label: 'Squash',
+        min: 0,
+        max: 0.3,
+        step: 0.01,
+        value: 0.15,
+      },
+    },
+  },
 };
 
 const paramState = {};
@@ -115,6 +141,7 @@ function renderParamsPanel(effectName) {
 
 resetParams('wave');
 resetParams('pulse');
+resetParams('bounce');
 renderParamsPanel('wave');
 
 effectSelect.addEventListener('change', function () {
@@ -149,18 +176,16 @@ uniform float u_pulseStrength;
 uniform float u_pulseSpeed;
 uniform float u_pulseSecondBeat;
 
+uniform float u_bounceHeight;
+uniform float u_bounceSpeed;
+uniform float u_bounceSquash;
+
 uniform float u_effect;
 
 void main() {
     float scale = 1.0;
 
     if (u_effect == 1.0) {
-      // scale = 1.0 + sin(u_time * u_pulseSpeed) * u_pulseStrength;
-
-      // float beat = abs(sin(u_time * u_pulseSpeed));
-      // beat = beat * beat;
-      // scale = 1.0 + beat * u_pulseStrength;
-
       float t = u_time * u_pulseSpeed;
       
       float beat1 = abs(sin(t));
@@ -173,8 +198,28 @@ void main() {
 
       scale = 1.0 + beat * u_pulseStrength;
     }
+
+    vec2 position;
+
+    if (u_effect == 2.0) {
+      float bounce = abs(sin(u_time *u_bounceSpeed));
+      bounce = 1.0 - pow(1.0 - bounce, 1.2);
+      float offsetY = bounce * u_bounceHeight;
+
+      float contact = 1.0 - bounce;
+      contact = contact * contact * contact;
+
+      float squash = 1.0 - contact * u_bounceSquash;
+      float stretch = 1.0 + contact * u_bounceSquash * 0.5;
+
+      float x = a_position.x * stretch;
+      float y = -1.0 + (a_position.y + 1.0) * squash + offsetY;
+
+      position = vec2(x, y);
+    } else {
+      position = a_position * scale;
+    }
     
-    vec2 position = a_position * scale;
     gl_Position = vec4(position, 0.0, 1.0);
     v_texCoord = a_texCoord;
 }
@@ -264,6 +309,10 @@ const pulseSecondBeatLocation = gl.getUniformLocation(
   'u_pulseSecondBeat',
 );
 
+const bounceHeightLocation = gl.getUniformLocation(program, 'u_bounceHeight');
+const bounceSpeedLocation = gl.getUniformLocation(program, 'u_bounceSpeed');
+const bounceSquashLocation = gl.getUniformLocation(program, 'u_bounceSquash');
+
 const positions = new Float32Array([
   -1, -1, 1, -1, -1, 1,
 
@@ -309,16 +358,22 @@ function getWaveParams() {
 function getPulseParams() {
   return paramState.pulse;
 }
+function getBounceParams() {
+  return paramState.bounce;
+}
 
 function render(time) {
   const effectName = effectSelect.value;
   const waveParams = getWaveParams();
   const pulseParams = getPulseParams();
+  const bounceParams = getBounceParams();
 
   if (effectName === 'wave') {
     gl.uniform1f(effectLocation, 0.0);
   } else if (effectName === 'pulse') {
     gl.uniform1f(effectLocation, 1.0);
+  } else if (effectName === 'bounce') {
+    gl.uniform1f(effectLocation, 2.0);
   }
 
   gl.uniform1f(timeLocation, time * 0.001);
@@ -329,6 +384,10 @@ function render(time) {
   gl.uniform1f(pulseStrengthLocation, pulseParams.strength);
   gl.uniform1f(pulseSpeedLocation, pulseParams.speed);
   gl.uniform1f(pulseSecondBeatLocation, pulseParams.secondBeat);
+
+  gl.uniform1f(bounceHeightLocation, bounceParams.height);
+  gl.uniform1f(bounceSpeedLocation, bounceParams.speed);
+  gl.uniform1f(bounceSquashLocation, bounceParams.squash);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
