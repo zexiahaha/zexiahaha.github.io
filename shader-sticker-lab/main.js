@@ -260,7 +260,8 @@ gl.clearColor(0, 0, 0, 1);
 gl.clear(gl.COLOR_BUFFER_BIT);
 
 const vertexShaderSource = `
-precision mediump float;
+precision highp float;
+
 attribute vec2 a_position;
 attribute vec2 a_texCoord;
 
@@ -321,12 +322,7 @@ void main() {
 `;
 
 const fragmentShaderSource = `
-#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
-#else
-precision mediump float;
-#endif
-precision mediump float;
 
 varying vec2 v_texCoord;
 uniform sampler2D u_image;
