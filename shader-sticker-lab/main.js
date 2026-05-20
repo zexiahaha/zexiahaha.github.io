@@ -176,6 +176,32 @@ const effectConfigs = {
       },
     },
   },
+  shockwave: {
+    label: 'Shockwave',
+    params: {
+      strength: {
+        label: 'Strength',
+        min: 0,
+        max: 0.2,
+        step: 0.01,
+        value: 0.04,
+      },
+      speed: {
+        label: 'Speed',
+        min: 0,
+        max: 8,
+        step: 0.1,
+        value: 0.4,
+      },
+      width: {
+        label: 'Width',
+        min: 0.005,
+        max: 0.2,
+        step: 0.001,
+        value: 0.08,
+      },
+    },
+  },
 };
 
 const paramState = {};
@@ -237,6 +263,7 @@ resetParams('bounce');
 resetParams('rainbow');
 resetParams('crt');
 resetParams('glitch');
+resetParams('shockwave');
 renderParamsPanel('wave');
 
 effectSelect.addEventListener('change', function () {
@@ -260,7 +287,7 @@ gl.clearColor(0, 0, 0, 1);
 gl.clear(gl.COLOR_BUFFER_BIT);
 
 const vertexShaderSource = `
-precision highp float;
+precision mediump float;
 
 attribute vec2 a_position;
 attribute vec2 a_texCoord;
@@ -322,7 +349,7 @@ void main() {
 `;
 
 const fragmentShaderSource = `
-precision highp float;
+precision mediump float;
 
 varying vec2 v_texCoord;
 uniform sampler2D u_image;
@@ -345,6 +372,10 @@ uniform float u_glitchStrength;
 uniform float u_glitchSpeed;
 uniform float u_glitchBlockSize;
 uniform float u_glitchRgbSplit;
+
+uniform float u_shockwaveStrength;
+uniform float u_shockwaveSpeed;
+uniform float u_shockwaveWidth;
 
 uniform float u_effect;
 
@@ -420,6 +451,19 @@ void main() {
       float b = texture2D(u_image, uv + vec2(offset - u_glitchRgbSplit, 0.0)).b;
 
       gl_FragColor = vec4(r, g, b, color.a);
+    } else if (u_effect == 6.0) {
+      vec2 centerUv = uv - 0.5;
+
+      float dist = length(centerUv); 
+      float radius = mod(u_time * u_shockwaveSpeed, 0.8);
+      float diff = abs(dist - radius);
+      float ring = 1.0 - smoothstep(0.0, u_shockwaveWidth, diff);
+
+      vec2 dir = centerUv / max(dist, 0.0001);
+      vec2 shockUv = uv + dir * ring * u_shockwaveStrength;
+      vec4 color = texture2D(u_image, shockUv);
+
+      gl_FragColor = color;
     } else {
       gl_FragColor = color;
     }
@@ -515,6 +559,19 @@ const glitchRgbSplitLocation = gl.getUniformLocation(
   'u_glitchRgbSplit',
 );
 
+const shockwaveStrengthLocation = gl.getUniformLocation(
+  program,
+  'u_shockwaveStrength',
+);
+const shockwaveSpeedLocation = gl.getUniformLocation(
+  program,
+  'u_shockwaveSpeed',
+);
+const shockwaveWidthLocation = gl.getUniformLocation(
+  program,
+  'u_shockwaveWidth',
+);
+
 const positions = new Float32Array([
   -1, -1, 1, -1, -1, 1,
 
@@ -572,6 +629,9 @@ function getCrtParams() {
 function getGlitchParams() {
   return paramState.glitch;
 }
+function getShockwaveParams() {
+  return paramState.shockwave;
+}
 
 function render(time) {
   const effectName = effectSelect.value;
@@ -581,6 +641,7 @@ function render(time) {
   const rainbowParams = getRainbowParams();
   const crtParams = getCrtParams();
   const glitchParams = getGlitchParams();
+  const shockwaveParams = getShockwaveParams();
 
   if (effectName === 'wave') {
     gl.uniform1f(effectLocation, 0.0);
@@ -594,6 +655,8 @@ function render(time) {
     gl.uniform1f(effectLocation, 4.0);
   } else if (effectName === 'glitch') {
     gl.uniform1f(effectLocation, 5.0);
+  } else if (effectName === 'shockwave') {
+    gl.uniform1f(effectLocation, 6.0);
   }
 
   gl.uniform1f(timeLocation, time * 0.001);
@@ -622,6 +685,10 @@ function render(time) {
   gl.uniform1f(glitchSpeedLocation, glitchParams.speed);
   gl.uniform1f(glitchBlockSizeLocation, glitchParams.blockSize);
   gl.uniform1f(glitchRgbSplitLocation, glitchParams.rgbSplit);
+
+  gl.uniform1f(shockwaveStrengthLocation, shockwaveParams.strength);
+  gl.uniform1f(shockwaveSpeedLocation, shockwaveParams.speed);
+  gl.uniform1f(shockwaveWidthLocation, shockwaveParams.width);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
