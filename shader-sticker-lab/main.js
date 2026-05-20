@@ -321,6 +321,11 @@ void main() {
 `;
 
 const fragmentShaderSource = `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
 precision mediump float;
 
 varying vec2 v_texCoord;
