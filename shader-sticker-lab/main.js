@@ -403,10 +403,10 @@ void main() {
       float timeBlock = floor(u_glitchSpeed * u_time * 0.35);
 
       float noise = random(vec2(block, timeBlock));
-      gl_FragColor = vec4(vec3(noise), 1.0);
-      return;
       float offsetNoise = random(vec2(block + 17.0, timeBlock));
       float active = step(0.92, noise);
+
+      gl_FragColor = vec4(vec3(active), 1.0);
 
       float offset = (offsetNoise - 0.5) * u_glitchStrength * active;
 
