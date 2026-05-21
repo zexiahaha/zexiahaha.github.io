@@ -202,6 +202,18 @@ const effectConfigs = {
       },
     },
   },
+  pixelate: {
+    label: 'Pixelate',
+    params: {
+      pixelCount: {
+        label: 'Pixel Count',
+        min: 4,
+        max: 128,
+        step: 1,
+        value: 32,
+      },
+    },
+  },
 };
 
 const paramState = {};
@@ -264,6 +276,7 @@ resetParams('rainbow');
 resetParams('crt');
 resetParams('glitch');
 resetParams('shockwave');
+resetParams('pixelate');
 renderParamsPanel('wave');
 
 effectSelect.addEventListener('change', function () {
@@ -377,6 +390,8 @@ uniform float u_shockwaveStrength;
 uniform float u_shockwaveSpeed;
 uniform float u_shockwaveWidth;
 
+uniform float u_pixelateCount;
+
 uniform float u_effect;
 
 // float random(vec2 p) {
@@ -464,6 +479,13 @@ void main() {
       vec4 color = texture2D(u_image, shockUv);
 
       gl_FragColor = color;
+    } else if (u_effect == 7.0) {
+      vec2 gridUv = uv * u_pixelateCount;
+      vec2 block = floor(gridUv);
+      vec2 pixelUv = (block + 0.5) / u_pixelateCount;
+      vec4 pixelColor = texture2D(u_image, pixelUv); 
+
+      gl_FragColor = pixelColor;
     } else {
       gl_FragColor = color;
     }
@@ -572,6 +594,8 @@ const shockwaveWidthLocation = gl.getUniformLocation(
   'u_shockwaveWidth',
 );
 
+const pixelateCountLocation = gl.getUniformLocation(program, 'u_pixelateCount');
+
 const positions = new Float32Array([
   -1, -1, 1, -1, -1, 1,
 
@@ -632,6 +656,9 @@ function getGlitchParams() {
 function getShockwaveParams() {
   return paramState.shockwave;
 }
+function getPixelateParams() {
+  return paramState.pixelate;
+}
 
 function render(time) {
   const effectName = effectSelect.value;
@@ -642,6 +669,7 @@ function render(time) {
   const crtParams = getCrtParams();
   const glitchParams = getGlitchParams();
   const shockwaveParams = getShockwaveParams();
+  const pixelateParams = getPixelateParams();
 
   if (effectName === 'wave') {
     gl.uniform1f(effectLocation, 0.0);
@@ -657,6 +685,8 @@ function render(time) {
     gl.uniform1f(effectLocation, 5.0);
   } else if (effectName === 'shockwave') {
     gl.uniform1f(effectLocation, 6.0);
+  } else if (effectName === 'pixelate') {
+    gl.uniform1f(effectLocation, 7.0);
   }
 
   gl.uniform1f(timeLocation, time * 0.001);
@@ -689,6 +719,8 @@ function render(time) {
   gl.uniform1f(shockwaveStrengthLocation, shockwaveParams.strength);
   gl.uniform1f(shockwaveSpeedLocation, shockwaveParams.speed);
   gl.uniform1f(shockwaveWidthLocation, shockwaveParams.width);
+
+  gl.uniform1f(pixelateCountLocation, pixelateParams.pixelCount);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
