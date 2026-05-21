@@ -214,6 +214,32 @@ const effectConfigs = {
       },
     },
   },
+  melt: {
+    label: 'Melt',
+    params: {
+      strength: {
+        label: 'Strength',
+        min: 0.01,
+        max: 1.0,
+        step: 0.01,
+        value: 0.5,
+      },
+      speed: {
+        label: 'Speed',
+        min: 0.1,
+        max: 8.0,
+        step: 0.01,
+        value: 1.5,
+      },
+      columnCount: {
+        label: 'Column Count',
+        min: 5,
+        max: 20,
+        step: 1,
+        value: 10.0,
+      },
+    },
+  },
 };
 
 const paramState = {};
@@ -277,6 +303,7 @@ resetParams('crt');
 resetParams('glitch');
 resetParams('shockwave');
 resetParams('pixelate');
+resetParams('melt');
 renderParamsPanel('wave');
 
 effectSelect.addEventListener('change', function () {
@@ -392,6 +419,10 @@ uniform float u_shockwaveWidth;
 
 uniform float u_pixelateCount;
 
+uniform float u_meltStrength;
+uniform float u_meltSpeed;
+uniform float u_meltColumnCount;
+
 uniform float u_effect;
 
 // float random(vec2 p) {
@@ -480,12 +511,27 @@ void main() {
 
       gl_FragColor = color;
     } else if (u_effect == 7.0) {
-      vec2 gridUv = uv * u_pixelateCount;
+      float loop = 4.0 + floor(sin(u_time) * sin(u_time) * (u_pixelateCount - 4.0));
+      vec2 gridUv = uv * loop;
       vec2 block = floor(gridUv);
-      vec2 pixelUv = (block + 0.5) / u_pixelateCount;
-      vec4 pixelColor = texture2D(u_image, pixelUv); 
+      vec2 pixelUv = (block + 0.5) / loop;
+      vec4 pixelColor = texture2D(u_image, pixelUv);
 
       gl_FragColor = pixelColor;
+    } else if (u_effect == 8.0) { 
+      float column = floor(uv.x * u_meltColumnCount);
+
+      float fall = random(vec2(column + 1.0, 0.0));
+
+      float verticalWeight = uv.y * 1.0;
+
+      vec2 meltUv = uv;
+      float offset = fall * verticalWeight * u_meltStrength * u_time;
+      meltUv.y = uv.y - offset * clamp(u_time * u_meltSpeed, 0.0, 1.0);
+
+      vec4 meltColor = texture2D(u_image, meltUv);
+
+      gl_FragColor = meltColor;
     } else {
       gl_FragColor = color;
     }
@@ -596,6 +642,13 @@ const shockwaveWidthLocation = gl.getUniformLocation(
 
 const pixelateCountLocation = gl.getUniformLocation(program, 'u_pixelateCount');
 
+const meltStrengthLocation = gl.getUniformLocation(program, 'u_meltStrength');
+const meltSpeedLocation = gl.getUniformLocation(program, 'u_meltSpeed');
+const meltColumnCountLocation = gl.getUniformLocation(
+  program,
+  'u_meltColumnCount',
+);
+
 const positions = new Float32Array([
   -1, -1, 1, -1, -1, 1,
 
@@ -659,6 +712,12 @@ function getShockwaveParams() {
 function getPixelateParams() {
   return paramState.pixelate;
 }
+function getMeltParams() {
+  return paramState.melt;
+}
+
+let currentEffectName = effectSelect.value;
+let effectStartTime = 0;
 
 function render(time) {
   const effectName = effectSelect.value;
@@ -670,6 +729,7 @@ function render(time) {
   const glitchParams = getGlitchParams();
   const shockwaveParams = getShockwaveParams();
   const pixelateParams = getPixelateParams();
+  const meltParams = getMeltParams();
 
   if (effectName === 'wave') {
     gl.uniform1f(effectLocation, 0.0);
@@ -687,9 +747,18 @@ function render(time) {
     gl.uniform1f(effectLocation, 6.0);
   } else if (effectName === 'pixelate') {
     gl.uniform1f(effectLocation, 7.0);
+  } else if (effectName === 'melt') {
+    gl.uniform1f(effectLocation, 8.0);
   }
 
-  gl.uniform1f(timeLocation, time * 0.001);
+  if (effectName !== currentEffectName) {
+    currentEffectName = effectName;
+    effectStartTime = time;
+  }
+
+  let effectTime = (time - effectStartTime) * 0.001;
+
+  gl.uniform1f(timeLocation, effectTime);
   gl.uniform1f(frequencyLocation, waveParams.frequency);
   gl.uniform1f(amplitudeLocation, waveParams.amplitude);
   gl.uniform1f(speedLocation, waveParams.speed);
@@ -721,6 +790,10 @@ function render(time) {
   gl.uniform1f(shockwaveWidthLocation, shockwaveParams.width);
 
   gl.uniform1f(pixelateCountLocation, pixelateParams.pixelCount);
+
+  gl.uniform1f(meltStrengthLocation, meltParams.strength);
+  gl.uniform1f(meltSpeedLocation, meltParams.speed);
+  gl.uniform1f(meltColumnCountLocation, meltParams.columnCount);
 
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
